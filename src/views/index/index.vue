@@ -1,681 +1,275 @@
 <template>
-  <div class="index-container">
-    <el-tabs :tab-position="tabPosition">
-      <el-tab-pane label="栋舍设备布局">
-        <div class="view_1">
-          <div class="total_view">总数: 耳环340个 摄像头8台</div>
-          <div class="div_view">
-            <el-row>
-              <el-col
-                :span="6"
-                v-for="(o, index) in 10"
-                :key="o"
-                class="box-col"
-              >
-                <el-card :body-style="{ padding: '0px' }" class="box-card">
-                  <div class="image_view">
-                    <img src="../../assets/piggery_blue.png" class="image" />
-                  </div>
-                  <div style="padding: 14px">
-                    <span>西区三舍西区三舍西区三舍西区三舍</span>
-                    <div class="bottom clearfix">
-                      <div class="item_view pulic_box_shadow">
-                        <span class="item_view_1">20</span>
-                        <span class="item_view_2">耳环</span>
-                      </div>
-                      <div class="item_view pulic_box_shadow">
-                        <span class="item_view_1">2</span>
-                        <span class="item_view_2">摄像头</span>
-                      </div>
-                    </div>
-                    <div class="name_span">饲养员:张三</div>
-                  </div>
-                </el-card>
-              </el-col>
-            </el-row>
-          </div>
+  <div class="index-index-container">
+    <div class="index-index-container-1">
+      <div class="index-container-left index-pulic_box_shadow">
+        <div class="index-pie-view">
+          <div style="margin-right: 40px">猪只个体健康</div>
+          <el-row>
+            <el-date-picker
+              v-model="currentDate"
+              align="right"
+              type="month"
+              placeholder="选择日期"
+            >
+            </el-date-picker>
+          </el-row>
         </div>
-      </el-tab-pane>
-      <el-tab-pane label="个体健康历史记录">
-        <div class="view_2">
-          <div class="view_2_1" v-if="logisticsDialog">
-            <div class="view_2_top pulic_box_shadow">
-              <div class="view_2_top_1">
-                <span class="view_2_top_1_1">50</span>
-                <span class="view_2_top_1_2">总存栏</span>
-              </div>
-              <div class="view_2_top_1">
-                <span class="view_2_top_1_1">5</span>
-                <span class="view_2_top_1_2">发热</span>
-              </div>
-              <div class="view_2_top_1">
-                <span class="view_2_top_1_1">30</span>
-                <span class="view_2_top_1_2">离线</span>
-              </div>
-            </div>
-            <el-form :inline="true" class="demo-form-inline">
-              <el-form-item label="耳号" prop="source_label">
-                <el-input
-                  v-model="source_label"
-                  placeholder="请输入耳号"
-                  clearable
-                />
-              </el-form-item>
-              <el-form-item label="场区" prop="sitearea">
-                <el-input
-                  v-model="sitearea"
-                  placeholder="请输入场区"
-                  clearable
-                />
-              </el-form-item>
-              <el-form-item label="栋舍" prop="door">
-                <el-input v-model="door" placeholder="请输入栋舍" clearable />
-              </el-form-item>
-              <el-form-item label="栏位" prop="dorm">
-                <el-input v-model="dorm" placeholder="请输入栏位" clearable />
-              </el-form-item>
-
-              <el-form-item label="状态" prop="status">
-                <el-select
-                  v-model="status"
-                  filterable
-                  clearable
-                  placeholder="请选择状态"
-                >
-                  <el-option label="全部" value=""></el-option>
-                  <el-option label="正常" value="1"></el-option>
-                  <el-option label="发热" value="4"></el-option>
-                  <el-option label="离线" value="2"></el-option>
-                  <el-option label="离场" value="3"></el-option>
-                </el-select>
-              </el-form-item>
-
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getList()">查询</el-button
-              >
-              <el-button type="primary" size="medium" @click="exportData()" style="margin-left:20px;">导出</el-button
-              >
-            </el-form>
-            <el-table :data="list" stripe style="width: 100%" border>
-              <el-table-column
-                prop="source_label"
-                fixed
-                width="120"
-                label="耳号"
-                align="center"
-              />
-              <el-table-column
-                prop="label_id"
-                width="120"
-                label="电子耳标号"
-                align="center"
-              />
-              <el-table-column
-                prop="Sitearea"
-                width="190"
-                label="场区"
-                align="center"
-              />
-              <el-table-column
-                prop="door"
-                width="190"
-                label="栋舍"
-                align="center"
-              />
-              <el-table-column
-                prop="dorm"
-                width="190"
-                label="栏位"
-                align="center"
-              />
-              <el-table-column
-                prop="status"
-                width="115"
-                label="状态"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.status == '1'">正常</p>
-                  <p v-if="scope.row.status == '4'">发热</p>
-                  <p v-if="scope.row.status == '2'">离线</p>
-                  <p v-if="scope.row.status == '3'">离场</p>
-                </template>
-              </el-table-column>
-
-              <el-table-column label="操作" width="250" align="center">
-                <template slot-scope="scope">
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="logisticsClick(scope.row.id)"
-                    >详情</el-button
-                  >
-                </template>
-              </el-table-column>
-            </el-table>
-
-            <!-- 分页 -->
-            <div class="block" style="margin-top: 15px">
-              <el-pagination
-                :current-page="current"
-                :page-size="limit"
-                :total="total"
-                style="padding: 30px 0; text-align: center"
-                layout="total, sizes, prev, pager, next"
-                @current-change="getList"
-                @size-change="handleSizeChange"
-                :page-sizes="[10, 20, 30, 40]"
-              />
-            </div>
-          </div>
-          <div class="view_2_1" v-if="!logisticsDialog">
-            <!-- <div class="view_2_top_1_2" @click="handlerReturn()">返回历史列表</div> -->
-            <el-page-header @back="handlerReturn" content="返回历史列表"></el-page-header>
-            <div class="view_2_top pulic_box_shadow" style="margin-top: 20px;">
-              <div class="view_2_top_1">
-                <span class="view_2_top_1_1">SN00001</span>
-                <span class="view_2_top_1_2">耳号</span>
-              </div>
-              <div class="view_2_top_1">
-                <span class="view_2_top_1_1">800090001</span>
-                <span class="view_2_top_1_2">电子耳号</span>
-              </div>
-              <div class="view_2_top_1">
-                <span class="view_2_top_1_1">母猪</span>
-                <span class="view_2_top_1_2">性别</span>
-              </div>
-            </div>
-            <el-form :inline="true" class="demo-form-inline">
-              <el-form-item label="时间范围">
-                <el-date-picker
-                v-model="timelist"
-                type="datetimerange"
-                @change="consoledata()"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                >
-                </el-date-picker>
-               </el-form-item>
-
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getDetailsList()">查询</el-button>
-
-              <el-button type="primary" size="medium" @click="exportDetailsData()" style="margin-left:20px;">导出</el-button>
-            </el-form>
-            <el-table :data="list" stripe style="width: 1040px;" border>
-              <el-table-column
-                prop="Sitearea"
-                width="200"
-                label="场区"
-                align="center"
-              />
-              <el-table-column
-                prop="door"
-                width="200"
-                label="栋舍"
-                align="center"
-              />
-              <el-table-column
-                prop="dorm"
-                width="200"
-                label="栏位"
-                align="center"
-              />
-              <el-table-column
-                prop="temperature"
-                width="120"
-                label="体温(°C)"
-                align="center"
-              />
-              <!-- <el-table-column
-                prop="activity"
-                width="120"
-                label="活跃度"
-                align="center"
-              /> -->
-              <el-table-column
-                prop="activity"
-                width="120"
-                label="活跃度"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.activity == '0'">无</p>
-                  <p v-if="scope.row.activity == '1'">低</p>
-                  <p v-if="scope.row.activity == '2'">中</p>
-                  <p v-if="scope.row.activity == '3'">高</p>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="check_in_time"
-                width="200"
-                label="更新时间"
-                align="center"
-              />
-              
-            </el-table>
-
-            <div class="echarts_view">
-                <el-row>
-                    <el-button round>天</el-button>
-                    <el-button round>周</el-button>
-                    <el-button round>6个月</el-button>
-                    <el-button round style="margin-right: 10px;">上一天</el-button>
-                    <el-date-picker
-                        v-model="value2"
-                        align="right"
-                        type="date"
-                        placeholder="选择日期"
-                        :picker-options="pickerOptions">
-                    </el-date-picker>
-                    <el-button round style="margin-left: 10px;">下一天</el-button>
-                    <el-button round>前一天</el-button>
-                    <el-button round>前二天</el-button>
-                    <el-button round>前三天</el-button>
-                </el-row>
-                <div class="echarts_view_top">
-                    <div class="echarts_view_l">
-                        <div class="echarts_view_title">猪只体温曲线图</div>
-                        <div id="echarttemp" style="width: 600px;height:400px;"></div>
-                    </div>
-                    <div class="echarts_view_r">
-                        <div class="echarts_view_title">猪只活跃度</div>
-                        <div id="echartact" style="width: 600px;height:400px;"></div>
-                    </div>
-                </div>
-                <div class="echarts_view_center">
-                    
-                </div>
-            </div>
-          </div>
+        <div class="index-pie-view">
+          <div
+            id="echarttemp1"
+            style="width: 200px; height: 200px"
+            ref="echarttemp1"
+          ></div>
+          <div
+            id="echarttemp2"
+            style="width: 200px; height: 200px"
+            ref="echarttemp2"
+          ></div>
+          <div
+            id="echarttemp3"
+            style="width: 200px; height: 200px"
+            ref="echarttemp3"
+          ></div>
         </div>
-      </el-tab-pane>
-      <el-tab-pane label="猪只个体档案管理">
-        <div class="view_2">
-          <div class="view_2_1">
-            <el-form :inline="true" class="demo-form-inline">
-              <el-form-item label="耳号" prop="source_label">
-                <el-input
-                  v-model="source_label"
-                  placeholder="请输入耳号"
-                  clearable
-                />
-              </el-form-item>
-              <el-form-item label="品种" prop="breed">
-                <el-input
-                  v-model="source_label"
-                  placeholder="请输入品种"
-                  clearable
-                />
-              </el-form-item>
-              <el-form-item label="在场情况" prop="presence_situation">
-                <el-input
-                  v-model="source_label"
-                  placeholder="请输入在场情况"
-                  clearable
-                />
-              </el-form-item>
+      </div>
 
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getList()">查询</el-button>
-              
-            </el-form>
-            <el-table :data="list" stripe style="width: 100%" border>
-              <el-table-column
-                prop="source_label"
-                fixed
-                width="120"
-                label="耳号"
-                align="center"
-              />
-              <el-table-column
-                prop="label_id"
-                width="120"
-                label="电子耳标号"
-                align="center"
-              />
-              <el-table-column
-                prop="Sitearea"
-                width="190"
-                label="品种"
-                align="center"
-              />
-              <el-table-column
-                prop="door"
-                width="190"
-                label="性别"
-                align="center"
-              />
-              <el-table-column
-                prop="status"
-                width="120"
-                label="在场情况"
-                align="center"
+      <div class="index-container-right index-pulic_box_shadow">
+        <div style="padding: 20px">发热猪信息</div>
+
+        <el-table :data="list" stripe style="width: 660px" border height="250" :row-style="{height:'30px'}" :cell-style="{padding: '0px'}">
+          <el-table-column
+            prop="Sitearea"
+            width="120"
+            label="场区"
+            align="center"
+          />
+          <el-table-column
+            prop="door"
+            width="120"
+            label="栋舍"
+            align="center"
+          />
+          <el-table-column
+            prop="dorm"
+            width="120"
+            label="栏位"
+            align="center"
+          />
+          <el-table-column
+            prop="source_label"
+            width="100"
+            label="耳号"
+            align="center"
+          />
+          <el-table-column
+            prop="temperature"
+            width="80"
+            label="体温(°C)"
+            align="center"
+          />
+          <el-table-column
+            prop="activity"
+            width="120"
+            label="活跃度"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <p v-if="scope.row.activity == '0'">无</p>
+              <p v-if="scope.row.activity == '1'">低</p>
+              <p v-if="scope.row.activity == '2'">中</p>
+              <p v-if="scope.row.activity == '3'">高</p>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <div class="index-block" >
+          <el-pagination
+            :current-page="current"
+            :page-size="limit"
+            :total="total"
+            style="padding: 10px 0; text-align: center"
+            layout="total, sizes, prev, pager, next"
+            @current-change="getList"
+            @size-change="handleSizeChange"
+            :page-sizes="[10, 20, 30, 40]"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="index-index-container-2">
+      <div class="index-container-2-left index-pulic_box_shadow">
+        <div style="padding: 20px">淋浴预警 失败累计数量(10)</div>
+
+        <el-table :data="list" stripe style="width: 400px" border height="300" :row-style="{height:'30px'}" :cell-style="{padding: '0px'}">
+          <el-table-column
+            prop="operation"
+            width="80"
+            label="头像"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
+              <el-avatar
+                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+              ></el-avatar>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="source_label"
+            width="100"
+            label="姓名"
+            align="center"
+          />
+
+          <el-table-column
+            prop="check_in_time"
+            width="120"
+            label="时间"
+            align="center"
+          />
+          <el-table-column
+            prop="status"
+            width="100"
+            label="结果"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <p v-if="scope.row.status == '1'">成功</p>
+              <p v-if="scope.row.status == '2'">失败</p>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <div class="index-block" style="margin-top: 15px">
+          <el-pagination
+            :current-page="current"
+            :page-size="limit"
+            :total="total"
+            style="padding: 10px 0; text-align: center"
+            layout="total, sizes, prev, pager, next"
+            @current-change="getList"
+            @size-change="handleSizeChange"
+            :page-sizes="[10, 20, 30, 40]"
+          />
+        </div>
+      </div>
+
+      <div class="index-container-2-right index-pulic_box_shadow">
+        <div style="padding: 20px">物资消毒预警 违规累计数量(10)</div>
+
+        <el-table :data="list" stripe style="width: 400px" border height="300" :row-style="{height:'30px'}" :cell-style="{padding: '0px'}">
+          <el-table-column
+            prop="Sitearea"
+            width="80"
+            label="位置"
+            align="center"
+          />
+          <el-table-column
+            prop="check_in_time"
+            width="120"
+            label="时间"
+            align="center"
+          />
+          <el-table-column
+            prop="status"
+            width="100"
+            label="结果"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <p v-if="scope.row.status == '1'">正常</p>
+              <p v-if="scope.row.status == '2'">违规</p>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="status"
+            width="100"
+            label="原因"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <p v-if="scope.row.status == '1'">未审核</p>
+              <p v-if="scope.row.status == '2'">已审批</p>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <div class="index-block" style="margin-top: 15px">
+          <el-pagination
+            :current-page="current"
+            :page-size="limit"
+            :total="total"
+            style="padding: 10px 0; text-align: center"
+            layout="total, sizes, prev, pager, next"
+            @current-change="getList"
+            @size-change="handleSizeChange"
+            :page-sizes="[10, 20, 30, 40]"
+          />
+        </div>
+      </div>
+
+      <div class="index-container-2-right index-pulic_box_shadow">
+        <div style="padding: 20px">小动物预警</div>
+
+        <el-table :data="list" stripe style="width: 400px" border height="300" >
+          <el-table-column
+            prop="Sitearea"
+            width="80"
+            label="位置"
+            align="center"
+          />
+          <el-table-column
+            prop="check_in_time"
+            width="120"
+            label="时间"
+            align="center"
+          />
+          <el-table-column
+            prop="imageUrl"
+            width="200"
+            label="图片"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <el-image
+                style="width: 160px; height: 60px"
+                :src="scope.row.imageUrl"
+                :preview-src-list="srcList"
               >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.status == '1'">正常</p>
-                  <p v-if="scope.row.status == '4'">发热</p>
-                  <p v-if="scope.row.status == '2'">离线</p>
-                  <p v-if="scope.row.status == '3'">离场</p>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="check_in_time"
-                width="200"
-                label="更新时间"
-                align="center"
-              />
-              <el-table-column label="操作" width="200" align="center">
-                <template slot-scope="scope">
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="handlerEdit(scope.row.id)">编辑</el-button>
-                  <el-button
-                    type="danger"
-                    size="mini"
-                    @click="handlerDelete(scope.row.id)">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
+              </el-image>
+            </template>
+          </el-table-column>
+        </el-table>
 
-            <!-- 分页 -->
-            <div class="block" style="margin-top: 15px;">
-              <el-pagination
-                :current-page="current"
-                :page-size="limit"
-                :total="total"
-                style="padding: 30px 0; text-align: center"
-                layout="total, sizes, prev, pager, next"
-                @current-change="getList"
-                @size-change="handleSizeChange"
-                :page-sizes="[10, 20, 30, 40]"
-              />
-            </div>
-          </div>
+        <div class="index-block" style="margin-top: 15px">
+          <el-pagination
+            :current-page="current"
+            :page-size="limit"
+            :total="total"
+            style="padding: 10px 0; text-align: center"
+            layout="total, sizes, prev, pager, next"
+            @current-change="getList"
+            @size-change="handleSizeChange"
+            :page-sizes="[10, 20, 30, 40]"
+          />
         </div>
-      </el-tab-pane>
-      <el-tab-pane label="栋舍信息管理">
-        <div class="view_2">
-          <div class="view_2_1">
-            <el-form :inline="true" class="demo-form-inline">
-              <el-form-item label="栋舍" prop="door">
-                <el-input v-model="door" placeholder="请输入栋舍" clearable />
-              </el-form-item>
-
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getList()">查询</el-button>
-              
-            </el-form>
-            <el-table :data="list" stripe style="width: 1140px;" border>
-              <el-table-column
-                prop="Sitearea"
-                width="180"
-                label="场区"
-                align="center"
-              />
-              <el-table-column
-                prop="door"
-                width="180"
-                label="栋舍"
-                align="center"
-              />
-              <el-table-column
-                prop="dorm"
-                width="180"
-                label="栏位"
-                align="center"
-              />
-              <el-table-column
-                prop="farm_name"
-                width="200"
-                label="饲养员"
-                align="center"
-              />
-              <el-table-column
-                prop="farm_name"
-                width="200"
-                label="耳环工作站"
-                align="center"
-              />
-
-              <el-table-column label="操作" width="200" align="center">
-                <template slot-scope="scope">
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="handlerEdit(scope.row.id)">编辑</el-button>
-                  <el-button
-                    type="danger"
-                    size="mini"
-                    @click="handlerDelete(scope.row.id)">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-
-            <!-- 分页 -->
-            <div class="block" style="margin-top: 15px">
-              <el-pagination
-                :current-page="current"
-                :page-size="limit"
-                :total="total"
-                style="padding: 30px 0; text-align: center"
-                layout="total, sizes, prev, pager, next"
-                @current-change="getList"
-                @size-change="handleSizeChange"
-                :page-sizes="[10, 20, 30, 40]"
-              />
-            </div>
-          </div>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="猪只批量入栏">
-        <div class="view_2">
-          <div class="view_2_1">
-            <el-form :inline="true" class="demo-form-inline">
-              <el-button
-                style="margin-left:0px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-plus"
-                @click="add()">增加</el-button>
-              <el-button type="primary" size="medium" @click="importData()" style="margin-left:20px;" icon="el-icon-document-add">导入Excel</el-button>
-            </el-form>
-            <div style="height: 30px;"></div>
-            <el-table :data="list" stripe style="width: 1160px;" border>
-              <el-table-column
-                prop="source_label"
-                width="120"
-                label="耳号"
-                align="center"
-              />
-              <el-table-column
-                prop="label_id"
-                width="120"
-                label="电子耳标号"
-                align="center"
-              />
-              <el-table-column
-                prop="Sitearea"
-                width="180"
-                label="场区"
-                align="center"
-              />
-              <el-table-column
-                prop="door"
-                width="180"
-                label="栋舍"
-                align="center"
-              />
-              <el-table-column
-                prop="dorm"
-                width="180"
-                label="栏位"
-                align="center"
-              />
-              <el-table-column
-                prop="status"
-                width="120"
-                label="品种"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.status == '1'">大白</p>
-                  <p v-if="scope.row.status == '4'">小白</p>
-                  <p v-if="scope.row.status == '2'">杜洛克</p>
-                  <p v-if="scope.row.status == '3'">长白山</p>
-                </template>
-              </el-table-column>
-
-              <el-table-column
-                prop="door"
-                width="80"
-                label="性别"
-                align="center"
-              />
-              <el-table-column
-                prop="check_in_time"
-                width="180"
-                label="入栏时间"
-                align="center"
-              />
-            </el-table>
-
-            
-          </div>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="猪只批量转栏">
-          <div class="view_2_1">
-            <el-form :inline="true" class="demo-form-inline">
-                <el-form-item label="时间范围">
-                    <el-date-picker
-                    v-model="timelist"
-                    type="datetimerange"
-                    @change="consoledata()"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    >
-                    </el-date-picker>
-                </el-form-item>
-
-              <el-form-item label="耳号" prop="source_label">
-                <el-input
-                  v-model="source_label"
-                  placeholder="请输入耳号"
-                  clearable
-                />
-              </el-form-item>
-
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getDetailsList()">查询</el-button>
-
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-plus"
-                @click="add()">增加</el-button>
-              <el-button type="primary" size="medium" @click="importData()" style="margin-left:20px;" icon="el-icon-document-add">导入Excel</el-button>
-            </el-form>
-            <el-table :data="list" stripe style="width: 1100px;" border>
-                <el-table-column
-                prop="check_in_time"
-                width="200"
-                label="日期"
-                align="center"
-              />
-              <el-table-column
-                prop="source_label"
-                width="120"
-                label="耳号"
-                align="center"
-              />
-              <el-table-column
-                prop="label_id"
-                width="120"
-                label="电子耳标号"
-                align="center"
-              />
-              
-              <el-table-column
-                prop="door"
-                width="260"
-                label="转出栋舍"
-                align="center"
-              />
-              <el-table-column
-                prop="door"
-                width="200"
-                label="转入栋舍"
-                align="center"
-              />
-
-              <el-table-column
-                prop="dorm"
-                width="200"
-                label="转入栏位"
-                align="center"
-              />
-              
-            </el-table>
-
-            <!-- 分页 -->
-            <div class="block" style="margin-top: 15px;">
-              <el-pagination
-                :current-page="current"
-                :page-size="limit"
-                :total="total"
-                style="padding: 30px 0; text-align: center"
-                layout="total, sizes, prev, pager, next"
-                @current-change="getList"
-                @size-change="handleSizeChange"
-                :page-sizes="[10, 20, 30, 40]"
-              />
-            </div>
-          </div>
-      </el-tab-pane>
-    </el-tabs>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import * as echarts from 'echarts';
+import * as echarts from "echarts";
 export default {
   data() {
     return {
-      tabPosition: "left",
-      currentDate: new Date(),
-      source_label: "",
-      sitearea: "",
-      door: "",
-      dorm: "",
-      status: "",
       current: 1, //当前页
       limit: 20, //每页显示记录数
       total: 60, //总记录数
+      srcList: [
+        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+      ],
       list: [
         {
           operation: 1,
@@ -692,7 +286,8 @@ export default {
           serial: 5809,
           parent_id: 3291,
           temperature: 36,
-          activity: 2
+          activity: 2,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
         {
           operation: 1,
@@ -709,7 +304,8 @@ export default {
           serial: 5810,
           parent_id: 3291,
           temperature: 35.5,
-          activity: 1
+          activity: 1,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
         {
           operation: 1,
@@ -726,7 +322,8 @@ export default {
           serial: 5811,
           parent_id: 3291,
           temperature: 35,
-          activity: 0
+          activity: 0,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
         {
           operation: 1,
@@ -743,7 +340,8 @@ export default {
           serial: 5813,
           parent_id: 3291,
           temperature: 36,
-          activity: 2
+          activity: 2,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
         {
           operation: 1,
@@ -760,7 +358,8 @@ export default {
           serial: 5814,
           parent_id: 3291,
           temperature: 37,
-          activity: 3
+          activity: 3,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
         {
           operation: 1,
@@ -777,7 +376,8 @@ export default {
           serial: 5812,
           parent_id: 3291,
           temperature: 36,
-          activity: 2
+          activity: 2,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
         {
           operation: 1,
@@ -794,7 +394,8 @@ export default {
           serial: 5633,
           parent_id: 3336,
           temperature: 36,
-          activity: 2
+          activity: 2,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
         {
           operation: 1,
@@ -811,7 +412,8 @@ export default {
           serial: 5596,
           parent_id: 3197,
           temperature: 36,
-          activity: 2
+          activity: 2,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
         {
           operation: 1,
@@ -828,7 +430,8 @@ export default {
           serial: 5595,
           parent_id: 3197,
           temperature: 36,
-          activity: 2
+          activity: 2,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
         {
           operation: 1,
@@ -845,61 +448,43 @@ export default {
           serial: 5594,
           parent_id: 3197,
           temperature: 36,
-          activity: 2
+          activity: 2,
+          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         },
       ],
-      logisticsDialog: true,
-      timelist: [
-          new Date().getTime() - 3 * 24 * 60 * 60 * 1000,
-          new Date().getTime(),
-        ],
-      chartTempDom: "",
-      myChartTemp: "",
-      optionTemp: "",
-      chartActDom: "",
-      myChartAct: "",
-      optionAct: "",
 
-      pickerOptions: {
-          disabledDate(time) {
-            return time.getTime() > Date.now();
-          },
-          shortcuts: [{
-            text: '今天',
-            onClick(picker) {
-              picker.$emit('pick', new Date());
-            }
-          }, {
-            text: '昨天',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit('pick', date);
-            }
-          }, {
-            text: '一周前',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', date);
-            }
-          }]
-        },
-        value2: new Date(),
+      chartTempDom1: "",
+      myChartTemp1: "",
+      optionTemp1: "",
+
+      chartTempDom2: "",
+      myChartTemp2: "",
+      optionTemp2: "",
+
+      chartTempDom3: "",
+      myChartTemp3: "",
+      optionTemp3: "",
     };
   },
   created() {
     // this.getList();
-    
   },
-  mounted(){
-    
+  mounted() {
+    this.$nextTick(() => {
+      this.chartTempDom1 = this.$refs.echarttemp1;
+      this.myChartTemp1 = echarts.init(this.chartTempDom1);
+
+      this.chartTempDom2 = this.$refs.echarttemp2;
+      this.myChartTemp2 = echarts.init(this.chartTempDom2);
+
+      this.chartTempDom3 = this.$refs.echarttemp3;
+      this.myChartTemp3 = echarts.init(this.chartTempDom3);
+
+      this.initChart();
+    });
   },
   methods: {
-    handlerReturn(){
-        this.logisticsDialog = true
-    },
-      //日期格式化
+    //日期格式化
     dateFormat: function (row, column) {
       var date = row[column.property];
       if (date == undefined) {
@@ -957,276 +542,170 @@ export default {
       //       console.log(error);
       //     });
     },
-    // 导出
-    exportData() {
-      if (this.searchObj.timelist == null) {
-        alert("导出时必须选择开始时间与结束时间，开始至结束之间不能超过3天。");
-      } else {
-        this.searchObj.startTime = moment(this.searchObj.timelist[0]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.searchObj.endTime = moment(this.searchObj.timelist[1]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.cleandata = true;
-        window.open(
-          `http://prod.coyotebio-lab.com:8995/admin/order/exportinfo?${stringify(
-            this.searchObj
-          )}`
-        );
-        // window.open(`http://localhost:8995/admin/order/exportinfo?${stringify(this.searchObj)}`)
-        this.searchObj.userid = "";
-        this.searchObj.orderStatus = "";
-        this.searchObj.status = "";
-        this.searchObj.orderNumber = "";
-        this.searchObj.userId = "";
-        this.searchObj.commodity = "";
-        this.searchObj.name = "";
-        this.searchObj.phone = "";
-      }
-    },
     handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+      console.log(`每页 ${val} 条`);
     },
-    logisticsClick(id) {
-      this.logisticsDialog = false;
-    //   this.initChart();
-    this.$nextTick(() => {
-      this.chartTempDom = document.getElementById("echarttemp");
-      this.myChartTemp = echarts.init(this.chartTempDom);
-
-      this.chartActDom = document.getElementById("echartact");
-      this.myChartAct = echarts.init(this.chartActDom);
-
-      this.initChart();
-    });
-    },
-    consoledata() {
-      if (!this.isEmpty(this.searchObj.timelist)) {
-        if (
-          this.searchObj.timelist[1].getTime() -
-            this.searchObj.timelist[0].getTime() >
-          3 * 24 * 60 * 60 * 1000
-        ) {
-          console.log("时间间隔大于三天");
-          this.$message.warning("时间范围不能超过3天");
-          this.searchObj.timelist = [];
-          return;
-        }
-      }
-    },
-    getDetailsList(page = 1) {
-      this.current = page;
-      //   if (
-      //     !this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("1");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     !this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("2");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist) &&
-      //     this.isEmpty(this.searchObj.orderNumber) &&
-      //     this.isEmpty(this.searchObj.userId) &&
-      //     this.isEmpty(this.searchObj.name) &&
-      //     this.isEmpty(this.searchObj.phone)
-      //   ) {
-      //     console.log("3");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   }
-      //   order
-      //     .getorderinfo(this.current, this.limit, this.searchObj)
-      //     .then((response) => {
-      //       this.list = response.data.records;
-      //       //总记录数
-      //       this.total = response.data.total;
-      //       this.searchObj.startTime = "";
-      //       this.searchObj.endTime = "";
-      //     })
-      //     .catch((error) => {
-      //       //请求失败
-      //       console.log(error);
-      //     });
-    },
-    exportDetailsData() {
-      if (this.searchObj.timelist == null) {
-        alert("导出时必须选择开始时间与结束时间，开始至结束之间不能超过3天。");
-      } else {
-        this.searchObj.startTime = moment(this.searchObj.timelist[0]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.searchObj.endTime = moment(this.searchObj.timelist[1]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.cleandata = true;
-        window.open(
-          `http://prod.coyotebio-lab.com:8995/admin/order/exportinfo?${stringify(
-            this.searchObj
-          )}`
-        );
-        // window.open(`http://localhost:8995/admin/order/exportinfo?${stringify(this.searchObj)}`)
-        this.searchObj.userid = "";
-        this.searchObj.orderStatus = "";
-        this.searchObj.status = "";
-        this.searchObj.orderNumber = "";
-        this.searchObj.userId = "";
-        this.searchObj.commodity = "";
-        this.searchObj.name = "";
-        this.searchObj.phone = "";
-      }
-    },
-    initChart(){
-        // 绘制图表
-
-        this.myChartTemp.setOption({
-            title: {
-                text: ''
+    initChart() {
+      // 绘制图表
+      this.myChartTemp1.setOption({
+        title: {
+          text: "123\n存栏",
+          textStyle:{
+            lineHeight: 22
+          },
+          // text: "123",
+          // subtext: "存栏",
+          left: "center",
+          top: "center",
+          // subtextStyle:{
+          //   fontSize: 16
+          // }
+        },
+        series: [
+          {
+            type: "pie",
+            radius: ["50%", "70%"],
+            avoidLabelOverlap: false,
+            label: {
+              show: false,
+              position: "center",
             },
-            tooltip: {},
-            xAxis: {
-                data: ['张三', '李四', '王五', '小明', '赵六', '哈哈']
+            labelLine: {
+              show: false,
             },
-            yAxis: {},
-            series: [
-                {
-                name: '销量',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20]
-                }
-            ]
-        });
+            emphasis: {
+              label: {
+                show: false,
+                fontSize: "30",
+                fontWeight: "bold",
+              },
+            },
+            data: [{ value: 0, name: "A" }],
+          },
+        ],
+      });
 
-        // 绘制图表
-        this.myChartAct.setOption({
-            title: {
-                text: ''
+      this.myChartTemp2.setOption({
+        title: {
+          text: "12\n发热",
+          textStyle:{
+            lineHeight: 22
+          },
+          // text: "123",
+          // subtext: "存栏",
+          left: "center",
+          top: "center",
+          // subtextStyle:{
+          //   fontSize: 16
+          // }
+        },
+        series: [
+          {
+            type: "pie",
+            radius: ["50%", "70%"],
+            avoidLabelOverlap: false,
+            label: {
+              show: false,
+              position: "center",
             },
-            tooltip: {},
-            xAxis: {
-                data: ['张三', '李四', '王五', '小明', '赵六', '哈哈']
+            labelLine: {
+              show: false,
             },
-            yAxis: {},
-            series: [
-                {
-                name: '销量',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20]
-                }
-            ]
-        });
-    }
+            emphasis: {
+              label: {
+                show: false,
+                fontSize: "30",
+                fontWeight: "bold",
+              },
+            },
+            data: [{ value: 335, name: "A" }],
+            color: "red",
+          },
+        ],
+      });
+
+      this.myChartTemp3.setOption({
+        title: {
+          text: "30\n离线",
+          textStyle:{
+            lineHeight: 22
+          },
+          // text: "123",
+          // subtext: "存栏",
+          left: "center",
+          top: "center",
+          // subtextStyle:{
+          //   fontSize: 16
+          // }
+        },
+        series: [
+          {
+            type: "pie",
+            radius: ["50%", "70%"],
+            avoidLabelOverlap: false,
+            label: {
+              show: false,
+              position: "center",
+            },
+            labelLine: {
+              show: false,
+            },
+            emphasis: {
+              label: {
+                show: false,
+                fontSize: "30",
+                fontWeight: "bold",
+              },
+            },
+            data: [{ value: 335, name: "A" }],
+          },
+        ],
+      });
+    },
   },
 };
 </script>
 
 <style>
-.el-tabs__item {
-  font-size: 18px !important;
-}
-
-.view_1 {
-  width: 1200px;
-}
-
-.box-col {
+.index-index-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 30px;
-}
-
-.box-card {
-  width: 240px;
-}
-
-.time {
-  font-size: 13px;
-  color: #999;
-}
-
-.bottom {
-  margin-top: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.button {
-  padding: 0;
-  float: right;
-}
-
-.image_view {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-}
-.image {
-  width: 100px;
-  height: 100px;
-  display: block;
-}
-
-.item_view {
-  display: flex;
+  /* align-items: center; */
+  /* justify-content: space-between; */
+  width: 100%;
   flex-direction: column;
-  justify-content: center;
+  /* height: 100vh; */
+}
+
+.index-index-container-1 {
+  display: flex;
+  /* align-items: center; */
+  justify-content: space-between;
+  width: 100%;
+  /* height: 100vh; */
+  height: 400px;
+}
+
+.index-container-left {
+  width: 665px;
+  display: flex;
   align-items: center;
-  /* border: 1px solid #EBEEF5;
-    background-color: #FFF;
-    color: #303133;
-    transition: .3s;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
-    padding: 20px 0px; */
-  width: 42%;
+  /* justify-content: center; */
+  flex-direction: column;
   padding: 20px 0px;
 }
 
-.item_view_1 {
-  font-size: 16px;
+.index-container-right {
+  width: 665px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0px 20px;
+  /* height: 800px; */
+  /* overflow-y: scroll; */
 }
 
-.item_view_2 {
-  margin-top: 20px;
-  font-size: 18px;
-}
-
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-
-.clearfix:after {
-  clear: both;
-}
-
-.name_span {
-  margin-top: 10px;
-}
-
-.total_view {
-  margin-bottom: 20px;
-  margin-left: 20px;
-}
-
-.div_view {
-  overflow-y: scroll;
-  height: 600px;
-}
-
-.pulic_box_shadow {
+.index-pulic_box_shadow {
   border: 1px solid #ebeef5;
   background-color: #fff;
   color: #303133;
@@ -1235,66 +714,66 @@ export default {
   /* padding: 20px 0px; */
 }
 
-.view_2 {
-  width: 1200px;
-  overflow-y: scroll;
-  height: 600px;
+.index-pie-view {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.view_2_1{
-    margin-left: 20px;
+.index-index-container-2 {
+  display: flex;
+  /* align-items: center; */
+  justify-content: space-between;
+  width: 100%;
+  /* height: 100vh; */
+  height: 400px;
+  margin-top: 20px;
 }
 
-.demo-form-inline{
-    margin-top: 20px;
-}
-
-.view_2_top {
+.index-container-2-left {
+  width: 420px;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  width: 1174px;
+  /* justify-content: center; */
+  flex-direction: column;
+  padding: 0px 10px;
 }
 
-.view_2_top_1 {
+.index-container-2-right {
+  width: 420px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 20px;
+  padding: 0px 10px;
+  /* height: 800px; */
+  /* overflow-y: scroll; */
 }
 
-.view_2_top_1_1 {
-  font-size: 20px;
+.index-demo-form-inline {
+  margin-top: 20px;
 }
 
-.view_2_top_1_2 {
-  margin-top: 10px;
-  font-size: 16px;
+.index-echarts_view {
+  margin-top: 40px;
 }
 
-
-.echarts_view{
-    margin-top: 50px;
+.index-echarts_view_top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
-.echarts_view_top{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 10px;
+.index-echarts_view_l {
+  display: flex;
+  flex-direction: column;
 }
 
-.echarts_view_l{
-    display: flex;
-    flex-direction: column;
+.index-echarts_view_title {
+  font-size: 18px;
 }
 
-.echarts_view_title{
-    font-size: 18px;
-}
-
-.echarts_view_center{
-
+.index-echarts_view_center {
 }
 </style>
