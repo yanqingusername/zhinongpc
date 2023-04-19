@@ -15,6 +15,16 @@ module.exports = {
   devServer: {
     port: 8888,
     open: true,
+      // proxy: {
+      //   '/storemanage': {
+      //       target: 'http://syrdev.coyotebio-lab.com:8080',
+      //       changeOrigin: true,
+      //       pathRewrite:{
+      //           '^/storemanage': '/storemanage'
+      //       }
+      //   },
+      // }
+  
   },
   configureWebpack: {
     resolve: {
@@ -27,7 +37,7 @@ module.exports = {
   // devServer: {
   //   proxy: {
   //       '/storemanage': {
-  //           target: 'http://ygldev.coyotebio-lab.com',
+  //           target: 'http://syrdev.coyotebio-lab.com:8080',
   //           changeOrigin: true,
   //           pathRewrite:{
   //               '^/storemanage': '/storemanage'

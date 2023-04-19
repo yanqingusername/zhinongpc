@@ -2,7 +2,8 @@
   <div class="tree-container">
     <div class="container-left pulic_box_shadow">
         <el-button size="medium" style="margin-top:20px;margin-left:0px;">今日预警</el-button>
-        <el-button size="medium" style="margin-top:20px;margin-left:0px;">历史记录</el-button>
+        <el-button size="medium" style="margin-top:20px;margin-left:0px;">今日消毒记录</el-button>
+        <el-button size="medium" style="margin-top:20px;margin-left:0px;">消毒历史记录</el-button>
     </div>
 
     <div class="container-right pulic_box_shadow">
@@ -24,12 +25,26 @@
                   v-model="positon"
                   filterable
                   clearable
-                  placeholder="请选择位置">
+                  placeholder="请选择位置"
+                >
                   <el-option label="全部" value=""></el-option>
                   <el-option label="位置1" value="1"></el-option>
                   <el-option label="位置2" value="2"></el-option>
                   <el-option label="位置3" value="3"></el-option>
                   <el-option label="位置4" value="4"></el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="结果" prop="results">
+                <el-select
+                  v-model="results"
+                  filterable
+                  clearable
+                  placeholder="请选择结果"
+                >
+                  <el-option label="全部" value=""></el-option>
+                  <el-option label="成功" value="1"></el-option>
+                  <el-option label="失败" value="2"></el-option>
                 </el-select>
               </el-form-item>
 
@@ -43,20 +58,57 @@
               <!-- <el-button type="primary" size="medium" @click="exportDetailsData()" style="margin-left:20px;">导出</el-button> -->
             </el-form>
 
-            <el-table :data="list" stripe style="width: 600px;" border>
+            <el-table :data="list" stripe style="width: 1080px;" border>
                 <el-table-column
                 prop="dorm"
-                width="200"
+                width="160"
                 label="位置"
                 align="center"
               />
               <el-table-column
                 prop="check_in_time"
-                width="160"
-                label="创建时间"
+                width="180"
+                label="时间"
+                align="center"
+              />
+              <el-table-column
+                prop="operation"
+                width="100"
+                label="时长"
                 align="center"
               />
               
+              <el-table-column
+                prop="status"
+                width="120"
+                label="结果"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <p v-if="scope.row.status == '1'">成功</p>
+                  <p v-if="scope.row.status == '2'">失败</p>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                prop="source_label"
+                width="180"
+                label="原因"
+                align="center"
+              />
+
+              <el-table-column
+                prop="status"
+                width="100"
+                label="审批状态"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <p v-if="scope.row.status == '1'">成功</p>
+                  <p v-if="scope.row.status == '2'">失败</p>
+                </template>
+              </el-table-column>
+
               <el-table-column
                 prop="imageUrl"
                 width="240"
@@ -87,14 +139,13 @@
             </div>
 
             <div class="echarts_view">
-                <!-- <el-row>
+                <el-row>
                     <el-button round style="margin-right: 10px;">上一月</el-button>
                     <el-date-picker
                         v-model="currentDate"
                         align="right"
                         type="month"
-                        placeholder="选择日期"
-                        :picker-options="pickerOptions">
+                        placeholder="选择日期">
                     </el-date-picker>
                     <el-button round style="margin-left: 10px;">下一月</el-button>
                     <el-form-item label="时间范围">
@@ -108,7 +159,7 @@
                         >
                         </el-date-picker>
                     </el-form-item>
-                </el-row> -->
+                </el-row>
                 <div class="echarts_view_top">
                     <div class="echarts_view_l">
                         <div class="echarts_view_title">月统计图</div>
@@ -129,6 +180,7 @@
 
 <script>
 import * as echarts from "echarts";
+import moment from "moment";
 export default {
   data() {
     return {

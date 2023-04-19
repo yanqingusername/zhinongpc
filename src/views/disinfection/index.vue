@@ -2,8 +2,8 @@
   <div class="tree-container">
     <div class="container-left pulic_box_shadow">
         <el-button size="medium" style="margin-top:20px;margin-left:0px;">今日预警</el-button>
-        <el-button size="medium" style="margin-top:20px;margin-left:0px;">今日消毒记录</el-button>
-        <el-button size="medium" style="margin-top:20px;margin-left:0px;">消毒历史记录</el-button>
+        <el-button size="medium" style="margin-top:20px;margin-left:0px;">今日淋浴记录</el-button>
+        <el-button size="medium" style="margin-top:20px;margin-left:0px;">淋浴历史记录</el-button>
     </div>
 
     <div class="container-right pulic_box_shadow">
@@ -19,7 +19,13 @@
                 >
                 </el-date-picker>
                </el-form-item>
-               
+               <el-form-item label="姓名" prop="real_name">
+                <el-input
+                  v-model="real_name"
+                  placeholder="请输入姓名"
+                  clearable
+                />
+              </el-form-item>
               <el-form-item label="位置" prop="positon">
                 <el-select
                   v-model="positon"
@@ -55,32 +61,55 @@
                 icon="el-icon-search"
                 @click="getDetailsList()">查询</el-button>
 
-              <!-- <el-button type="primary" size="medium" @click="exportDetailsData()" style="margin-left:20px;">导出</el-button> -->
+              <el-button type="primary" size="medium" @click="exportDetailsData()" style="margin-left:20px;">导出</el-button>
             </el-form>
 
-            <el-table :data="list" stripe style="width: 1080px;" border>
+            <el-table :data="list" stripe style="width: 100%" border>
                 <el-table-column
+                prop="operation"
+                width="120"
+                label="头像"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
+                  <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="source_label"
+                width="100"
+                label="姓名"
+                align="center"
+              />
+              
+              <el-table-column
+                prop="label_id"
+                width="120"
+                label="卡号"
+                align="center"
+              />
+              <el-table-column
+                prop="operation"
+                width="80"
+                label="时长"
+                align="center"
+              />
+              <el-table-column
+                prop="check_in_time"
+                width="200"
+                label="淋浴结束时间"
+                align="center"
+              />
+              <el-table-column
                 prop="dorm"
                 width="160"
                 label="位置"
                 align="center"
               />
               <el-table-column
-                prop="check_in_time"
-                width="180"
-                label="时间"
-                align="center"
-              />
-              <el-table-column
-                prop="operation"
-                width="100"
-                label="时长"
-                align="center"
-              />
-              
-              <el-table-column
                 prop="status"
-                width="120"
+                width="100"
                 label="结果"
                 align="center"
               >
@@ -91,38 +120,24 @@
               </el-table-column>
 
               <el-table-column
-                prop="source_label"
-                width="180"
-                label="原因"
-                align="center"
-              />
-
-              <el-table-column
                 prop="status"
                 width="100"
-                label="审批状态"
+                label="上/下班"
                 align="center"
               >
                 <template slot-scope="scope">
-                  <p v-if="scope.row.status == '1'">成功</p>
-                  <p v-if="scope.row.status == '2'">失败</p>
+                  <p v-if="scope.row.status == '1'">上班</p>
+                  <p v-if="scope.row.status == '2'">下班</p>
                 </template>
               </el-table-column>
 
               <el-table-column
-                prop="imageUrl"
-                width="240"
-                label="图片"
+                prop="check_in_time"
+                width="180"
+                label="门禁刷卡时间"
                 align="center"
-              >
-                <template slot-scope="scope">
-                  <el-image 
-                    style="width: 200px; height: 100px"
-                    :src="scope.row.imageUrl"
-                    :preview-src-list="srcList">
-                  </el-image>
-                </template>
-              </el-table-column>
+              />
+              
             </el-table>
 
             <div class="block" style="margin-top: 15px">
@@ -139,27 +154,6 @@
             </div>
 
             <div class="echarts_view">
-                <el-row>
-                    <el-button round style="margin-right: 10px;">上一月</el-button>
-                    <el-date-picker
-                        v-model="currentDate"
-                        align="right"
-                        type="month"
-                        placeholder="选择日期">
-                    </el-date-picker>
-                    <el-button round style="margin-left: 10px;">下一月</el-button>
-                    <el-form-item label="时间范围">
-                        <el-date-picker
-                        v-model="timelist"
-                        type="datetimerange"
-                        @change="consoledata()"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        >
-                        </el-date-picker>
-                    </el-form-item>
-                </el-row>
                 <div class="echarts_view_top">
                     <div class="echarts_view_l">
                         <div class="echarts_view_title">月统计图</div>
@@ -179,7 +173,8 @@
 </template>
 
 <script>
-import * as echarts from "echarts";
+import * as echarts from 'echarts';
+import moment from "moment";
 export default {
   data() {
     return {
@@ -190,7 +185,6 @@ export default {
       current: 1, //当前页
       limit: 20, //每页显示记录数
       total: 60, //总记录数
-      srcList: ["https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"],
       list: [
         {
           operation: 1,
@@ -207,8 +201,7 @@ export default {
           serial: 5809,
           parent_id: 3291,
           temperature: 36,
-          activity: 2,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          activity: 2
         },
         {
           operation: 1,
@@ -225,8 +218,7 @@ export default {
           serial: 5810,
           parent_id: 3291,
           temperature: 35.5,
-          activity: 1,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          activity: 1
         },
         {
           operation: 1,
@@ -243,8 +235,7 @@ export default {
           serial: 5811,
           parent_id: 3291,
           temperature: 35,
-          activity: 0,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          activity: 0
         },
         {
           operation: 1,
@@ -261,8 +252,7 @@ export default {
           serial: 5813,
           parent_id: 3291,
           temperature: 36,
-          activity: 2,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          activity: 2
         },
         {
           operation: 1,
@@ -279,8 +269,7 @@ export default {
           serial: 5814,
           parent_id: 3291,
           temperature: 37,
-          activity: 3,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          activity: 3
         },
         {
           operation: 1,
@@ -297,8 +286,7 @@ export default {
           serial: 5812,
           parent_id: 3291,
           temperature: 36,
-          activity: 2,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          activity: 2
         },
         {
           operation: 1,
@@ -315,8 +303,7 @@ export default {
           serial: 5633,
           parent_id: 3336,
           temperature: 36,
-          activity: 2,
-          imageUrl:"https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+          activity: 2
         },
         {
           operation: 1,
@@ -333,8 +320,7 @@ export default {
           serial: 5596,
           parent_id: 3197,
           temperature: 36,
-          activity: 2,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          activity: 2
         },
         {
           operation: 1,
@@ -351,8 +337,7 @@ export default {
           serial: 5595,
           parent_id: 3197,
           temperature: 36,
-          activity: 2,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          activity: 2
         },
         {
           operation: 1,
@@ -369,38 +354,42 @@ export default {
           serial: 5594,
           parent_id: 3197,
           temperature: 36,
-          activity: 2,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          activity: 2
         },
       ],
       timelist: [
-        new Date().getTime() - 3 * 24 * 60 * 60 * 1000,
-        new Date().getTime(),
-      ],
+          new Date().getTime() - 3 * 24 * 60 * 60 * 1000,
+          new Date().getTime(),
+        ],
       chartTempDom: "",
       myChartTemp: "",
       optionTemp: "",
       chartActDom: "",
       myChartAct: "",
       optionAct: "",
+
+      
     };
   },
   created() {
     // this.getList();
+    
+    
   },
-  mounted() {
+  mounted(){
     this.$nextTick(() => {
       this.chartTempDom = this.$refs.echarttemp;
       this.myChartTemp = echarts.init(this.chartTempDom);
 
-      //   this.chartActDom = document.getElementById("echartact");
-      //   this.myChartAct = echarts.init(this.chartActDom);
+    //   this.chartActDom = document.getElementById("echartact");
+    //   this.myChartAct = echarts.init(this.chartActDom);
 
       this.initChart();
     });
   },
   methods: {
-    //日期格式化
+    
+      //日期格式化
     dateFormat: function (row, column) {
       var date = row[column.property];
       if (date == undefined) {
@@ -459,7 +448,7 @@ export default {
       //     });
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+        console.log(`每页 ${val} 条`);
     },
     consoledata() {
       if (!this.isEmpty(this.searchObj.timelist)) {
@@ -545,46 +534,47 @@ export default {
         this.searchObj.phone = "";
       }
     },
-    initChart() {
-      // 绘制图表
+    initChart(){
+        // 绘制图表
 
-      this.myChartTemp.setOption({
-        title: {
-          text: "",
-        },
-        tooltip: {},
-        xAxis: {
-          data: ["张三", "李四", "王五", "小明", "赵六", "哈哈"],
-        },
-        yAxis: {},
-        series: [
-          {
-            name: "销量",
-            type: "bar",
-            data: [5, 20, 36, 10, 10, 20],
-          },
-        ],
-      });
+        this.myChartTemp.setOption({
+            title: {
+                text: '成功/失败'
+            },
+            tooltip: {},
+            xAxis: {
+                data: ['张三', '李四', '王五', '小明', '赵六', '哈哈']
+            },
+            yAxis: {},
+            series: [
+                {
+                name: '销量',
+                type: 'bar',
+                data: [5, 20, 36, 10, 10, 20]
+                }
+            ]
+        });
 
-      // 绘制图表
-      // this.myChartAct.setOption({
-      //     title: {
-      //         text: ''
-      //     },
-      //     tooltip: {},
-      //     xAxis: {
-      //         data: ['张三', '李四', '王五', '小明', '赵六', '哈哈']
-      //     },
-      //     yAxis: {},
-      //     series: [
-      //         {
-      //         name: '销量',
-      //         type: 'bar',
-      //         data: [5, 20, 36, 10, 10, 20]
-      //         }
-      //     ]
-      // });
+        // 绘制图表
+        // this.myChartAct.setOption({
+        //     title: {
+        //         text: ''
+        //     },
+        //     tooltip: {},
+        //     xAxis: {
+        //         data: ['张三', '李四', '王五', '小明', '赵六', '哈哈']
+        //     },
+        //     yAxis: {},
+        //     series: [
+        //         {
+        //         name: '销量',
+        //         type: 'bar',
+        //         data: [5, 20, 36, 10, 10, 20]
+        //         }
+        //     ]
+        // });
     },
+    
   },
 };
 </script>
@@ -594,31 +584,31 @@ export default {
   font-size: 18px !important;
 }
 
-.tree-container {
-  display: flex;
-  /* align-items: center; */
-  justify-content: space-between;
-  width: 100%;
-  /* height: 100vh; */
+.tree-container{
+    display: flex;
+    /* align-items: center; */
+    justify-content: space-between;
+    width: 100%;
+    /* height: 100vh; */
 }
 
-.container-left {
-  width: 180px;
-  display: flex;
-  align-items: center;
-  /* justify-content: center; */
-  flex-direction: column;
+.container-left{
+    width: 180px;
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    flex-direction: column;
 }
 
-.container-right {
-  width: 1160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding: 0px 20px;
-  /* height: 800px; */
-  /* overflow-y: scroll; */
+.container-right{
+    width: 1160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0px 20px;
+    /* height: 800px; */
+    /* overflow-y: scroll; */
 }
 
 .pulic_box_shadow {
@@ -630,31 +620,36 @@ export default {
   /* padding: 20px 0px; */
 }
 
-.demo-form-inline {
-  margin-top: 20px;
+
+
+.demo-form-inline{
+    margin-top: 20px;
 }
 
-.echarts_view {
-  margin-top: 40px;
+
+
+
+.echarts_view{
+    margin-top: 50px;
 }
 
-.echarts_view_top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
+.echarts_view_top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
 }
 
-.echarts_view_l {
-  display: flex;
-  flex-direction: column;
+.echarts_view_l{
+    display: flex;
+    flex-direction: column;
 }
 
-.echarts_view_title {
-  font-size: 18px;
+.echarts_view_title{
+    font-size: 18px;
 }
 
-.echarts_view_center {
-}
+.echarts_view_center{
 
+}
 </style>

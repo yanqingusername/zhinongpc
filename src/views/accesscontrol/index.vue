@@ -1,10 +1,5 @@
 <template>
   <div class="tree-container">
-    <div class="container-left pulic_box_shadow">
-        <el-button size="medium" style="margin-top:20px;margin-left:0px;">今日预警</el-button>
-        <el-button size="medium" style="margin-top:20px;margin-left:0px;">今日淋浴记录</el-button>
-        <el-button size="medium" style="margin-top:20px;margin-left:0px;">淋浴历史记录</el-button>
-    </div>
 
     <div class="container-right pulic_box_shadow">
         <el-form :inline="true" class="demo-form-inline">
@@ -41,16 +36,18 @@
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="结果" prop="results">
+              <el-form-item label="通行状态" prop="results">
                 <el-select
                   v-model="results"
                   filterable
                   clearable
-                  placeholder="请选择结果"
+                  placeholder="请选择通行状态"
                 >
                   <el-option label="全部" value=""></el-option>
-                  <el-option label="成功" value="1"></el-option>
-                  <el-option label="失败" value="2"></el-option>
+                  <el-option label="人脸认证通过" value="1"></el-option>
+                  <el-option label="人脸认证失败" value="2"></el-option>
+                  <el-option label="刷卡认证通过" value="3"></el-option>
+                  <el-option label="刷卡认证失败" value="4"></el-option>
                 </el-select>
               </el-form-item>
 
@@ -61,7 +58,6 @@
                 icon="el-icon-search"
                 @click="getDetailsList()">查询</el-button>
 
-              <el-button type="primary" size="medium" @click="exportDetailsData()" style="margin-left:20px;">导出</el-button>
             </el-form>
 
             <el-table :data="list" stripe style="width: 100%" border>
@@ -77,6 +73,12 @@
                 </template>
               </el-table-column>
               <el-table-column
+                prop="check_in_time"
+                width="200"
+                label="日期时间"
+                align="center"
+              />
+              <el-table-column
                 prop="source_label"
                 width="100"
                 label="姓名"
@@ -89,18 +91,7 @@
                 label="卡号"
                 align="center"
               />
-              <el-table-column
-                prop="operation"
-                width="80"
-                label="时长"
-                align="center"
-              />
-              <el-table-column
-                prop="check_in_time"
-                width="200"
-                label="淋浴结束时间"
-                align="center"
-              />
+              
               <el-table-column
                 prop="dorm"
                 width="160"
@@ -109,35 +100,18 @@
               />
               <el-table-column
                 prop="status"
-                width="100"
-                label="结果"
+                width="200"
+                label="通行状态"
                 align="center"
               >
                 <template slot-scope="scope">
-                  <p v-if="scope.row.status == '1'">成功</p>
-                  <p v-if="scope.row.status == '2'">失败</p>
+                  <p v-if="scope.row.status == '1'">人脸认证通过</p>
+                  <p v-if="scope.row.status == '2'">人脸认证失败</p>
+                  <p v-if="scope.row.status == '3'">刷卡认证通过</p>
+                  <p v-if="scope.row.status == '4'">刷卡认证失败</p>
                 </template>
               </el-table-column>
 
-              <el-table-column
-                prop="status"
-                width="100"
-                label="上/下班"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.status == '1'">上班</p>
-                  <p v-if="scope.row.status == '2'">下班</p>
-                </template>
-              </el-table-column>
-
-              <el-table-column
-                prop="check_in_time"
-                width="180"
-                label="门禁刷卡时间"
-                align="center"
-              />
-              
             </el-table>
 
             <div class="block" style="margin-top: 15px">
@@ -153,27 +127,13 @@
               />
             </div>
 
-            <div class="echarts_view">
-                <div class="echarts_view_top">
-                    <div class="echarts_view_l">
-                        <div class="echarts_view_title">月统计图</div>
-                        <div id="echarttemp" style="width: 600px;height:400px;" ref="echarttemp"></div>
-                    </div>
-                    <div class="echarts_view_r">
-                        <!-- <div class="echarts_view_title">猪只活跃度</div>
-                        <div id="echartact" style="width: 600px;height:400px;"></div> -->
-                    </div>
-                </div>
-                <div class="echarts_view_center">
-                    
-                </div>
-            </div>
+            
     </div>
   </div>
 </template>
 
 <script>
-import * as echarts from 'echarts';
+import moment from "moment";
 export default {
   data() {
     return {
@@ -376,15 +336,7 @@ export default {
     
   },
   mounted(){
-    this.$nextTick(() => {
-      this.chartTempDom = this.$refs.echarttemp;
-      this.myChartTemp = echarts.init(this.chartTempDom);
-
-    //   this.chartActDom = document.getElementById("echartact");
-    //   this.myChartAct = echarts.init(this.chartActDom);
-
-      this.initChart();
-    });
+    
   },
   methods: {
     
@@ -506,74 +458,6 @@ export default {
       //       console.log(error);
       //     });
     },
-    exportDetailsData() {
-      if (this.searchObj.timelist == null) {
-        alert("导出时必须选择开始时间与结束时间，开始至结束之间不能超过3天。");
-      } else {
-        this.searchObj.startTime = moment(this.searchObj.timelist[0]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.searchObj.endTime = moment(this.searchObj.timelist[1]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.cleandata = true;
-        window.open(
-          `http://prod.coyotebio-lab.com:8995/admin/order/exportinfo?${stringify(
-            this.searchObj
-          )}`
-        );
-        // window.open(`http://localhost:8995/admin/order/exportinfo?${stringify(this.searchObj)}`)
-        this.searchObj.userid = "";
-        this.searchObj.orderStatus = "";
-        this.searchObj.status = "";
-        this.searchObj.orderNumber = "";
-        this.searchObj.userId = "";
-        this.searchObj.commodity = "";
-        this.searchObj.name = "";
-        this.searchObj.phone = "";
-      }
-    },
-    initChart(){
-        // 绘制图表
-
-        this.myChartTemp.setOption({
-            title: {
-                text: '成功/失败'
-            },
-            tooltip: {},
-            xAxis: {
-                data: ['张三', '李四', '王五', '小明', '赵六', '哈哈']
-            },
-            yAxis: {},
-            series: [
-                {
-                name: '销量',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20]
-                }
-            ]
-        });
-
-        // 绘制图表
-        // this.myChartAct.setOption({
-        //     title: {
-        //         text: ''
-        //     },
-        //     tooltip: {},
-        //     xAxis: {
-        //         data: ['张三', '李四', '王五', '小明', '赵六', '哈哈']
-        //     },
-        //     yAxis: {},
-        //     series: [
-        //         {
-        //         name: '销量',
-        //         type: 'bar',
-        //         data: [5, 20, 36, 10, 10, 20]
-        //         }
-        //     ]
-        // });
-    },
-    
   },
 };
 </script>
@@ -600,7 +484,7 @@ export default {
 }
 
 .container-right{
-    width: 1160px;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -623,32 +507,5 @@ export default {
 
 .demo-form-inline{
     margin-top: 20px;
-}
-
-
-
-
-.echarts_view{
-    margin-top: 50px;
-}
-
-.echarts_view_top{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-.echarts_view_l{
-    display: flex;
-    flex-direction: column;
-}
-
-.echarts_view_title{
-    font-size: 18px;
-}
-
-.echarts_view_center{
-
 }
 </style>

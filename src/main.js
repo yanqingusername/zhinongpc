@@ -5,9 +5,12 @@ import store from "./store"
 import ElementUI from "element-ui"
 import 'element-ui/lib/theme-chalk/index.css'
 import "./router/router-config"  // 路由守卫，做动态路由的地方
+import preview from 'vue-photo-preview'
+import 'vue-photo-preview/dist/skin.css'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
+Vue.use(preview)
 
 new Vue({
   router,

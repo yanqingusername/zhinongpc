@@ -6,15 +6,50 @@ import requestH5Imgs from './requestH5Img'
 import requestH5Other from './requestH5Other'
 
 //PC端登录
-export const getLogin = val => requestH5Other('/wisdomLivestockWH/pig/common/login.hn', val, 'get');
+export const getLogin = val => requestH5Other('/wisdomLivestockWH/BaseInstall/Vuelogin.hn', val, 'get');
 
 //获取pc端目录
-export const getMenu = val => requestH5Other('/wisdomLivestockWH/BaseInstall/getMenu.hn', val, 'get');
+export const getMenu = val => requestH5Other('/wisdomLivestockWH/BaseInstall/getVueMenu.hn', val, 'get');
 
+//风险预警  pig/newindex/
+//获取小动物预警
+export const getAnimalRecord = val => requestH5Other('/wisdomLivestockWH/pig/newindex/getAnimalRecord.hn', val, 'get');
 
+//获取物品熏蒸预警
+export const getGoodsRecord = val => requestH5Other('/wisdomLivestockWH/pig/newindex/getGoodsRecord.hn', val, 'get');
 
+//首页获取发热耳环数据
+export const getFeverLabelInfo = val => requestH5Other('/wisdomLivestockWH/pig/newindex/getFeverLabelInfo.hn', val, 'get');
 
+//获取洗消报警数据
+export const getAlarmList = val => requestH5Other('/wisdomLivestockWH/pig/newindex/getAlarmList.hn', val, 'get');
 
+//获取猪只概况
+export const getPigSurvey = val => requestH5Other('/wisdomLivestockWH/pig/newindex/getPigSurvey.hn', val, 'get');
+
+//获取员工列表方法
+export const getEmployeesLists = val => requestH5Other('/wisdomLivestockWH/PCpersonnelManagement/getEmployeesLists.hn', val, 'get');
+
+//获取角色信息
+export const getRoleinfo = val => requestH5Other('/wisdomLivestockWH/PCpersonnelManagement/getRoleinfo.hn', val, 'get');
+
+//上传图片
+export const uploadImg = val => requestH5Other('/wisdomLivestockWH/PCpersonnelManagement/upload.hn', val, 'get');
+
+//删除员工
+export const deleteEmployee = val => requestH5Other('/wisdomLivestockWH/PCpersonnelManagement/deleteEmployee.hn', val, 'get');
+
+//新增人员
+export const adduserinfo = val => requestH5Other('/wisdomLivestockWH/PCpersonnelManagement/adduserinfo.hn', val, 'get');
+
+//根据id获取员工信息
+export const getuserinfo = val => requestH5Other('/wisdomLivestockWH/PCpersonnelManagement/getuserinfo.hn', val, 'get');
+
+//修改员工信息
+export const edituserinfo = val => requestH5Other('/wisdomLivestockWH/PCpersonnelManagement/edituserinfo.hn', val, 'get');
+
+//导出数据
+export const ExportEmployeesLists = val => requestH5Other('/wisdomLivestockWH/PCpersonnelManagement/ExportEmployeesLists.hn', val, 'get');
 
 
 

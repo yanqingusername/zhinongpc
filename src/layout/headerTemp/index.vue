@@ -4,10 +4,10 @@
             <el-image :src="userInfo.avatar" class="eImage"></el-image>
             <el-dropdown @command="handleLogout">
                 <div class="detail user-link">
-                    <!-- <span>{{ userInfo.role_name }}</span>
-                    <span>{{ userInfo.farm_id }}</span> -->
-                    <span>{{ userInfo.name }}</span>
-                    <span>{{ userInfo.desc }}</span>
+                    <span>{{ userInfo.role_name }}</span>
+                    <span>{{ userInfo.farm_id }}</span>
+                    <!-- <span>{{ userInfo.name }}</span>
+                    <span>{{ userInfo.desc }}</span> -->
                     <i class="el-icon--right"></i>
                 </div>
                 <template #dropdown>
@@ -44,7 +44,7 @@ export default {
 }
 </script>
 <style scoped>
-.header-temp-container{border-bottom: 1px solid #ddd; width: 100%;height: 80px;}
+.header-temp-container{border-bottom: 0px solid #ddd; width: 100%;height: 80px;}
 .userInfo{display: flex;flex-direction: row;align-items: center;justify-content: flex-end;height: 100%;margin-right: 20px;}
 .eImage{width: 40px;height: 40px;border-radius: 50%;margin-right: 10px;}
 .detail{display: flex;flex-direction: column;align-items: flex-start;justify-content: space-around;}

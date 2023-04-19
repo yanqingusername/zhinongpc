@@ -22,7 +22,7 @@ router.beforeEach((to, from, next) => {
         // 获取token和原始路由数组
         const userInfo = JSON.parse(window.localStorage.getItem('userInfo')) ?? ""
         // 当token和原始路由都存在的时候
-        if(userInfo.token && userInfo.routes) onFilterRoutes(to, next, userInfo.routes)  // 执行路由过滤和跳转
+        if(userInfo.roleId && userInfo.routes) onFilterRoutes(to, next, userInfo.routes)  // 执行路由过滤和跳转
         else next({ path: "/login", replace: true })
     } else next()
 })
@@ -36,6 +36,9 @@ router.afterEach(() => {
 function loadView(view) {
     return () => import(`@/views/${ view }`)
 }
+// function loadView (view) {
+//     return (resolve) => require([`@/views/${view}`], resolve)
+// }
 
 // 路由过滤和跳转
 async function onFilterRoutes(to, next, e) {

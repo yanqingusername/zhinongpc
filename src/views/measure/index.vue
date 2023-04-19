@@ -40,15 +40,15 @@
         <div class="view_2">
           <div class="view_2_1" v-if="logisticsDialog">
             <div class="view_2_top pulic_box_shadow">
-              <div class="view_2_top_1">
+              <div class="view_2_top_1" @click="handlerClick(1)">
                 <span class="view_2_top_1_1">50</span>
                 <span class="view_2_top_1_2">总存栏</span>
               </div>
-              <div class="view_2_top_1">
+              <div class="view_2_top_1" @click="handlerClick(2)">
                 <span class="view_2_top_1_1">5</span>
                 <span class="view_2_top_1_2">发热</span>
               </div>
-              <div class="view_2_top_1">
+              <div class="view_2_top_1" @click="handlerClick(3)">
                 <span class="view_2_top_1_1">30</span>
                 <span class="view_2_top_1_2">离线</span>
               </div>
@@ -612,99 +612,101 @@
 
       </el-tab-pane>
       <el-tab-pane label="猪只批量转栏">
-          <div class="view_2_1">
-            <el-form :inline="true" class="demo-form-inline">
-                <el-form-item label="时间范围">
-                    <el-date-picker
-                    v-model="timelist"
-                    type="datetimerange"
-                    @change="consoledata()"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    >
-                    </el-date-picker>
+           <div class="view_2">
+            <div class="view_2_1">
+                <el-form :inline="true" class="demo-form-inline">
+                    <el-form-item label="时间范围">
+                        <el-date-picker
+                        v-model="timelist"
+                        type="datetimerange"
+                        @change="consoledata()"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        >
+                        </el-date-picker>
+                    </el-form-item>
+
+                <el-form-item label="耳号" prop="source_label">
+                    <el-input
+                    v-model="source_label"
+                    placeholder="请输入耳号"
+                    clearable
+                    />
                 </el-form-item>
 
-              <el-form-item label="耳号" prop="source_label">
-                <el-input
-                  v-model="source_label"
-                  placeholder="请输入耳号"
-                  clearable
+                <el-button
+                    style="margin-left:20px;"
+                    type="primary"
+                    size="medium"
+                    icon="el-icon-search"
+                    @click="getDetailsList()">查询</el-button>
+
+                <el-button
+                    style="margin-left:20px;"
+                    type="primary"
+                    size="medium"
+                    icon="el-icon-plus"
+                    @click="add()">增加</el-button>
+                <el-button type="primary" size="medium" @click="importData()" style="margin-left:20px;" icon="el-icon-document-add">导入Excel</el-button>
+                </el-form>
+                <el-table :data="list" stripe style="width: 1100px;" border>
+                    <el-table-column
+                    prop="check_in_time"
+                    width="200"
+                    label="日期"
+                    align="center"
                 />
-              </el-form-item>
-
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getDetailsList()">查询</el-button>
-
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-plus"
-                @click="add()">增加</el-button>
-              <el-button type="primary" size="medium" @click="importData()" style="margin-left:20px;" icon="el-icon-document-add">导入Excel</el-button>
-            </el-form>
-            <el-table :data="list" stripe style="width: 1100px;" border>
                 <el-table-column
-                prop="check_in_time"
-                width="200"
-                label="日期"
-                align="center"
-              />
-              <el-table-column
-                prop="source_label"
-                width="120"
-                label="耳号"
-                align="center"
-              />
-              <el-table-column
-                prop="label_id"
-                width="120"
-                label="电子耳标号"
-                align="center"
-              />
-              
-              <el-table-column
-                prop="door"
-                width="260"
-                label="转出栋舍"
-                align="center"
-              />
-              <el-table-column
-                prop="door"
-                width="200"
-                label="转入栋舍"
-                align="center"
-              />
+                    prop="source_label"
+                    width="120"
+                    label="耳号"
+                    align="center"
+                />
+                <el-table-column
+                    prop="label_id"
+                    width="120"
+                    label="电子耳标号"
+                    align="center"
+                />
+                
+                <el-table-column
+                    prop="door"
+                    width="260"
+                    label="转出栋舍"
+                    align="center"
+                />
+                <el-table-column
+                    prop="door"
+                    width="200"
+                    label="转入栋舍"
+                    align="center"
+                />
 
-              <el-table-column
-                prop="dorm"
-                width="200"
-                label="转入栏位"
-                align="center"
-              />
-              
-            </el-table>
+                <el-table-column
+                    prop="dorm"
+                    width="200"
+                    label="转入栏位"
+                    align="center"
+                />
+                
+                </el-table>
 
-            <!-- 分页 -->
-            <div class="block" style="margin-top: 15px;">
-              <el-pagination
-                :current-page="current"
-                :page-size="limit"
-                :total="total"
-                style="padding: 30px 0; text-align: center"
-                layout="total, sizes, prev, pager, next"
-                @current-change="getList"
-                @size-change="handleSizeChange"
-                :page-sizes="[10, 20, 30, 40]"
-              />
+                <!-- 分页 -->
+                <div class="block" style="margin-top: 15px;">
+                <el-pagination
+                    :current-page="current"
+                    :page-size="limit"
+                    :total="total"
+                    style="padding: 30px 0; text-align: center"
+                    layout="total, sizes, prev, pager, next"
+                    @current-change="getList"
+                    @size-change="handleSizeChange"
+                    :page-sizes="[10, 20, 30, 40]"
+                />
+                </div>
             </div>
-          </div>
+           </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -712,6 +714,7 @@
 
 <script>
 import * as echarts from 'echarts';
+import moment from "moment";
 export default {
   data() {
     return {
@@ -946,6 +949,9 @@ export default {
     
   },
   methods: {
+    handlerClick(e){
+      alert(e)
+    },
     handlerReturn(){
         this.logisticsDialog = true
     },
@@ -1040,16 +1046,16 @@ export default {
     },
     logisticsClick(id) {
       this.logisticsDialog = false;
-    //   this.initChart();
-    this.$nextTick(() => {
-      this.chartTempDom = document.getElementById("echarttemp");
-      this.myChartTemp = echarts.init(this.chartTempDom);
+      //   this.initChart();
+      this.$nextTick(() => {
+        this.chartTempDom = document.getElementById("echarttemp");
+        this.myChartTemp = echarts.init(this.chartTempDom);
 
-      this.chartActDom = document.getElementById("echartact");
-      this.myChartAct = echarts.init(this.chartActDom);
+        this.chartActDom = document.getElementById("echartact");
+        this.myChartAct = echarts.init(this.chartActDom);
 
-      this.initChart();
-    });
+        this.initChart();
+      });
     },
     consoledata() {
       if (!this.isEmpty(this.searchObj.timelist)) {
