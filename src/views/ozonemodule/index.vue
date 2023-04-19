@@ -612,7 +612,7 @@ export default {
 }
 
 .container-right {
-  width: 1160px;
+  width: 1150px;
   display: flex;
   align-items: center;
   justify-content: center;

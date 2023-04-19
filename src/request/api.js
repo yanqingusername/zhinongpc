@@ -51,6 +51,12 @@ export const edituserinfo = val => requestH5Other('/wisdomLivestockWH/PCpersonne
 //导出数据
 export const ExportEmployeesLists = val => requestH5Other('/wisdomLivestockWH/PCpersonnelManagement/ExportEmployeesLists.hn', val, 'get');
 
+//获取门禁列表
+export const getEntranceGuardList = val => requestH5Other('/wisdomLivestockWH/PCAccessManagement/getEntranceGuardList.hn', val, 'get');
+
+//获取门禁的位置信息用于筛选
+export const getAccesslayoutdescr = val => requestH5Other('/wisdomLivestockWH/PCAccessManagement/getAccesslayoutdescr.hn', val, 'get');
+
 
 
 

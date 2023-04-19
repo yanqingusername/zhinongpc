@@ -213,7 +213,6 @@ export default {
   data() {
     return {
       userInfo: JSON.parse(window.localStorage.getItem("userInfo")),
-      currentDate: new Date(),
       search_name: "",
       current: 1, //当前页
       limit: 10, //每页显示记录数

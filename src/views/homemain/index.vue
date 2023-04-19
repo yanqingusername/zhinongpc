@@ -122,7 +122,9 @@
           >
             <template slot-scope="scope">
               <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
-              <el-avatar :src="scope.row.head_url"></el-avatar>
+              <div class="el-img">
+                <el-avatar :src="scope.row.head_url"></el-avatar>
+              </div>
             </template>
           </el-table-column>
           <el-table-column

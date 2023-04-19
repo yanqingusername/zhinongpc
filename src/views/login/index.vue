@@ -38,10 +38,10 @@ export default {
 	data() {
 		return {
 			user: {
-				// username: "shunxinC",
-				// password: "865528"
-				username: "pcyizhuang",
-				password: "888888"
+				username: "shunxinC",
+				password: "865528"
+				// username: "pcyizhuang",
+				// password: "888888"
 			},
 			rules: {
 				username: [
