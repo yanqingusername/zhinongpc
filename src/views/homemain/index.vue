@@ -39,6 +39,17 @@
           :header-cell-style="iHeaderCellStyle"
           size="mini"
         >
+        
+        <!-- <el-table
+          :data="listFever"
+          style="width: 660px"
+          height="100"
+          :row-style="iRowStyle"
+          :cell-style="iCellStyle"
+          :header-row-style="iHeaderRowStyle"
+          :header-cell-style="iHeaderCellStyle"
+          size="mini"
+        > -->
           <el-table-column
             prop="Sitearea"
             width="120"
@@ -385,12 +396,14 @@ export default {
     },
     iHeaderRowStyle: function ({ row, rowIndex }) {
       return "height:46px";
+      // return "height:35px";
     },
     iCellStyle: function ({ row, column, rowIndex, columnIndex }) {
       return "padding:0px";
     },
     iHeaderCellStyle: function ({ row, column, rowIndex, columnIndex }) {
       return "padding:0px";
+      // return "padding:0px;background:rgb(48, 65, 86);color:#FFFFFF;";
     },
     clickImg(e) {
       this.showImg = true;
@@ -682,7 +695,7 @@ export default {
   /* align-items: center; */
   justify-content: space-between;
   width: 100%;
-  /* height: 100vh; */
+  /* height: 317px; */
   height: 400px;
 }
 
@@ -800,4 +813,8 @@ export default {
   justify-content: center;
   padding: 5px 0px;
 }
+/* 
+.el-table--mini{
+  font-size: 5px;
+} */
 </style>

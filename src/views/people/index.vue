@@ -28,14 +28,20 @@
           icon="el-icon-folder">导出</el-button>
       </el-form>
 
-      <el-table :data="list" stripe style="width: 1120px" border>
+      <el-table :data="list" stripe style="width: 1120px" border
+        :row-style="iRowStyle"
+        :cell-style="iCellStyle"
+        :header-row-style="iHeaderRowStyle"
+        :header-cell-style="iHeaderCellStyle" >
         <el-table-column
           prop="head_url"
           width="120"
           label="头像"
           align="center">
           <template slot-scope="scope">
-            <el-avatar :src="scope.row.head_url"></el-avatar>
+            <div class="people-img">
+              <el-avatar :src="scope.row.head_url"></el-avatar>
+            </div>
           </template>
         </el-table-column>
         <el-table-column
@@ -85,7 +91,7 @@
         </el-table-column>
       </el-table>
 
-      <div class="people-block" style="margin-top: 15px">
+      <div class="people-block" style="margin-top: 0px">
         <el-pagination
           :current-page="current"
           :page-size="limit"
@@ -99,7 +105,7 @@
       </div>
     </div>
 
-    <!-- 新添/修改商品弹框 -->
+    <!-- 新添/修改弹框 -->
     <el-dialog
       title="新添/修改"
       :visible.sync="showDialog"
@@ -178,7 +184,7 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
-        <div class="from-footer">
+        <div class="people-from-footer">
           <el-button @click="resetForm('formObj')">取消</el-button>
           <el-button type="primary" @click="onSubmit('formObj')">保存</el-button>
         </div>
@@ -258,6 +264,18 @@ export default {
     this.getRoleinfo();
   },
   methods: {
+    iRowStyle: function ({ row, rowIndex }) {
+      return "height:35px";
+    },
+    iHeaderRowStyle: function ({ row, rowIndex }) {
+      return "height:46px";
+    },
+    iCellStyle: function ({ row, column, rowIndex, columnIndex }) {
+      return "padding:0px";
+    },
+    iHeaderCellStyle: function ({ row, column, rowIndex, columnIndex }) {
+      return "padding:0px";
+    },
     //日期格式化
     dateFormat: function (row, column) {
       var date = row[column.property];
@@ -597,9 +615,16 @@ export default {
   display: block;
 }
 
-.from-footer {
+.people-from-footer {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.people-img{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 0px;
 }
 </style>
