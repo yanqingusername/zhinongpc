@@ -18,6 +18,10 @@
       <div
         :class="[numberType == 5 ?'device-click_view_activity':'device-click_view']"
         @click="handleClick(5)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />液体消毒监测</div>
+
+      <div
+        :class="[numberType == 6 ?'device-click_view_activity':'device-click_view']"
+        @click="handleClick(6)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />车辆消毒监测</div>
     </div>
 
     <div class="device-container-right device-pulic_box_shadow">
@@ -32,7 +36,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listOzone" stripe style="width: 100%" border
+        <el-table :data="listOzone" stripe style="width: 1150px" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -111,7 +115,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listDis" stripe style="width: 100%" border
+        <el-table :data="listDis" stripe style="width: 1150px" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -177,7 +181,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listAnimal" stripe style="width: 100%" border
+        <el-table :data="listAnimal" stripe style="width: 1150px" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -243,7 +247,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listAccess" stripe style="width: 100%" border
+        <el-table :data="listAccess" stripe style="width: 1150px" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -323,7 +327,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listLiquid" stripe style="width: 100%" border
+        <el-table :data="listLiquid" stripe style="width: 1150px" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -386,6 +390,78 @@
             layout="total, sizes, prev, pager, next"
             @current-change="getEmployeesLists"
             @size-change="handleLiquidSizeChange"
+            :page-sizes="[10, 20, 30, 40]"
+          />
+        </div>
+      </div>
+
+      <div v-if="numberType == 6">
+        <div class="device-top-view">
+          <div class="device-title">车辆消毒监测工作站(1000)</div>
+          <el-button
+            type="primary"
+            size="medium"
+            @click="addCar()"
+            style="margin-left: 20px"
+            icon="el-icon-plus">新增</el-button>
+        </div>
+
+        <el-table :data="listCar" stripe style="width: 1150px" border
+          :row-style="iRowStyle"
+          :cell-style="iCellStyle"
+          :header-row-style="iHeaderRowStyle"
+          :header-cell-style="iHeaderCellStyle">
+        
+          <el-table-column
+            prop="device_sn"
+            width="200"
+            label="设备SN号"
+            align="center"
+          />
+
+          <el-table-column
+            prop="address"
+            width="200"
+            label="位置"
+            align="center">
+          </el-table-column>
+
+          <el-table-column
+            prop="disinfect_time"
+            width="200"
+            label="设备添加时间"
+            align="center"
+          />
+          <el-table-column
+            prop="device_people"
+            width="350"
+            label="管理员"
+            align="center"
+          />
+
+          <el-table-column label="操作" width="200" align="center">
+            <template slot-scope="scope">
+              <el-button
+                type="primary"
+                size="mini"
+                @click="handlerCarEdit(scope.row.id)">编辑</el-button>
+              <el-button
+                type="danger"
+                size="mini"
+                @click="handlerOzoneDelete(scope.row.id)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <div class="block" style="margin-top: 0px">
+          <el-pagination
+            :current-page="currentCar"
+            :page-size="limitCar"
+            :total="totalCar"
+            style="padding: 30px 0; text-align: center"
+            layout="total, sizes, prev, pager, next"
+            @current-change="getEmployeesLists"
+            @size-change="handleCarSizeChange"
             :page-sizes="[10, 20, 30, 40]"
           />
         </div>
@@ -669,9 +745,67 @@
             <el-radio v-for="(item,index) in device_people" :key="index" :label="item.id">{{item.name}}</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="设备添加时间*：">
+            <el-input
+              v-model="liquid_current_time"
+              style="width: 200px"
+              placeholder=""
+              :readonly="true"></el-input>
+          </el-form-item>
         <div class="device-from-footer">
           <el-button @click="resetLiquidForm('formLiquidObj')">取消</el-button>
           <el-button type="primary" @click="onLiquidSubmit('formLiquidObj')">保存</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
+
+    <!--车辆消毒监测 新添/修改弹框 -->
+    <el-dialog
+      title="新添/修改"
+      :visible.sync="showCarDialog"
+      width="50%"
+      center
+      :close-on-click-modal="false"
+      :show-close="false">
+      <el-form ref="formCarObj" :model="formCarObj" label-width="140px">
+        <!-- <div class="device-flex-space"> -->
+          <el-form-item label="设备SN号*：">
+            <el-input
+              v-model="formCarObj.car_sn"
+              style="width: 200px"
+              placeholder="请输入设备SN号"></el-input>
+          </el-form-item>
+
+          <el-form-item label="位置*：" prop="car_address" style="margin-left:0px;">
+            <el-select
+              v-model="formCarObj.car_address"
+              placeholder="请选择位置"
+              style="width: 200px">
+              <el-option
+                v-for="(item, index) in listOzonePosition"
+                :key="index"
+                :label="item.role_name"
+                :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+        <!-- </div> -->
+
+        <el-form-item label="管理员*：" prop="car_device_people">
+          <el-checkbox-group v-model="car_device_people">
+            <el-checkbox v-for="(item,index) in device_people" :key="index" :label="item.id">{{item.name}}</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+
+        <el-form-item label="设备添加时间*：">
+            <el-input
+              v-model="car_current_time"
+              style="width: 200px"
+              placeholder=""
+              :readonly="true"></el-input>
+          </el-form-item>
+        <div class="device-from-footer">
+          <el-button @click="resetCarForm('formCarObj')">取消</el-button>
+          <el-button type="primary" @click="onCarSubmit('formCarObj')">保存</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -1074,8 +1208,78 @@ export default {
       deleteLiquidDialog: false,
       idLiquid: "", // 员工id
       isLiquidEdit: 1, // 1-新增  2-编辑
+
+      currentCar: 1, //当前页
+      limitCar: 10, //每页显示记录数
+      totalCar: 0, //总记录数
+      listCar: [
+        {
+          "id": '1',
+          "address": '位置1',
+          "device_sn": '120101010111',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '张三,李四',
+          "approve_people": '张三',
+        },
+        {
+          "id": '2',
+          "address": '位置2',
+          "device_sn": '120101010112',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '张三,李四',
+          "approve_people": '张三',
+        },
+        {
+          "id": '3',
+          "address": '位置3',
+          "device_sn": '120101010113',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '张三,李四',
+          "approve_people": '张三',
+        },
+        {
+          "id": '4',
+          "address": '位置4',
+          "device_sn": '120101010114',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '张三,李四',
+          "approve_people": '张三',
+        },
+        {
+          "id": '5',
+          "address": '位置5',
+          "device_sn": '120101010115',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '张三,李四',
+          "approve_people": '张三',
+        }
+      ],
+      listCarPosition: [],
+      showCarDialog: false,
+      formCarObj: {
+        car_sn: "",
+        car_address: "",
+      },
+      car_current_time: new Date().getTime(),
+      rulesCar: {
+        car_sn: [
+          { required: true, message: "请输入设备SN号", trigger: "blur" },
+          // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        car_address: [{ required: true, message: "请选择位置", trigger: "change" }],
+      },
+      car_device_people: ['1', '2'],
+      device_people: [{'id': '1', name: '张三'}, {'id': '2', name: '李四'},{'id': '3', name: '王五'},{'id': '4', name: '赵六'}],
+      deleteCarDialog: false,
+      idCar: "", // 员工id
+      isCarEdit: 1, // 1-新增  2-编辑
       
-      numberType: 1, // 1-臭氧消毒监测  2-淋浴一体机  3-小动物监控 4-门禁系统管理
+      numberType: 1, // 1-臭氧消毒监测  2-淋浴一体机  3-小动物监控 4-门禁系统管理 5-液体消毒监测  6-车辆消毒监测
     };
   },
   created() {
@@ -1085,6 +1289,7 @@ export default {
       this.animal_current_time = this.dateFormat(this.animal_current_time);
       this.access_current_time = this.dateFormat(this.access_current_time);
       this.liquid_current_time = this.dateFormat(this.liquid_current_time);
+      this.car_current_time = this.dateFormat(this.car_current_time);
       // this.getEmployeesLists();
       this.getRoleinfo();
       
@@ -1304,6 +1509,8 @@ export default {
     handleClick(number) {
       this.numberType = number;
       if(number == 5){
+
+      } else if(number == 5){
 
       } else if(number == 4){
         
@@ -1763,6 +1970,114 @@ export default {
     addLiquid() {
       this.isLiquidEdit = 1;
       this.showLiquidDialog = true;
+    },
+    /**
+     * 车辆消毒监测
+     */
+    handleCarSizeChange(val) {
+      this.limitCar = val;
+      this.getEmployeesLists();
+    },
+    handlerCarEdit(id) {
+      this.isCarEdit = 2;
+      this.showCarDialog = true;
+      getuserinfo({
+        id: id,
+      }).then((res) => {
+        if (res.data.success) {
+          let infoList = res.data.data;
+          if (infoList && infoList.length > 0) {
+            let itemInfo = infoList[0];
+            this.formCarObj.car_sn = itemInfo.real_name;
+            this.formCarObj.car_address = itemInfo.roleId;
+            this.idCar = itemInfo.id;
+          }
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    resetCarForm(formName) {
+      this.$refs[formName].resetFields();
+      this.showCarDialog = false;
+      this.formCarObj.car_sn = "";
+      this.formCarObj.car_address = "";
+      this.idCar = "";
+    },
+    onCarSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if (this.isCarEdit == 2) {
+            let params = this.formCarObj;
+            params.id = this.idCar;
+            // params.pig_farm_id = this.userInfo.farm_id
+            edituserinfo(params).then((res) => {
+              if (res.data.success) {
+                Message({
+                  type: "success",
+                  message: res.data.msg,
+                  showClose: true,
+                  duration: 3000,
+                });
+                // this.current = 1;
+                this.getEmployeesLists();
+
+                this.$refs[formName].resetFields();
+                this.showCarDialog = false;
+                this.formCarObj.car_sn = "";
+                this.formCarObj.car_address = "";
+                this.idCar = "";
+              } else {
+                Message({
+                  type: "warning",
+                  message: res.data.msg,
+                  showClose: true,
+                  duration: 3000,
+                });
+              }
+            });
+          } else {
+            let params = this.formCarObj;
+            params.pig_farm_id = this.userInfo.farm_id;
+            adduserinfo(params).then((res) => {
+              if (res.data.success) {
+                Message({
+                  type: "success",
+                  message: res.data.msg,
+                  showClose: true,
+                  duration: 3000,
+                });
+                // this.current = 1;
+                this.getEmployeesLists();
+
+                this.$refs[formName].resetFields();
+                this.showCarDialog = false;
+                this.formCarObj.car_sn = "";
+                this.formCarObj.car_address = "";
+                this.idCar = "";
+              } else {
+                Message({
+                  type: "warning",
+                  message: res.data.msg,
+                  showClose: true,
+                  duration: 3000,
+                });
+              }
+            });
+          }
+        } else {
+          return false;
+        }
+      });
+    },
+    addCar() {
+      this.isCarEdit = 1;
+      this.showCarDialog = true;
     },
   },
 };

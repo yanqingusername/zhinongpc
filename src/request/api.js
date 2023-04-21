@@ -60,10 +60,23 @@ export const getAccesslayoutdescr = val => requestH5Other('/wisdomLivestockWH/PC
 //获取洗消信息列表方法
 export const getIwadomlistinfos = val => requestH5Other('/wisdomLivestockWH/PCiwadom/getIwadomlistinfos.hn', val, 'get');
 
-//获取洗消信息列表方法
+//获取自然月洗消结果图
 export const getIwadomChart = val => requestH5Other('/wisdomLivestockWH/PCiwadom/getIwadomChart.hn', val, 'get');
 
 //导出洗消列表方法
 export const ExportIwadomLists = val => requestH5Other('/wisdomLivestockWH/PCiwadom/ExportIwadomLists.hn', val, 'get');
 
+//获取物资熏蒸详情列表
+export const getGoodslistinfos = val => requestH5Other('/wisdomLivestockWH/PCgoodsManagement/getGoodslistinfos.hn', val, 'get');
 
+//获取指定时间熏蒸设备数据图方法
+export const getGoodsChart = val => requestH5Other('/wisdomLivestockWH/PCgoodsManagement/getgoodsChart.hn', val, 'get');
+
+//获取熏蒸设备位置
+export const getDeviceInfo = val => requestH5Other('/wisdomLivestockWH/PCgoodsManagement/getDeviceInfo.hn', val, 'get');
+
+//获取物小动物详情列表 
+export const getAnimallistinfos = val => requestH5Other('/wisdomLivestockWH/PCanimalManagement/getAnimallistinfos.hn', val, 'get');
+
+//获取当月小动物设备数据图方法 
+export const getAnimalChart = val => requestH5Other('/wisdomLivestockWH/PCanimalManagement/getanimalChart.hn', val, 'get');

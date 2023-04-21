@@ -259,12 +259,14 @@ export default {
               type: "bar",
               color: '#5470c6',
               data: ysuccess,
+              barWidth: 12
             },
             {
               name: "失败",
               type: "bar",
               color: '#91cc75',
               data: yfail,
+              barWidth: 12
             }
           ];
           this.initChart(xdata,series);
@@ -284,9 +286,9 @@ export default {
         pig_farm_id: this.userInfo.farm_id,
         page: this.current,
         limit: this.limit,
-        start_time: this.dateFormat(this.timelist[0]) + ' 00:00:00',
+        start_time: this.numberType == 3 ? '' : this.dateFormat(this.timelist[0]) + ' 00:00:00',
         // start_time: '2023-03-17 00:00:00',
-        end_time: this.dateFormat(this.timelist[1]) + ' 00:00:00',
+        end_time: this.numberType == 3 ? '' : this.dateFormat(this.timelist[1]) + ' 23:59:59',
         address: this.location_id,
         status: this.results, //(1-成功  0-失败)
         realname: this.real_name
@@ -343,7 +345,9 @@ export default {
           data: xdata,
         },
         yAxis: {
-          name: "数量(次)"
+          name: "数量(次)",
+          min: 0,
+          minInterval: 1,
         },
         series: series,
       });
@@ -352,18 +356,23 @@ export default {
       this.numberType = number;
       if(number == 3){
         this.results = '';
+        this.timelist = []
       } else if (number == 2){
         this.results = '';
+        this.timelist = [
+          new Date().getTime(),
+          new Date().getTime(),
+        ]
       } else {
         this.results = '0';
+        this.timelist = [
+          new Date().getTime(),
+          new Date().getTime(),
+        ]
       }
       this.real_name = '';
       this.location_id = '';
-      this.current = '';
-      this.timelist = [
-        new Date().getTime(),
-        new Date().getTime(),
-      ]
+      this.current = 1;
       this.limit = 10;
       this.getIwadomlistinfos();
     },
@@ -371,8 +380,8 @@ export default {
     exportData() {
       let params = {
         pig_farm_id: this.userInfo.farm_id,
-        start_time: this.dateFormat(this.timelist[0]) + ' 00:00:00',
-        end_time: this.dateFormat(this.timelist[1]) + ' 00:00:00',
+        start_time: this.numberType == 3 ? '' : this.dateFormat(this.timelist[0]) + ' 00:00:00',
+        end_time: this.numberType == 3 ? '' : this.dateFormat(this.timelist[1]) + ' 00:00:00',
         address: this.location_id,
         status: this.results, //(1-成功  0-失败)
         realname: this.real_name

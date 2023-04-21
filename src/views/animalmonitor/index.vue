@@ -1,128 +1,114 @@
 <template>
-  <div class="tree-container">
-    <div class="container-left pulic_box_shadow">
-        <el-button size="medium" style="margin-top:20px;margin-left:0px;">今日预警</el-button>
-        <el-button size="medium" style="margin-top:20px;margin-left:0px;">历史记录</el-button>
+  <div class="animal-index-container">
+    <div class="animal-container-left animal-pulic_box_shadow">
+      <div
+        :class="[numberType == 1 ?'animal-click_view_activity':'animal-click_view']"
+        @click="handleClick(1)">今日预警</div>
+      
+      <div
+        :class="[numberType == 3 ?'animal-click_view_activity':'animal-click_view']"
+        @click="handleClick(3)">历史记录</div>
     </div>
 
-    <div class="container-right pulic_box_shadow">
-        <el-form :inline="true" class="demo-form-inline">
-              <el-form-item label="时间范围">
-                <el-date-picker
-                v-model="timelist"
-                type="datetimerange"
-                @change="consoledata()"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                >
-                </el-date-picker>
-               </el-form-item>
-               
-              <el-form-item label="位置" prop="positon">
-                <el-select
-                  v-model="positon"
-                  filterable
-                  clearable
-                  placeholder="请选择位置">
-                  <el-option label="全部" value=""></el-option>
-                  <el-option label="位置1" value="1"></el-option>
-                  <el-option label="位置2" value="2"></el-option>
-                  <el-option label="位置3" value="3"></el-option>
-                  <el-option label="位置4" value="4"></el-option>
-                </el-select>
-              </el-form-item>
+    <div class="animal-container-right animal-pulic_box_shadow">
+      <el-form :inline="true" class="animal-demo-form-inline">
+        <el-form-item label="时间范围">
+          <el-date-picker
+            v-model="timelist"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            style="width: 260px;"
+            :readonly="(numberType == 3) ? false : true">
+          </el-date-picker>
+        </el-form-item>
+        
+        <el-form-item label="位置" prop="location_id">
+          <el-input v-model="location_id" placeholder="请输入位置" clearable style="width: 200px"/>
+        </el-form-item>
+    
+        <el-button
+          style="margin-left: 20px"
+          type="primary"
+          size="medium"
+          icon="el-icon-search"
+          @click="getAnimallistinfos()">查询</el-button>
 
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getDetailsList()">查询</el-button>
+      </el-form>
 
-              <!-- <el-button type="primary" size="medium" @click="exportDetailsData()" style="margin-left:20px;">导出</el-button> -->
-            </el-form>
+      <el-table :data="listAnimal" stripe style="width: 1150px" border
+        :row-style="iRowStyle"
+        :cell-style="iCellStyle"
+        :header-row-style="iHeaderRowStyle"
+        :header-cell-style="iHeaderCellStyle">
 
-            <el-table :data="list" stripe style="width: 600px;" border>
-                <el-table-column
-                prop="dorm"
+        <el-table-column
+                prop="SN"
                 width="200"
+                label="SN号"
+                align="center"
+              />
+
+              <el-table-column
+                prop="address"
+                width="390"
                 label="位置"
                 align="center"
               />
               <el-table-column
-                prop="check_in_time"
-                width="160"
+                prop="create_time"
+                width="260"
                 label="创建时间"
                 align="center"
               />
               
               <el-table-column
-                prop="imageUrl"
-                width="240"
+                prop="img"
+                width="300"
                 label="图片"
                 align="center"
               >
                 <template slot-scope="scope">
-                  <el-image 
-                    style="width: 200px; height: 100px"
-                    :src="scope.row.imageUrl"
-                    :preview-src-list="srcList">
-                  </el-image>
+                  <div class="animal-img">
+                    <el-image 
+                      style="width: 200px; height: 60px"
+                      :src="scope.row.img"
+                      :preview-src-list="srcList">
+                    </el-image>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
 
-            <div class="block" style="margin-top: 15px">
-              <el-pagination
-                :current-page="current"
-                :page-size="limit"
-                :total="total"
-                style="padding: 30px 0; text-align: center"
-                layout="total, sizes, prev, pager, next"
-                @current-change="getList"
-                @size-change="handleSizeChange"
-                :page-sizes="[10, 20, 30, 40]"
-              />
-            </div>
+      <div class="block" style="margin-top: 0px">
+        <el-pagination
+          :current-page="current"
+          :page-size="limit"
+          :total="total"
+          style="padding: 30px 0; text-align: center"
+          layout="total, sizes, prev, pager, next"
+          @current-change="getAnimallistinfos"
+          @size-change="handleSizeChange"
+          :page-sizes="[10, 20, 30, 40]"
+        />
+      </div>
 
-            <div class="echarts_view">
-                <!-- <el-row>
-                    <el-button round style="margin-right: 10px;">上一月</el-button>
-                    <el-date-picker
-                        v-model="currentDate"
-                        align="right"
-                        type="month"
-                        placeholder="选择日期"
-                        :picker-options="pickerOptions">
-                    </el-date-picker>
-                    <el-button round style="margin-left: 10px;">下一月</el-button>
-                    <el-form-item label="时间范围">
-                        <el-date-picker
-                        v-model="timelist"
-                        type="datetimerange"
-                        @change="consoledata()"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        >
-                        </el-date-picker>
-                    </el-form-item>
-                </el-row> -->
-                <div class="echarts_view_top">
-                    <div class="echarts_view_l">
-                        <div class="echarts_view_title">月统计图</div>
-                        <div id="echarttemp" style="width: 600px;height:400px;" ref="echarttemp"></div>
-                    </div>
-                    <div class="echarts_view_r">
-                        <!-- <div class="echarts_view_title">猪只活跃度</div>
-                        <div id="echartact" style="width: 600px;height:400px;"></div> -->
-                    </div>
-                </div>
-                <div class="echarts_view_center">
-                    
-                </div>
-            </div>
+      <div class="animal-echarts_view">
+        <div class="animal-echarts_view_top">
+          <div class="animal-echarts_view_l">
+            <div class="animal-echarts_view_title">小动物异常报警⽉统计表</div>
+            <div
+              id="echarttemp"
+              style="width: 1150px; height: 400px"
+              ref="echarttemp"
+            ></div>
+          </div>
+          <div class="animal-echarts_view_r">
+          </div>
+        </div>
+        <div class="animal-echarts_view_center"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -130,233 +116,63 @@
 <script>
 import * as echarts from "echarts";
 import moment from "moment";
+import {
+  getAnimallistinfos,
+  getAnimalChart
+} from "../../request/api";
+import { Message } from "element-ui";
 export default {
   data() {
     return {
-      currentDate: new Date(),
-      real_name: "",
-      positon: "",
-      results: "",
+      userInfo: JSON.parse(window.localStorage.getItem("userInfo")),
+      location_id: "",
       current: 1, //当前页
-      limit: 20, //每页显示记录数
-      total: 60, //总记录数
-      srcList: ["https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"],
-      list: [
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏27",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3318,
-          label_id: "89000731",
-          source_label: "Y173708",
-          door: "西10舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 18:43",
-          serial: 5809,
-          parent_id: 3291,
-          temperature: 36,
-          activity: 2,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        },
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏27",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3318,
-          label_id: "89000899",
-          source_label: "L90904",
-          door: "西10舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 18:43",
-          serial: 5810,
-          parent_id: 3291,
-          temperature: 35.5,
-          activity: 1,
-          imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        },
-        // {
-        //   operation: 1,
-        //   label_type: 1,
-        //   dorm: "栏27",
-        //   status: 1,
-        //   Sitearea: "顺鑫西区",
-        //   layout_id: 3318,
-        //   label_id: "89000860",
-        //   source_label: "Y174004",
-        //   door: "西10舍",
-        //   farm_name: "顺鑫猪场",
-        //   check_in_time: "2023-04-06 18:43",
-        //   serial: 5811,
-        //   parent_id: 3291,
-        //   temperature: 35,
-        //   activity: 0,
-        //   imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        // },
-        // {
-        //   operation: 1,
-        //   label_type: 1,
-        //   dorm: "栏27",
-        //   status: 1,
-        //   Sitearea: "顺鑫西区",
-        //   layout_id: 3318,
-        //   label_id: "89000512",
-        //   source_label: "Y174110",
-        //   door: "西10舍",
-        //   farm_name: "顺鑫猪场",
-        //   check_in_time: "2023-04-06 18:43",
-        //   serial: 5813,
-        //   parent_id: 3291,
-        //   temperature: 36,
-        //   activity: 2,
-        //   imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        // },
-        // {
-        //   operation: 1,
-        //   label_type: 1,
-        //   dorm: "栏27",
-        //   status: 1,
-        //   Sitearea: "顺鑫西区",
-        //   layout_id: 3318,
-        //   label_id: "89000749",
-        //   source_label: "Y173802",
-        //   door: "西10舍",
-        //   farm_name: "顺鑫猪场",
-        //   check_in_time: "2023-04-06 18:43",
-        //   serial: 5814,
-        //   parent_id: 3291,
-        //   temperature: 37,
-        //   activity: 3,
-        //   imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        // },
-        // {
-        //   operation: 1,
-        //   label_type: 1,
-        //   dorm: "栏27",
-        //   status: 1,
-        //   Sitearea: "顺鑫西区",
-        //   layout_id: 3318,
-        //   label_id: "89000423",
-        //   source_label: "Y174002",
-        //   door: "西10舍",
-        //   farm_name: "顺鑫猪场",
-        //   check_in_time: "2023-04-06 18:43",
-        //   serial: 5812,
-        //   parent_id: 3291,
-        //   temperature: 36,
-        //   activity: 2,
-        //   imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        // },
-        // {
-        //   operation: 1,
-        //   label_type: 3,
-        //   dorm: "栏33",
-        //   status: 1,
-        //   Sitearea: "顺鑫西区",
-        //   layout_id: 3369,
-        //   label_id: "89000774",
-        //   source_label: "Y170704",
-        //   door: "西11舍",
-        //   farm_name: "顺鑫猪场",
-        //   check_in_time: "2023-04-06 10:21",
-        //   serial: 5633,
-        //   parent_id: 3336,
-        //   temperature: 36,
-        //   activity: 2,
-        //   imageUrl:"https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-        // },
-        // {
-        //   operation: 1,
-        //   label_type: 1,
-        //   dorm: "栏18",
-        //   status: 1,
-        //   Sitearea: "顺鑫西区",
-        //   layout_id: 3215,
-        //   label_id: "89000784",
-        //   source_label: "Y129711",
-        //   door: "西3舍",
-        //   farm_name: "顺鑫猪场",
-        //   check_in_time: "2023-04-06 10:21",
-        //   serial: 5596,
-        //   parent_id: 3197,
-        //   temperature: 36,
-        //   activity: 2,
-        //   imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        // },
-        // {
-        //   operation: 1,
-        //   label_type: 1,
-        //   dorm: "栏18",
-        //   status: 1,
-        //   Sitearea: "顺鑫西区",
-        //   layout_id: 3215,
-        //   label_id: "89000558",
-        //   source_label: "Y131611",
-        //   door: "西3舍",
-        //   farm_name: "顺鑫猪场",
-        //   check_in_time: "2023-04-06 10:21",
-        //   serial: 5595,
-        //   parent_id: 3197,
-        //   temperature: 36,
-        //   activity: 2,
-        //   imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        // },
-        // {
-        //   operation: 1,
-        //   label_type: 1,
-        //   dorm: "栏18",
-        //   status: 1,
-        //   Sitearea: "顺鑫西区",
-        //   layout_id: 3215,
-        //   label_id: "89000479",
-        //   source_label: "Y130807",
-        //   door: "西3舍",
-        //   farm_name: "顺鑫猪场",
-        //   check_in_time: "2023-04-06 10:21",
-        //   serial: 5594,
-        //   parent_id: 3197,
-        //   temperature: 36,
-        //   activity: 2,
-        //   imageUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        // },
-      ],
+      limit: 10, //每页显示记录数
+      total: 0, //总记录数
+      listAnimal: [],
+      srcList: [],
       timelist: [
-        new Date().getTime() - 3 * 24 * 60 * 60 * 1000,
+        new Date().getTime(),
         new Date().getTime(),
       ],
       chartTempDom: "",
       myChartTemp: "",
       optionTemp: "",
-      chartActDom: "",
-      myChartAct: "",
-      optionAct: "",
+      
+      numberType: 1, // 1-今日预警  2-  3-历史记录
     };
   },
   created() {
-    // this.getList();
   },
   mounted() {
     this.$nextTick(() => {
       this.chartTempDom = this.$refs.echarttemp;
       this.myChartTemp = echarts.init(this.chartTempDom);
 
-      //   this.chartActDom = document.getElementById("echartact");
-      //   this.myChartAct = echarts.init(this.chartActDom);
-
-      this.initChart();
+      this.getAnimallistinfos();
+      this.getAnimalChart();
     });
   },
   methods: {
+    iRowStyle: function ({ row, rowIndex }) {
+      return "height:35px";
+    },
+    iHeaderRowStyle: function ({ row, rowIndex }) {
+      return "height:46px";
+    },
+    iCellStyle: function ({ row, column, rowIndex, columnIndex }) {
+      return "padding:0px";
+    },
+    iHeaderCellStyle: function ({ row, column, rowIndex, columnIndex }) {
+      return "padding:0px";
+    },
     //日期格式化
-    dateFormat: function (row, column) {
-      var date = row[column.property];
+    dateFormat: function (date) {
+      // var date = row[column.property];
       if (date == undefined) {
         return "";
       }
-      return moment(date).format("YYYY-MM-DD HH:mm:ss");
+      return moment(date).format("YYYY-MM-DD");
     },
     isEmpty(obj) {
       if (obj == null || obj == undefined || obj == "") {
@@ -365,175 +181,127 @@ export default {
         return false;
       }
     },
-    getList(page = 1) {
+    getAnimalChart() {
+      getAnimalChart({
+        pig_farm_id: this.userInfo.farm_id,
+      }).then((res) => {
+        if (res.data.success) {
+          let xdata = res.data.xdata;
+          let ydata = res.data.ydata;
+          let series = [
+            {
+              name: "数量",
+              type: "bar",
+              color: '#5470c6',
+              data: ydata,
+              barWidth: 12
+            },
+            // {
+            //   name: "失败",
+            //   type: "bar",
+            //   color: '#91cc75',
+            //   data: yfail,
+            //   barWidth: 12
+            // }
+          ];
+          this.initChart(xdata,series);
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    getAnimallistinfos(page = 1) {
       this.current = page;
-      //   if (
-      //     !this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("1");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     !this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("2");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist) &&
-      //     this.isEmpty(this.searchObj.orderNumber) &&
-      //     this.isEmpty(this.searchObj.userId) &&
-      //     this.isEmpty(this.searchObj.name) &&
-      //     this.isEmpty(this.searchObj.phone)
-      //   ) {
-      //     console.log("3");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   }
-      //   order
-      //     .getorderinfo(this.current, this.limit, this.searchObj)
-      //     .then((response) => {
-      //       this.list = response.data.records;
-      //       //总记录数
-      //       this.total = response.data.total;
-      //       this.searchObj.startTime = "";
-      //       this.searchObj.endTime = "";
-      //     })
-      //     .catch((error) => {
-      //       //请求失败
-      //       console.log(error);
-      //     });
+      let params = {
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.current,
+        limit: this.limit,
+        start_time: this.numberType == 3 ? '' : this.dateFormat(this.timelist[0]) + ' 00:00:00',
+        // start_time: '2023-03-17 00:00:00',
+        end_time: this.numberType == 3 ? '' : this.dateFormat(this.timelist[1]) + ' 23:59:59',
+        address: this.location_id,
+      }
+      console.log(params)
+      getAnimallistinfos(params).then((res) => {
+        if (res.data.success) {
+          // Message({ type: 'success', message: res.data.msg, showClose: true, duration: 3000 })
+          this.listAnimal = res.data.data;
+          this.total = parseInt(res.data.count);
+          this.listAnimal.forEach(element => {
+            this.srcList.push(element.img)
+          });
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.limit = val;
+      this.getAnimallistinfos();
     },
-    consoledata() {
-      if (!this.isEmpty(this.searchObj.timelist)) {
-        if (
-          this.searchObj.timelist[1].getTime() -
-            this.searchObj.timelist[0].getTime() >
-          3 * 24 * 60 * 60 * 1000
-        ) {
-          console.log("时间间隔大于三天");
-          this.$message.warning("时间范围不能超过3天");
-          this.searchObj.timelist = [];
-          return;
-        }
-      }
-    },
-    getDetailsList(page = 1) {
-      this.current = page;
-      //   if (
-      //     !this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("1");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     !this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("2");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist) &&
-      //     this.isEmpty(this.searchObj.orderNumber) &&
-      //     this.isEmpty(this.searchObj.userId) &&
-      //     this.isEmpty(this.searchObj.name) &&
-      //     this.isEmpty(this.searchObj.phone)
-      //   ) {
-      //     console.log("3");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   }
-      //   order
-      //     .getorderinfo(this.current, this.limit, this.searchObj)
-      //     .then((response) => {
-      //       this.list = response.data.records;
-      //       //总记录数
-      //       this.total = response.data.total;
-      //       this.searchObj.startTime = "";
-      //       this.searchObj.endTime = "";
-      //     })
-      //     .catch((error) => {
-      //       //请求失败
-      //       console.log(error);
-      //     });
-    },
-    exportDetailsData() {
-      if (this.searchObj.timelist == null) {
-        alert("导出时必须选择开始时间与结束时间，开始至结束之间不能超过3天。");
-      } else {
-        this.searchObj.startTime = moment(this.searchObj.timelist[0]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.searchObj.endTime = moment(this.searchObj.timelist[1]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.cleandata = true;
-        window.open(
-          `http://prod.coyotebio-lab.com:8995/admin/order/exportinfo?${stringify(
-            this.searchObj
-          )}`
-        );
-        // window.open(`http://localhost:8995/admin/order/exportinfo?${stringify(this.searchObj)}`)
-        this.searchObj.userid = "";
-        this.searchObj.orderStatus = "";
-        this.searchObj.status = "";
-        this.searchObj.orderNumber = "";
-        this.searchObj.userId = "";
-        this.searchObj.commodity = "";
-        this.searchObj.name = "";
-        this.searchObj.phone = "";
-      }
-    },
-    initChart() {
+    initChart(xdata, series) {
       // 绘制图表
 
       this.myChartTemp.setOption({
         title: {
-          text: "",
+          // text: "成功/失败",
+          // fontSize: 12
         },
         tooltip: {},
-        xAxis: {
-          data: ["张三", "李四", "王五", "小明", "赵六", "哈哈"],
+        legend: {
+          show: true
         },
-        yAxis: {},
-        series: [
-          {
-            name: "销量",
-            type: "bar",
-            data: [5, 20, 36, 10, 10, 20],
-          },
-        ],
+        toolbox: {
+          show: true,
+          orient: 'vertical',
+          left: 'right',
+          top: 'center',
+          feature: {
+            mark: { show: true },
+            // dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ['line', 'bar', 'stack'] },
+            restore: { show: true },
+            saveAsImage: { show: false }
+          }
+        },
+        xAxis: {
+          type: 'category',
+          axisTick: { show: false },
+          name: "位置",
+          data: xdata,
+        },
+        yAxis: {
+          name: "数量(次)",
+          min: 0,
+          minInterval: 1,
+        },
+        series: series,
       });
-
-      // 绘制图表
-      // this.myChartAct.setOption({
-      //     title: {
-      //         text: ''
-      //     },
-      //     tooltip: {},
-      //     xAxis: {
-      //         data: ['张三', '李四', '王五', '小明', '赵六', '哈哈']
-      //     },
-      //     yAxis: {},
-      //     series: [
-      //         {
-      //         name: '销量',
-      //         type: 'bar',
-      //         data: [5, 20, 36, 10, 10, 20]
-      //         }
-      //     ]
-      // });
+    },
+    handleClick(number) {
+      this.numberType = number;
+      if(number == 3){
+        this.timelist = []
+      } else {
+        this.timelist = [
+          new Date().getTime(),
+          new Date().getTime(),
+        ]
+      }
+      this.location_id = '';
+      this.current = 1;
+      this.limit = 10;
+      this.getAnimallistinfos();
     },
   },
 };
@@ -544,7 +312,7 @@ export default {
   font-size: 18px !important;
 }
 
-.tree-container {
+.animal-index-container {
   display: flex;
   /* align-items: center; */
   justify-content: space-between;
@@ -552,26 +320,29 @@ export default {
   /* height: 100vh; */
 }
 
-.container-left {
+.animal-container-left {
   width: 180px;
   display: flex;
   align-items: center;
   /* justify-content: center; */
   flex-direction: column;
+  position: fixed;
+  height: 600px;
 }
 
-.container-right {
+.animal-container-right {
   width: 1160px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   padding: 0px 20px;
+  margin-left: 200px;
   /* height: 800px; */
   /* overflow-y: scroll; */
 }
 
-.pulic_box_shadow {
+.animal-pulic_box_shadow {
   border: 1px solid #ebeef5;
   background-color: #fff;
   color: #303133;
@@ -580,31 +351,68 @@ export default {
   /* padding: 20px 0px; */
 }
 
-.demo-form-inline {
+.animal-demo-form-inline {
   margin-top: 20px;
 }
 
-.echarts_view {
-  margin-top: 40px;
+.animal-echarts_view {
+  margin-top: 0px;
 }
 
-.echarts_view_top {
+.animal-echarts_view_top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 
-.echarts_view_l {
+.animal-echarts_view_l {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
-.echarts_view_title {
-  font-size: 18px;
+.animal-echarts_view_title {
+  font-size: 24px;
+  padding: 10px 0px;
 }
 
-.echarts_view_center {
+.animal-echarts_view_center {
 }
 
+.animal-img{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 0px;
+}
+.animal-click_view{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  background: #FFF;
+  border: 1px solid #DCDFE6;
+  color: #606266;
+  margin-top: 20px; 
+  margin-left: 0px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.animal-click_view_activity{
+  color: #FFF;
+  background-color: #409EFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  border: 1px solid #409EFF;
+  margin-top: 20px; 
+  margin-left: 0px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 4px;
+}
 </style>
