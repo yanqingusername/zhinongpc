@@ -583,13 +583,13 @@
               placeholder="请输入有效淋浴时长时长(分钟)"></el-input>
           </el-form-item>
 
-          <el-form-item label="设备添加时间*：">
+          <!-- <el-form-item label="设备添加时间*：">
             <el-input
               v-model="dis_current_time"
               style="width: 260px"
               placeholder=""
               :readonly="true"></el-input>
-          </el-form-item>
+          </el-form-item> -->
         </div>
         <div class="device-from-footer">
           <el-button @click="resetDisForm('formDisObj')">取消</el-button>
@@ -635,13 +635,13 @@
             </el-select>
           </el-form-item> -->
 
-          <el-form-item label="设备添加时间*：">
+          <!-- <el-form-item label="设备添加时间*：">
             <el-input
               v-model="animal_current_time"
               style="width: 260px"
               placeholder=""
               :readonly="true"></el-input>
-          </el-form-item>
+          </el-form-item> -->
         </div>
         <div class="device-from-footer">
           <el-button @click="resetAnimalForm('formAnimalObj')">取消</el-button>
@@ -654,16 +654,16 @@
     <el-dialog
       title="新添/修改"
       :visible.sync="showAccessDialog"
-      width="55%"
+      width="45%"
       center
       :close-on-click-modal="false"
       :show-close="false">
       <el-form ref="formAccessObj" :model="formAccessObj" label-width="140px">
-        <div class="device-flex-space">
+        <div class="device-flex-center">
           <el-form-item label="设备编号*：">
             <el-input
               v-model="formAccessObj.access_sn"
-              style="width: 200px"
+              style="width: 220px"
               placeholder="请输入设备编号"></el-input>
           </el-form-item>
 
@@ -671,7 +671,7 @@
             <el-select
               v-model="formAccessObj.access_address"
               placeholder="请选择位置"
-              style="width: 210px">
+              style="width: 220px">
               <el-option
                 v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
@@ -679,30 +679,32 @@
                 :value="item.id+''"></el-option>
             </el-select>
           </el-form-item>
-        </div>
+        <!-- </div> -->
 
-        <div class="device-flex-space">
+        <!-- <div class="device-flex-space"> -->
           <el-form-item label="设备IP地址*：">
             <el-input
               v-model="formAccessObj.access_ip"
-              style="width: 200px"
+              style="width: 220px"
               placeholder="请输入设备IP地址"></el-input>
           </el-form-item>
 
-          <el-form-item label="设备添加时间*：">
+          <!-- <el-form-item label="设备添加时间*：">
             <el-input
               v-model="access_current_time"
               style="width: 210px"
               placeholder=""
               :readonly="true"></el-input>
-          </el-form-item>
-        </div>
+          </el-form-item> -->
+        
 
         <el-form-item label="授权使用人员*：" prop="access_device_people">
           <el-checkbox-group v-model="formAccessObj.access_device_people">
             <el-checkbox v-for="(item,index) in listEmployees" :key="index" :label="item.id+''">{{item.real_name}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
+
+        </div>
 
         <div class="device-from-footer">
           <el-button @click="resetAccessForm('formAccessObj')">取消</el-button>
