@@ -80,3 +80,55 @@ export const getAnimallistinfos = val => requestH5Other('/wisdomLivestockWH/PCan
 
 //获取当月小动物设备数据图方法 
 export const getAnimalChart = val => requestH5Other('/wisdomLivestockWH/PCanimalManagement/getanimalChart.hn', val, 'get');
+
+//获取设备的位置描述  <04-23>
+export const getFarmlayout = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/getFarmlayout.hn', val, 'get');
+
+//获取熏蒸设备的详情列表 
+export const getzonedevicelist = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/getzonedevicelist.hn', val, 'get');
+
+//新增臭氧熏蒸设备信息 
+export const addozonedeviceinfo = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/addozonedeviceinfo.hn', val, 'get');
+
+//删除，设备信息（共用）
+export const deletedeviceinfo = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/deletedeviceinfo.hn', val, 'get');
+
+//根据id获取设备信息（共用） 
+export const getdeviceinfobyid = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/getdeviceinfobyid.hn', val, 'get');
+
+//修改臭氧熏蒸设备信息 
+export const editdeviceinfo = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/editdeviceinfo.hn', val, 'get');
+
+//获取洗消设备列表 
+export const getdeviceinfo = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/getdeviceinfo.hn', val, 'get');
+
+//新增洗消设备信息 
+export const addDecontaminationdeviceinfo = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/addDecontaminationdeviceinfo.hn', val, 'get');
+
+//修改洗消设备 
+export const editDecontaminationdeviceinfo = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/editDecontaminationdeviceinfo.hn', val, 'get');
+
+//获取异物设备位点信息列表 
+export const getForeignMatterManageList = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/getForeignMatterManageList.hn', val, 'get');
+
+//新增异物检测设备信息方法 
+export const addForeignMatter = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/addForeignMatter.hn', val, 'get');
+
+//修改异物设备信息 
+export const editForeignMatterinfo = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/editForeignMatterinfo.hn', val, 'get');
+
+//获取门禁位点信息列表  门禁  PCAccessManagement
+export const getEntranceGuardManageList = val => requestH5Other('/wisdomLivestockWH/PCAccessManagement/getEntranceGuardManageList.hn', val, 'get');
+
+//新增门禁设备
+export const addEntranceGuard = val => requestH5Other('/wisdomLivestockWH/PCAccessManagement/addEntranceGuard.hn', val, 'get');
+
+//根据id获取门禁信息
+export const getAccessdeviceinfobyid = val => requestH5Other('/wisdomLivestockWH/PCAccessManagement/getAccessdeviceinfobyid.hn', val, 'get');
+
+//修改门禁设备
+export const editEntranceGuard = val => requestH5Other('/wisdomLivestockWH/PCAccessManagement/editEntranceGuard.hn', val, 'get');
+
+//删除门禁
+export const deleteEntranceGuardInfo = val => requestH5Other('/wisdomLivestockWH/PCAccessManagement/deleteEntranceGuardInfo.hn', val, 'get');
+

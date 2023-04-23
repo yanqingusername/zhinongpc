@@ -27,7 +27,7 @@
     <div class="device-container-right device-pulic_box_shadow">
       <div v-if="numberType == 1">
         <div class="device-top-view">
-          <div class="device-title">物资臭氧消毒监测工作站管理(1000)</div>
+          <div class="device-title">物资臭氧消毒监测工作站管理({{totalOzone}})</div>
           <el-button
             type="primary"
             size="medium"
@@ -43,15 +43,15 @@
           :header-cell-style="iHeaderCellStyle">
         
           <el-table-column
-            prop="device_sn"
-            width="160"
+            prop="sn"
+            width="120"
             label="设备SN号"
             align="center"
           />
 
           <el-table-column
             prop="address"
-            width="120"
+            width="160"
             label="位置"
             align="center">
           </el-table-column>
@@ -63,18 +63,18 @@
             align="center"
           />
           <el-table-column
-            prop="disinfect_time"
+            prop="duration"
             width="150"
             label="消毒时长(分钟)"
             align="center"
           />
           <el-table-column
-            prop="device_people"
+            prop="controller"
             width="270"
             label="设备管理员"
             align="center"
           />
-          <el-table-column prop="approve_people" width="100" label="审批人" align="center" />
+          <el-table-column prop="reviewer" width="100" label="审批人" align="center" />
 
           <el-table-column label="操作" width="200" align="center">
             <template slot-scope="scope">
@@ -97,7 +97,7 @@
             :total="totalOzone"
             style="padding: 30px 0; text-align: center"
             layout="total, sizes, prev, pager, next"
-            @current-change="getEmployeesLists"
+            @current-change="getzonedevicelist"
             @size-change="handleOzoneSizeChange"
             :page-sizes="[10, 20, 30, 40]"
           />
@@ -106,7 +106,7 @@
 
       <div v-if="numberType == 2">
         <div class="device-top-view">
-          <div class="device-title">淋浴一体机管理(1000)</div>
+          <div class="device-title">淋浴一体机管理({{totalDis}})</div>
           <el-button
             type="primary"
             size="medium"
@@ -122,7 +122,7 @@
           :header-cell-style="iHeaderCellStyle">
         
           <el-table-column
-            prop="device_sn"
+            prop="sn"
             width="260"
             label="设备SN号"
             align="center"
@@ -135,9 +135,16 @@
             align="center">
           </el-table-column>
 
+          <el-table-column prop="gender" width="100" label="性别" align="center">
+            <template slot-scope="scope">
+              <p v-if="scope.row.gender == '0'">男</p>
+              <p v-if="scope.row.gender == '1'">女</p>
+            </template>
+          </el-table-column>
+
           <el-table-column
-            prop="concentration"
-            width="350"
+            prop="duration"
+            width="250"
             label="有效淋浴时长（分钟）"
             align="center"
           />
@@ -163,7 +170,7 @@
             :total="totalDis"
             style="padding: 30px 0; text-align: center"
             layout="total, sizes, prev, pager, next"
-            @current-change="getEmployeesLists"
+            @current-change="getdeviceinfo"
             @size-change="handleDisSizeChange"
             :page-sizes="[10, 20, 30, 40]"
           />
@@ -172,7 +179,7 @@
 
       <div v-if="numberType == 3">
         <div class="device-top-view">
-          <div class="device-title">小动物监控工作站管理(1000)</div>
+          <div class="device-title">小动物监控工作站管理({{totalAnimal}})</div>
           <el-button
             type="primary"
             size="medium"
@@ -188,7 +195,7 @@
           :header-cell-style="iHeaderCellStyle">
         
           <el-table-column
-            prop="device_sn"
+            prop="sn"
             width="260"
             label="设备SN号"
             align="center"
@@ -202,7 +209,7 @@
           </el-table-column>
 
           <el-table-column
-            prop="concentration"
+            prop="create_time"
             width="350"
             label="设备添加时间"
             align="center"
@@ -229,7 +236,7 @@
             :total="totalAnimal"
             style="padding: 30px 0; text-align: center"
             layout="total, sizes, prev, pager, next"
-            @current-change="getEmployeesLists"
+            @current-change="getForeignMatterManageList"
             @size-change="handleAnimalSizeChange"
             :page-sizes="[10, 20, 30, 40]"
           />
@@ -238,7 +245,7 @@
 
       <div v-if="numberType == 4">
         <div class="device-top-view">
-          <div class="device-title">门禁系统管理(1000)</div>
+          <div class="device-title">门禁系统管理({{totalAccess}})</div>
           <el-button
             type="primary"
             size="medium"
@@ -254,8 +261,8 @@
           :header-cell-style="iHeaderCellStyle">
         
           <el-table-column
-            prop="device_sn"
-            width="170"
+            prop="sn"
+            width="150"
             label="设备SN号"
             align="center"
           />
@@ -282,8 +289,8 @@
           />
 
           <el-table-column
-            prop="disinfect_time"
-            width="160"
+            prop="create_time"
+            width="180"
             label="设备添加时间"
             align="center"
           />
@@ -309,7 +316,7 @@
             :total="totalAccess"
             style="padding: 30px 0; text-align: center"
             layout="total, sizes, prev, pager, next"
-            @current-change="getEmployeesLists"
+            @current-change="getEntranceGuardManageList"
             @size-change="handleAccessSizeChange"
             :page-sizes="[10, 20, 30, 40]"
           />
@@ -501,29 +508,29 @@
               placeholder="请输入消毒时长(分钟)"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置*：" prop="ozone_address" style="margin-left:20px;">
+          <el-form-item label="位置*：" style="margin-left:20px;" prop="ozone_address_id">
             <el-select
-              v-model="formOzoneObj.ozone_address"
+              v-model="formOzoneObj.ozone_address_id"
               placeholder="请选择位置"
               style="width: 200px">
               <el-option
-                v-for="(item, index) in listOzonePosition"
+                v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
-                :label="item.role_name"
-                :value="item.id"></el-option>
+                :label="item.location_descr"
+                :value="item.id+''"></el-option>
             </el-select>
           </el-form-item>
         </div>
 
         <el-form-item label="设备管理员*：" prop="ozone_device_people">
-          <el-checkbox-group v-model="ozone_device_people">
-            <el-checkbox v-for="(item,index) in device_people" :key="index" :label="item.id">{{item.name}}</el-checkbox>
+          <el-checkbox-group v-model="formOzoneObj.ozone_device_people">
+            <el-checkbox v-for="(item,index) in listEmployees" :key="index" :label="item.id+''">{{item.real_name}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
 
-        <el-form-item label="审批人*：" v-model="ozone_app_people">
-          <el-radio-group v-model="ozone_app_people">
-            <el-radio v-for="(item,index) in device_people" :key="index" :label="item.id">{{item.name}}</el-radio>
+        <el-form-item label="审批人*：" prop="ozone_app_people">
+          <el-radio-group v-model="formOzoneObj.ozone_app_people" style="display: flex;flex-wrap: wrap;">
+            <el-radio style="height:40px;display: flex;align-items: center;" v-for="(item,index) in listEmployees" :key="index" :label="item.id+''">{{item.real_name}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <div class="device-from-footer">
@@ -557,6 +564,16 @@
               placeholder="请输入设备位置"></el-input>
           </el-form-item>
         <!-- </div> -->
+
+        <el-form-item label="性别*：" prop="dis_gender">
+          <el-select
+            v-model="formDisObj.dis_gender"
+            placeholder="请选择性别"
+            style="width: 200px">
+            <el-option label="男" value="0"></el-option>
+            <el-option label="女" value="1"></el-option>
+          </el-select>
+        </el-form-item>
 
         <!-- <div class="device-flex-space"> -->
           <el-form-item label="有效淋浴时长(分钟)*：">
@@ -597,19 +614,26 @@
               style="width: 260px"
               placeholder="请输入设备SN号"></el-input>
           </el-form-item>
+
+          <el-form-item label="位置：" style="margin-left:0px;">
+            <el-input
+              v-model="formAnimalObj.animal_address"
+              style="width: 260px"
+              placeholder="请输入设备位置"></el-input>
+          </el-form-item>
         
-          <el-form-item label="位置*：" prop="ozone_address" style="margin-left:0px;">
+          <!-- <el-form-item label="位置*：" prop="ozone_address" style="margin-left:0px;">
             <el-select
               v-model="formAnimalObj.animal_address"
               placeholder="请选择位置"
               style="width: 260px">
               <el-option
-                v-for="(item, index) in listOzonePosition"
+                v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
-                :label="item.role_name"
-                :value="item.id"></el-option>
+                :label="item.location_descr"
+                :value="item.id+''"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
 
           <el-form-item label="设备添加时间*：">
             <el-input
@@ -647,12 +671,12 @@
             <el-select
               v-model="formAccessObj.access_address"
               placeholder="请选择位置"
-              style="width: 200px">
+              style="width: 210px">
               <el-option
-                v-for="(item, index) in listOzonePosition"
+                v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
-                :label="item.role_name"
-                :value="item.id"></el-option>
+                :label="item.location_descr"
+                :value="item.id+''"></el-option>
             </el-select>
           </el-form-item>
         </div>
@@ -668,15 +692,15 @@
           <el-form-item label="设备添加时间*：">
             <el-input
               v-model="access_current_time"
-              style="width: 200px"
+              style="width: 210px"
               placeholder=""
               :readonly="true"></el-input>
           </el-form-item>
         </div>
 
-        <el-form-item label="授权使用人员*：" >
-          <el-checkbox-group v-model="access_device_people">
-            <el-checkbox v-for="(item,index) in device_people" :key="index" :label="item.id">{{item.name}}</el-checkbox>
+        <el-form-item label="授权使用人员*：" prop="access_device_people">
+          <el-checkbox-group v-model="formAccessObj.access_device_people">
+            <el-checkbox v-for="(item,index) in listEmployees" :key="index" :label="item.id+''">{{item.real_name}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
 
@@ -726,10 +750,10 @@
               placeholder="请选择位置"
               style="width: 200px">
               <el-option
-                v-for="(item, index) in listOzonePosition"
+                v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
-                :label="item.role_name"
-                :value="item.id"></el-option>
+                :label="item.location_descr"
+                :value="item.id+''"></el-option>
             </el-select>
           </el-form-item>
         </div>
@@ -782,10 +806,10 @@
               placeholder="请选择位置"
               style="width: 200px">
               <el-option
-                v-for="(item, index) in listOzonePosition"
+                v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
-                :label="item.role_name"
-                :value="item.id"></el-option>
+                :label="item.location_descr"
+                :value="item.id+''"></el-option>
             </el-select>
           </el-form-item>
         <!-- </div> -->
@@ -825,8 +849,24 @@
 import moment from "moment";
 import {
   getEmployeesLists,
-  getRoleinfo,
-  deleteEmployee,
+  getFarmlayout,
+  getzonedevicelist,
+  addozonedeviceinfo,
+  deletedeviceinfo,
+  getdeviceinfobyid,
+  editdeviceinfo,
+  getdeviceinfo,
+  addDecontaminationdeviceinfo,
+  editDecontaminationdeviceinfo,
+  getForeignMatterManageList,
+  addForeignMatter,
+  editForeignMatterinfo,
+  getEntranceGuardManageList,
+  addEntranceGuard,
+  getAccessdeviceinfobyid,
+  editEntranceGuard,
+  deleteEntranceGuardInfo,
+
   adduserinfo,
   getuserinfo,
   edituserinfo,
@@ -836,64 +876,20 @@ export default {
   data() {
     return {
       userInfo: JSON.parse(window.localStorage.getItem("userInfo")),
-      search_name: '',
+      listEmployees: [], // 员工列表
+      listAccesslayoutdescr: [], // 位置列表
       currentOzone: 1, //当前页
       limitOzone: 10, //每页显示记录数
       totalOzone: 0, //总记录数
-      listOzone: [
-        {
-          "id": '1',
-          "address": '位置1',
-          "device_sn": '120101010111',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '2',
-          "address": '位置2',
-          "device_sn": '120101010112',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '3',
-          "address": '位置3',
-          "device_sn": '120101010113',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '4',
-          "address": '位置4',
-          "device_sn": '120101010114',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '5',
-          "address": '位置5',
-          "device_sn": '120101010115',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        }
-      ],
-      listOzonePosition: [],
+      listOzone: [],
       showOzoneDialog: false,
       formOzoneObj: {
         ozone_sn: "",
         ozone_concentration: "",
         ozone_time: "",
-        ozone_address: "",
+        ozone_address_id: "",
+        ozone_device_people: [],
+        ozone_app_people: ''
       },
       rulesOzone: {
         ozone_sn: [
@@ -906,11 +902,14 @@ export default {
         ozone_time: [
           { required: true, message: "请输入消毒时长(分钟)", trigger: "blur" },
         ],
-        ozone_address: [{ required: true, message: "请选择位置", trigger: "change" }],
+        ozone_address_id: [{ required: true, message: "请选择位置", trigger: "change" }],
+        ozone_device_people: [
+          { type: 'array', required: true, message: '请至少选择一个设备管理员', trigger: 'change' }
+        ],
+        ozone_app_people: [
+          { required: true, message: '请选择审批人', trigger: 'change' }
+        ],
       },
-      ozone_device_people: ['1', '2'],
-      device_people: [{'id': '1', name: '张三'}, {'id': '2', name: '李四'},{'id': '3', name: '王五'},{'id': '4', name: '赵六'}],
-      ozone_app_people: "3",
       deleteOzoneDialog: false,
       idOzone: "", // 员工id
       isOzoneEdit: 1, // 1-新增  2-编辑
@@ -919,58 +918,13 @@ export default {
       currentDis: 1, //当前页
       limitDis: 10, //每页显示记录数
       totalDis: 0, //总记录数
-      listDis: [
-        {
-          "id": '1',
-          "address": '位置1',
-          "device_sn": '120101010111',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '2',
-          "address": '位置2',
-          "device_sn": '120101010112',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '3',
-          "address": '位置3',
-          "device_sn": '120101010113',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '4',
-          "address": '位置4',
-          "device_sn": '120101010114',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '5',
-          "address": '位置5',
-          "device_sn": '120101010115',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        }
-      ],
+      listDis: [],
       showDisDialog: false,
       formDisObj: {
         dis_sn: "",
         dis_time: "",
         dis_address: "",
+        dis_gender: '' //（0男 1女)
       },
       dis_current_time: new Date().getTime(),
       rulesDis: {
@@ -984,6 +938,7 @@ export default {
         dis_address: [
           { required: true, message: "请输入设备位置", trigger: "blur" },
         ],
+        dis_gender: [{ required: true, message: "请选择性别", trigger: "change" }],
       },
       idDis: "", // 员工id
       isDisEdit: 1, // 1-新增  2-编辑
@@ -992,53 +947,7 @@ export default {
       currentAnimal: 1, //当前页
       limitAnimal: 10, //每页显示记录数
       totalAnimal: 0, //总记录数
-      listAnimal: [
-        {
-          "id": '1',
-          "address": '位置1',
-          "device_sn": '120101010111',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '2',
-          "address": '位置2',
-          "device_sn": '120101010112',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '3',
-          "address": '位置3',
-          "device_sn": '120101010113',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '4',
-          "address": '位置4',
-          "device_sn": '120101010114',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '5',
-          "address": '位置5',
-          "device_sn": '120101010115',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        }
-      ],
+      listAnimal: [],
       showAnimalDialog: false,
       formAnimalObj: {
         animal_sn: "",
@@ -1050,7 +959,11 @@ export default {
           { required: true, message: "请输入设备SN号", trigger: "blur" },
           // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
-        animal_address: [{ required: true, message: "请选择位置", trigger: "change" }],
+        animal_address: [
+          { required: true, message: "请输入位置", trigger: "blur" },
+          // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        // animal_address: [{ required: true, message: "请选择位置", trigger: "change" }],
       },
       idAnimal: "", // 员工id
       isAnimalEdit: 1, // 1-新增  2-编辑
@@ -1059,59 +972,13 @@ export default {
       currentAccess: 1, //当前页
       limitAccess: 10, //每页显示记录数
       totalAccess: 0, //总记录数
-      listAccess: [
-        {
-          "id": '1',
-          "address": '位置1',
-          "device_sn": '120101010111',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '2',
-          "address": '位置2',
-          "device_sn": '120101010112',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '3',
-          "address": '位置3',
-          "device_sn": '120101010113',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '4',
-          "address": '位置4',
-          "device_sn": '120101010114',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '5',
-          "address": '位置5',
-          "device_sn": '120101010115',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        }
-      ],
-      listAccessPosition: [],
+      listAccess: [],
       showAccessDialog: false,
       formAccessObj: {
         access_sn: "",
         access_address: "",
         access_ip: "",
+        access_device_people: [],
       },
       access_current_time: new Date().getTime(),
       rulesAccess: {
@@ -1123,9 +990,10 @@ export default {
           { required: true, message: "请输入设备IP地址", trigger: "blur" },
         ],
         access_address: [{ required: true, message: "请选择位置", trigger: "change" }],
+        access_device_people: [
+          { type: 'array', required: true, message: '请至少选择一个设备管理员', trigger: 'change' }
+        ],
       },
-      access_device_people: ['1', '2'],
-      device_people: [{'id': '1', name: '张三'}, {'id': '2', name: '李四'},{'id': '3', name: '王五'},{'id': '4', name: '赵六'}],
       idAccess: "", // 员工id
       isAccessEdit: 1, // 1-新增  2-编辑
 
@@ -1290,8 +1158,10 @@ export default {
       this.access_current_time = this.dateFormat(this.access_current_time);
       this.liquid_current_time = this.dateFormat(this.liquid_current_time);
       this.car_current_time = this.dateFormat(this.car_current_time);
-      // this.getEmployeesLists();
-      this.getRoleinfo();
+      this.getEmployeesLists();
+      this.getFarmlayout();
+
+      this.getzonedevicelist();
       
   },
   methods: {
@@ -1322,18 +1192,181 @@ export default {
         return false;
       }
     },
-    getEmployeesLists(page = 1) {
-      this.currentOzone = page;
-
+    getEmployeesLists() {
       getEmployeesLists({
+        pig_farm_id: this.userInfo.farm_id,
+        page: 1,
+        limit: 1000,
+        real_name: '',
+      }).then((res) => {
+        if (res.data.success) {
+          this.listEmployees = res.data.info;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    getFarmlayout() {
+      getFarmlayout({
+        pig_farm_id: this.userInfo.farm_id,
+      }).then((res) => {
+        if (res.data.success) {
+          this.listAccesslayoutdescr = res.data.data;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    handleClick(number) {
+      this.numberType = number;
+      if(number == 6){
+
+      } else if(number == 5){
+
+      } else if(number == 4){
+        this.limitAccess = 10;
+        this.currentAccess = 1;
+        this.getEntranceGuardManageList()
+      } else if(number == 3){
+        this.limitAnimal = 10;
+        this.currentAnimal = 1;
+        this.getForeignMatterManageList()
+      } else if (number == 2){
+        this.limitDis = 10;
+        this.currentDis = 1;
+        this.getdeviceinfo()
+      } else {
+        this.limitOzone = 10;
+        this.currentOzone = 1;
+        this.getzonedevicelist()
+      }
+      
+    },
+    /**
+     * 删除
+     */
+    handlerOzoneDelete(id) {
+      if(this.numberType == 1){
+        this.deleteOzoneDialog = true;
+        this.idOzone = id;
+      } else if(this.numberType == 2){
+        this.deleteOzoneDialog = true;
+        this.idDis = id;
+      } else if(this.numberType == 3){
+        this.deleteOzoneDialog = true;
+        this.idAnimal = id;
+      } else if(this.numberType == 4){
+        this.deleteOzoneDialog = true;
+        this.idAccess = id;
+      }
+    },
+    deleteOzoneClick() {
+      if(this.numberType == 1){
+        if (this.idOzone) {
+          this.publicDelete(this.idOzone);
+        }
+      } else if(this.numberType == 2){
+        if (this.idDis) {
+          this.publicDelete(this.idDis);
+        }
+      } else if(this.numberType == 3){
+        if (this.idAnimal) {
+          this.publicDelete(this.idAnimal);
+        }
+      } else if(this.numberType == 4){
+        if (this.idAccess) {
+          deleteEntranceGuardInfo({
+            id: this.idAccess,
+            status: '1'
+          }).then((res) => {
+            if (res.data.success) {
+              Message({
+                type: "success",
+                message: res.data.msg,
+                showClose: true,
+                duration: 3000,
+              });
+
+              // this.limitAccess = 10;
+              // this.currentAccess = 1;
+              // this.resetAccessForm('formAccessObj');
+              this.deleteOzoneDialog = false;
+              this.getEntranceGuardManageList()
+            } else {
+              Message({
+                type: "warning",
+                message: res.data.msg,
+                showClose: true,
+                duration: 3000,
+              });
+            }
+          });
+        }
+      }
+    },
+    publicDelete(id){
+      deletedeviceinfo({
+            id: id,
+            status: '1'
+          }).then((res) => {
+            if (res.data.success) {
+              Message({
+                type: "success",
+                message: res.data.msg,
+                showClose: true,
+                duration: 3000,
+              });
+
+              if(this.numberType == 1){
+                // this.limitOzone = 10;
+                // this.currentOzone = 1;
+                // this.resetOzoneForm('formOzoneObj');
+                this.deleteOzoneDialog = false;
+                this.getzonedevicelist()
+              } else if(this.numberType == 2){
+                // this.limitDis = 10;
+                // this.currentDis = 1;
+                // this.resetDisForm('formDisObj');
+                this.deleteOzoneDialog = false;
+                this.getdeviceinfo()
+              } else if(this.numberType == 3){
+                // this.limitAnimal = 10;
+                // this.currentAnimal = 1;
+                // this.resetAnimalForm('formAnimalObj');
+                this.deleteOzoneDialog = false;
+                this.getForeignMatterManageList()
+              }
+            } else {
+              Message({
+                type: "warning",
+                message: res.data.msg,
+                showClose: true,
+                duration: 3000,
+              });
+            }
+          });
+    },
+    /**
+     * 臭氧熏蒸
+     */
+    getzonedevicelist() {
+      getzonedevicelist({
         pig_farm_id: this.userInfo.farm_id,
         page: this.currentOzone,
         limit: this.limitOzone,
-        real_name: this.search_name,
       }).then((res) => {
         if (res.data.success) {
-          // Message({ type: 'success', message: res.data.msg, showClose: true, duration: 3000 })
-          this.listOzone = res.data.info;
+          this.listOzone = res.data.data;
           this.totalOzone = parseInt(res.data.count);
         } else {
           Message({
@@ -1347,71 +1380,28 @@ export default {
     },
     handleOzoneSizeChange(val) {
       this.limitOzone = val;
-      this.getEmployeesLists();
-    },
-
-    handlerOzoneDelete(id) {
-      this.deleteOzoneDialog = true;
-      this.idOzone = id;
-    },
-    deleteOzoneClick() {
-      // if (this.idOzone) {
-      //   deleteEmployee({
-      //     id: this.idOzone,
-      //   }).then((res) => {
-      //     if (res.data.success) {
-      //       Message({
-      //         type: "success",
-      //         message: res.data.msg,
-      //         showClose: true,
-      //         duration: 3000,
-      //       });
-
-      //       this.getEmployeesLists();
-      //       this.deleteOzoneDialog = false;
-      //     } else {
-      //       Message({
-      //         type: "warning",
-      //         message: res.data.msg,
-      //         showClose: true,
-      //         duration: 3000,
-      //       });
-      //     }
-      //   });
-      // }
+      this.getzonedevicelist();
     },
     handlerOzoneEdit(id) {
       this.isOzoneEdit = 2;
-      this.showOzoneDialog = true;
-      getuserinfo({
+      getdeviceinfobyid({
         id: id,
-      }).then((res) => {
-        if (res.data.success) {
-          let infoList = res.data.data;
-          if (infoList && infoList.length > 0) {
-            let itemInfo = infoList[0];
-            this.formOzoneObj.ozone_sn = itemInfo.real_name;
-            this.formOzoneObj.ozone_concentration = itemInfo.job_number;
-            this.formOzoneObj.ozone_time = itemInfo.phone;
-            this.formOzoneObj.ozone_address = itemInfo.roleId;
-            this.idOzone = itemInfo.id;
-          }
-        } else {
-          Message({
-            type: "warning",
-            message: res.data.msg,
-            showClose: true,
-            duration: 3000,
-          });
-        }
-      });
-    },
-    getRoleinfo() {
-      getRoleinfo({
         pig_farm_id: this.userInfo.farm_id,
       }).then((res) => {
         if (res.data.success) {
-          this.listOzonePosition = res.data.data;
+          this.showOzoneDialog = true;
+          let infoList = res.data.data;
+          if (infoList && infoList.length > 0) {
+            let itemInfo = infoList[0];
+            let controller = itemInfo.controller.split(',')
+            this.formOzoneObj.ozone_sn = itemInfo.sn;
+            this.formOzoneObj.ozone_concentration = itemInfo.concentration;
+            this.formOzoneObj.ozone_time = itemInfo.duration;
+            this.formOzoneObj.ozone_address_id = itemInfo.layout_id;
+            this.formOzoneObj.ozone_device_people = controller;
+            this.formOzoneObj.ozone_app_people = itemInfo.reviewer;
+            this.idOzone = itemInfo.id;
+          }
         } else {
           Message({
             type: "warning",
@@ -1428,17 +1418,35 @@ export default {
       this.formOzoneObj.ozone_sn = "";
       this.formOzoneObj.ozone_concentration = "";
       this.formOzoneObj.ozone_time = "";
-      this.formOzoneObj.ozone_address = "";
+      this.formOzoneObj.ozone_address_id = "";
+      this.formOzoneObj.ozone_device_people = [];
+      this.formOzoneObj.ozone_app_people = "";
       this.idOzone = "";
     },
     onOzoneSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.isOzoneEdit == 2) {
-            let params = this.formOzoneObj;
-            params.id = this.idOzone;
-            // params.pig_farm_id = this.userInfo.farm_id
-            edituserinfo(params).then((res) => {
+            let addressText = '';
+            for(let i = 0; i < this.listAccesslayoutdescr.length; i++){
+              if(this.listAccesslayoutdescr[i].id == this.formOzoneObj.ozone_address_id){
+                addressText = this.listAccesslayoutdescr[i].location_descr;
+                break;
+              }
+            }
+            let ozone_device_people = this.formOzoneObj.ozone_device_people.join(',')
+            let params = {
+              id: this.idOzone,
+              sn: this.formOzoneObj.ozone_sn,
+              address: addressText,
+              layout_id: this.formOzoneObj.ozone_address_id,
+              controller: ozone_device_people,
+              reviewer: this.formOzoneObj.ozone_app_people,
+              duration: this.formOzoneObj.ozone_time,
+              concentration: this.formOzoneObj.ozone_concentration,
+            };
+
+            editdeviceinfo(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -1447,14 +1455,16 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getzonedevicelist();
 
                 this.$refs[formName].resetFields();
                 this.showOzoneDialog = false;
                 this.formOzoneObj.ozone_sn = "";
                 this.formOzoneObj.ozone_concentration = "";
                 this.formOzoneObj.ozone_time = "";
-                this.formOzoneObj.ozone_address = "";
+                this.formOzoneObj.ozone_address_id = "";
+                this.formOzoneObj.ozone_device_people = [];
+                this.formOzoneObj.ozone_app_people = "";
                 this.idOzone = "";
               } else {
                 Message({
@@ -1466,9 +1476,27 @@ export default {
               }
             });
           } else {
-            let params = this.formOzoneObj;
-            params.pig_farm_id = this.userInfo.farm_id;
-            adduserinfo(params).then((res) => {
+            let addressText = '';
+            for(let i = 0; i < this.listAccesslayoutdescr.length; i++){
+              if(this.listAccesslayoutdescr[i].id == this.formOzoneObj.ozone_address_id){
+                addressText = this.listAccesslayoutdescr[i].location_descr;
+                break;
+              }
+            }
+            let ozone_device_people = this.formOzoneObj.ozone_device_people.join(',')
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              type: '2',
+              sn: this.formOzoneObj.ozone_sn,
+              address: addressText,
+              layout_id: this.formOzoneObj.ozone_address_id,
+              controller: ozone_device_people,
+              reviewer: this.formOzoneObj.ozone_app_people,
+              duration: this.formOzoneObj.ozone_time,
+              concentration: this.formOzoneObj.ozone_concentration,
+            };
+
+            addozonedeviceinfo(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -1477,14 +1505,16 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getzonedevicelist();
 
                 this.$refs[formName].resetFields();
                 this.showOzoneDialog = false;
                 this.formOzoneObj.ozone_sn = "";
                 this.formOzoneObj.ozone_concentration = "";
                 this.formOzoneObj.ozone_time = "";
-                this.formOzoneObj.ozone_address = "";
+                this.formOzoneObj.ozone_address_id = "";
+                this.formOzoneObj.ozone_device_people = [];
+                this.formOzoneObj.ozone_app_people = "";
                 this.idOzone = "";
               } else {
                 Message({
@@ -1505,44 +1535,49 @@ export default {
       this.isOzoneEdit = 1;
       this.showOzoneDialog = true;
     },
-    
-    handleClick(number) {
-      this.numberType = number;
-      if(number == 5){
-
-      } else if(number == 5){
-
-      } else if(number == 4){
-        
-      } else if(number == 3){
-        
-      } else if (number == 2){
-        
-      } else {
-        
-      }
-      
-    },
     /**
      * 淋浴一体机
      */
+    getdeviceinfo() {
+      getdeviceinfo({
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.currentDis,
+        limit: this.limitDis,
+      }).then((res) => {
+        if (res.data.success) {
+          this.listDis = res.data.data;
+          this.totalDis = parseInt(res.data.count);
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
     handleDisSizeChange(val) {
       this.limitDis = val;
-      this.getEmployeesLists();
+      this.getdeviceinfo();
     },
     handlerDisEdit(id) {
       this.isDisEdit = 2;
-      this.showDisDialog = true;
-      getuserinfo({
+      this.dis_current_time = this.dateFormat(new Date().getTime());
+      getdeviceinfobyid({
         id: id,
+        pig_farm_id: this.userInfo.farm_id,
       }).then((res) => {
         if (res.data.success) {
+          this.showDisDialog = true;
+
           let infoList = res.data.data;
           if (infoList && infoList.length > 0) {
             let itemInfo = infoList[0];
-            this.formDisObj.dis_sn = itemInfo.real_name;
-            this.formDisObj.dis_time = itemInfo.phone;
-            this.formDisObj.dis_address = itemInfo.roleId;
+            this.formDisObj.dis_sn = itemInfo.sn;
+            this.formDisObj.dis_time = itemInfo.duration;
+            this.formDisObj.dis_address = itemInfo.address;
+            this.formDisObj.dis_gender = itemInfo.gender;
             this.idDis = itemInfo.id;
           }
         } else {
@@ -1561,16 +1596,23 @@ export default {
       this.formDisObj.dis_sn = "";
       this.formDisObj.dis_time = "";
       this.formDisObj.dis_address = "";
+      this.formDisObj.dis_gender = "";
       this.idDis = "";
     },
     onDisSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.isDisEdit == 2) {
-            let params = this.formDisObj;
-            params.id = this.idDis;
-            // params.pig_farm_id = this.userInfo.farm_id
-            edituserinfo(params).then((res) => {
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              id: this.idDis,
+              sn: this.formDisObj.dis_sn,
+              address: this.formDisObj.dis_address,
+              gender: this.formDisObj.dis_gender,
+              duration: this.formDisObj.dis_time,
+            };
+
+            editDecontaminationdeviceinfo(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -1579,13 +1621,14 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getdeviceinfo();
 
                 this.$refs[formName].resetFields();
                 this.showDisDialog = false;
                 this.formDisObj.dis_sn = "";
                 this.formDisObj.dis_time = "";
                 this.formDisObj.dis_address = "";
+                this.formDisObj.dis_gender = "";
                 this.idDis = "";
               } else {
                 Message({
@@ -1597,9 +1640,16 @@ export default {
               }
             });
           } else {
-            let params = this.formDisObj;
-            params.pig_farm_id = this.userInfo.farm_id;
-            adduserinfo(params).then((res) => {
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              type: '1',
+              sn: this.formDisObj.dis_sn,
+              address: this.formDisObj.dis_address,
+              gender: this.formDisObj.dis_gender,
+              duration: this.formDisObj.dis_time,
+            };
+
+            addDecontaminationdeviceinfo(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -1608,13 +1658,14 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getdeviceinfo();
 
                 this.$refs[formName].resetFields();
                 this.showDisDialog = false;
                 this.formDisObj.dis_sn = "";
                 this.formDisObj.dis_time = "";
                 this.formDisObj.dis_address = "";
+                this.formDisObj.dis_gender = "";
                 this.idDis = "";
               } else {
                 Message({
@@ -1633,27 +1684,51 @@ export default {
     },
     addDis() {
       this.isDisEdit = 1;
+      this.dis_current_time = this.dateFormat(new Date().getTime());
       this.showDisDialog = true;
     },
     /**
      * 小动物
      */
+    getForeignMatterManageList() {
+      getForeignMatterManageList({
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.currentAnimal,
+        limit: this.limitAnimal,
+      }).then((res) => {
+        if (res.data.success) {
+          this.listAnimal = res.data.data;
+          this.totalAnimal = parseInt(res.data.count);
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
     handleAnimalSizeChange(val) {
       this.limitAnimal = val;
-      this.getEmployeesLists();
+      this.getForeignMatterManageList();
     },
     handlerAnimalEdit(id) {
       this.isAnimalEdit = 2;
-      this.showAnimalDialog = true;
-      getuserinfo({
+      this.animal_current_time = this.dateFormat(new Date().getTime());
+      // this.showAnimalDialog = true;
+      getdeviceinfobyid({
         id: id,
+        pig_farm_id: this.userInfo.farm_id,
       }).then((res) => {
         if (res.data.success) {
+          this.showAnimalDialog = true;
+
           let infoList = res.data.data;
           if (infoList && infoList.length > 0) {
             let itemInfo = infoList[0];
-            this.formAnimalObj.animal_sn = itemInfo.real_name;
-            this.formAnimalObj.animal_address = itemInfo.roleId;
+            this.formAnimalObj.animal_sn = itemInfo.sn;
+            this.formAnimalObj.animal_address = itemInfo.address;
             this.idAnimal = itemInfo.id;
           }
         } else {
@@ -1677,10 +1752,13 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.isAnimalEdit == 2) {
-            let params = this.formAnimalObj;
-            params.id = this.idAnimal;
-            // params.pig_farm_id = this.userInfo.farm_id
-            edituserinfo(params).then((res) => {
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              id: this.idAnimal,
+              sn: this.formAnimalObj.animal_sn,
+              address: this.formAnimalObj.animal_address,
+            };
+            editForeignMatterinfo(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -1689,7 +1767,7 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getForeignMatterManageList();
 
                 this.$refs[formName].resetFields();
                 this.showAnimalDialog = false;
@@ -1706,9 +1784,14 @@ export default {
               }
             });
           } else {
-            let params = this.formAnimalObj;
-            params.pig_farm_id = this.userInfo.farm_id;
-            adduserinfo(params).then((res) => {
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              type: '3',
+              sn: this.formAnimalObj.animal_sn,
+              address: this.formAnimalObj.animal_address,
+            };
+
+            addForeignMatter(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -1717,7 +1800,7 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getForeignMatterManageList();
 
                 this.$refs[formName].resetFields();
                 this.showAnimalDialog = false;
@@ -1741,28 +1824,53 @@ export default {
     },
     addAnimal() {
       this.isAnimalEdit = 1;
+      this.animal_current_time = this.dateFormat(new Date().getTime());
       this.showAnimalDialog = true;
     },
     /**
      * 门禁系统管理
      */
+    getEntranceGuardManageList() {
+      getEntranceGuardManageList({
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.currentAccess,
+        limit: this.limitAccess,
+      }).then((res) => {
+        if (res.data.success) {
+          this.listAccess = res.data.data;
+          this.totalAccess = parseInt(res.data.count);
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
     handleAccessSizeChange(val) {
       this.limitAccess = val;
-      this.getEmployeesLists();
+      this.getEntranceGuardManageList();
     },
     handlerAccessEdit(id) {
       this.isAccessEdit = 2;
-      this.showAccessDialog = true;
-      getuserinfo({
+      this.access_current_time = this.dateFormat(new Date().getTime());
+      
+      getAccessdeviceinfobyid({
         id: id,
       }).then((res) => {
         if (res.data.success) {
+          this.showAccessDialog = true;
+
           let infoList = res.data.data;
           if (infoList && infoList.length > 0) {
             let itemInfo = infoList[0];
-            this.formAccessObj.access_sn = itemInfo.real_name;
-            this.formAccessObj.access_address = itemInfo.roleId;
-            this.formAccessObj.access_ip = itemInfo.roleId;
+            let person_authority = itemInfo.Person_authority.split(',')
+            this.formAccessObj.access_sn = itemInfo.sn;
+            this.formAccessObj.access_address = itemInfo.location_id+'';
+            this.formAccessObj.access_ip = itemInfo.access_control_ipaddress;
+            this.formAccessObj.access_device_people = person_authority;
             this.idAccess = itemInfo.id;
           }
         } else {
@@ -1781,16 +1889,24 @@ export default {
       this.formAccessObj.access_sn = "";
       this.formAccessObj.access_address = "";
       this.formAccessObj.access_ip = "";
+      this.formAccessObj.access_device_people = [];
       this.idAccess = "";
     },
     onAccessSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.isAccessEdit == 2) {
-            let params = this.formAccessObj;
-            params.id = this.idAccess;
-            // params.pig_farm_id = this.userInfo.farm_id
-            edituserinfo(params).then((res) => {
+            let access_device_people = this.formAccessObj.access_device_people.join(',')
+            let params = {
+              id: this.idAccess,
+              pig_farm_id: this.userInfo.farm_id,
+              sn: this.formAccessObj.access_sn,
+              ip: this.formAccessObj.access_ip,
+              address_id: this.formAccessObj.access_address,
+              Person_authority: access_device_people,
+            };
+
+            editEntranceGuard(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -1799,13 +1915,14 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getEntranceGuardManageList();
 
                 this.$refs[formName].resetFields();
                 this.showAccessDialog = false;
                 this.formAccessObj.access_sn = "";
                 this.formAccessObj.access_address = "";
                 this.formAccessObj.access_ip = "";
+                this.formAccessObj.access_device_people = [];
                 this.idAccess = "";
               } else {
                 Message({
@@ -1817,9 +1934,23 @@ export default {
               }
             });
           } else {
-            let params = this.formAccessObj;
-            params.pig_farm_id = this.userInfo.farm_id;
-            adduserinfo(params).then((res) => {
+            // let addressText = '';
+            // for(let i = 0; i < this.listAccesslayoutdescr.length; i++){
+            //   if(this.listAccesslayoutdescr[i].id == this.formOzoneObj.ozone_address_id){
+            //     addressText = this.listAccesslayoutdescr[i].location_descr;
+            //     break;
+            //   }
+            // }
+            let access_device_people = this.formAccessObj.access_device_people.join(',')
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              sn: this.formAccessObj.access_sn,
+              ip: this.formAccessObj.access_ip,
+              address_id: this.formAccessObj.access_address,
+              Person_authority: access_device_people,
+            };
+
+            addEntranceGuard(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -1828,13 +1959,14 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getEntranceGuardManageList();
 
                 this.$refs[formName].resetFields();
                 this.showAccessDialog = false;
                 this.formAccessObj.access_sn = "";
                 this.formAccessObj.access_address = "";
                 this.formAccessObj.access_ip = "";
+                this.formAccessObj.access_device_people = [];
                 this.idAccess = "";
               } else {
                 Message({
@@ -1853,6 +1985,7 @@ export default {
     },
     addAccess() {
       this.isAccessEdit = 1;
+      this.access_current_time = this.dateFormat(new Date().getTime());
       this.showAccessDialog = true;
     },
     /**

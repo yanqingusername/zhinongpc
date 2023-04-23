@@ -148,7 +148,7 @@
                 v-for="(item, index) in listRole"
                 :key="index"
                 :label="item.role_name"
-                :value="item.id"></el-option>
+                :value="item.id+''"></el-option>
             </el-select>
           </el-form-item>
         </div>
