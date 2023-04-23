@@ -15,13 +15,13 @@
         :class="[numberType == 4 ?'device-click_view_activity':'device-click_view']"
         @click="handleClick(4)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />门禁系统管理</div>
 
-      <div
+      <!-- <div
         :class="[numberType == 5 ?'device-click_view_activity':'device-click_view']"
-        @click="handleClick(5)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />液体消毒监测</div>
+        @click="handleClick(5)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />液体消毒监测</div> -->
 
-      <div
+      <!-- <div
         :class="[numberType == 6 ?'device-click_view_activity':'device-click_view']"
-        @click="handleClick(6)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />车辆消毒监测</div>
+        @click="handleClick(6)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />车辆消毒监测</div> -->
     </div>
 
     <div class="device-container-right device-pulic_box_shadow">
@@ -275,14 +275,14 @@
           </el-table-column>
 
           <el-table-column
-            prop="concentration"
+            prop="ip"
             width="160"
             label="设备IP地址"
             align="center"
           />
           
           <el-table-column
-            prop="device_people"
+            prop="Person_authority"
             width="300"
             label="授权使用人员"
             align="center"
@@ -334,7 +334,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listLiquid" stripe style="width: 1150px" border
+        <el-table :data="listLiquid" stripe style="width: 1150px;" height="420" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -1008,7 +1008,7 @@ export default {
           "device_sn": '120101010111',
           "concentration": '20',
           "disinfect_time": '5',
-          "device_people": '张三,李四',
+          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
           "approve_people": '张三',
         },
         {
@@ -1017,7 +1017,7 @@ export default {
           "device_sn": '120101010112',
           "concentration": '20',
           "disinfect_time": '5',
-          "device_people": '张三,李四',
+          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
           "approve_people": '张三',
         },
         {
@@ -1026,7 +1026,7 @@ export default {
           "device_sn": '120101010113',
           "concentration": '20',
           "disinfect_time": '5',
-          "device_people": '张三,李四',
+          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
           "approve_people": '张三',
         },
         {
@@ -1035,7 +1035,7 @@ export default {
           "device_sn": '120101010114',
           "concentration": '20',
           "disinfect_time": '5',
-          "device_people": '张三,李四',
+          "device_people": '米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
           "approve_people": '张三',
         },
         {
@@ -1044,7 +1044,52 @@ export default {
           "device_sn": '120101010115',
           "concentration": '20',
           "disinfect_time": '5',
-          "device_people": '张三,李四',
+          "device_people": '米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
+          "approve_people": '张三',
+        },
+        {
+          "id": '1',
+          "address": '位置1',
+          "device_sn": '120101010111',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
+          "approve_people": '张三',
+        },
+        {
+          "id": '2',
+          "address": '位置2',
+          "device_sn": '120101010112',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
+          "approve_people": '张三',
+        },
+        {
+          "id": '3',
+          "address": '位置3',
+          "device_sn": '120101010113',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
+          "approve_people": '张三',
+        },
+        {
+          "id": '4',
+          "address": '位置4',
+          "device_sn": '120101010114',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
+          "approve_people": '张三',
+        },
+        {
+          "id": '5',
+          "address": '位置5',
+          "device_sn": '120101010115',
+          "concentration": '20',
+          "disinfect_time": '5',
+          "device_people": '米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
           "approve_people": '张三',
         }
       ],
@@ -2243,10 +2288,11 @@ export default {
   width: 1160px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   flex-direction: column;
   padding: 0px 20px;
   margin-left: 200px;
+  height: 600px;
   /* height: 800px; */
   /* overflow-y: scroll; */
 }

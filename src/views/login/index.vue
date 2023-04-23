@@ -1,30 +1,33 @@
 <template>
-	<div class="login-wrapper">
-		<div class="login_img_view">
-			<img class="login_img" src="http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/pig/picture/login-img.png" />
+	<div class="login-container">
+		<div class="login-wrapper">
+			<div class="login_img_view">
+				<img class="login_img" src="http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/pig/picture/login-img.png" />
+			</div>
+			<div class="modal">
+				<el-form :model="user" status-icon :rules="rules" ref="userForm">
+					<div class="title">智慧畜牧PC系统</div>
+					<el-form-item prop="username">
+						<el-input type="text" prefix-icon="el-icon-user" placeholder="请输入用户名" v-model="user.username" />
+					</el-form-item>
+					<el-form-item prop="password">
+						<el-input type="password" prefix-icon="el-icon-view" placeholder="请输入密码" v-model="user.password" />
+					</el-form-item>
+					<el-form-item>
+						<el-button type="primary" class="btn-login" @click="login">登录</el-button>
+					</el-form-item>
+					<!-- <div class="toast">
+						<span>管理员账号：admin </span>
+						<span>密码：654321</span>
+					</div>
+					<div class="toast">
+						<span>普通人员账号：people</span>
+						<span>密码：123456</span>
+					</div> -->
+				</el-form>
+			</div>
 		</div>
-		<div class="modal">
-			<el-form :model="user" status-icon :rules="rules" ref="userForm">
-				<div class="title">智慧畜牧PC系统</div>
-				<el-form-item prop="username">
-					<el-input type="text" prefix-icon="el-icon-user" placeholder="请输入用户名" v-model="user.username" />
-				</el-form-item>
-				<el-form-item prop="password">
-					<el-input type="password" prefix-icon="el-icon-view" placeholder="请输入密码" v-model="user.password" />
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" class="btn-login" @click="login">登录</el-button>
-				</el-form-item>
-				<!-- <div class="toast">
-					<span>管理员账号：admin </span>
-					<span>密码：654321</span>
-				</div>
-				<div class="toast">
-					<span>普通人员账号：people</span>
-					<span>密码：123456</span>
-				</div> -->
-			</el-form>
-		</div>
+		<div class="login-title">卡尤迪智农科技有限公司 版权所有©2023</div>
 	</div>
 </template>
 <script>
@@ -38,10 +41,10 @@ export default {
 	data() {
 		return {
 			user: {
-				username: "shunxinC",
-				password: "865528"
-				// username: "pcyizhuang",
-				// password: "888888"
+				// username: "shunxinC",
+				// password: "865528"
+				username: "pcyizhuang",
+				password: "888888"
 			},
 			rules: {
 				username: [
@@ -142,6 +145,21 @@ export default {
 }
 </script>
 <style scoped>
+.login-container{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: #13153e;
+	width: 100%;
+	height: 100%;
+}
+
+.login-title{
+	font-size: 18px;
+	color: #FFF;
+	margin-top: 50px;
+}
 .login-wrapper {
 	display: flex;
 	flex-direction: row;
@@ -149,7 +167,7 @@ export default {
 	justify-content: space-evenly;
 	background-color: #13153e;
 	width: 100%;
-	height: 100%;
+	/* height: 100%; */
 }
 
 .login_img_view{
