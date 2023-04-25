@@ -406,7 +406,7 @@ export default {
           show: true
         },
         toolbox: {
-          show: true,
+          show: false,
           orient: 'vertical',
           left: 'right',
           top: 'center',

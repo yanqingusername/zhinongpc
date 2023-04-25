@@ -70,7 +70,8 @@
           type="primary"
           size="medium"
           @click="exportData()"
-          style="margin-left: 20px">导出</el-button>
+          style="margin-left: 20px"
+          icon="el-icon-folder">导出</el-button>
       </el-form>
 
       <el-table :data="listIwadom" stripe style="width: 100%" border
@@ -326,7 +327,7 @@ export default {
           show: true
         },
         toolbox: {
-          show: true,
+          show: false,
           orient: 'vertical',
           left: 'right',
           top: 'center',

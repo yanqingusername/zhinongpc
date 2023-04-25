@@ -88,7 +88,7 @@ export default {
 							// window.localStorage.setItem("userInfo", JSON.stringify(item))
 							// this.$router.replace({ path: "/" })
 
-							this.getMenuMethod(res.data.role_name, res.data.farm_id, res.data.roleId);
+							this.getMenuMethod(res.data.role_name, res.data.farm_id, res.data.roleId,res.data.userId);
 						} else {
 							Message({ type: 'warning', message: "账号密码错误，请重试!", showClose: true, duration: 3000 })
 						}
@@ -97,7 +97,7 @@ export default {
 			    } else return false
 			})
 		},
-		getMenuMethod(role_name, farm_id, roleId){
+		getMenuMethod(role_name, farm_id, roleId, userId){
 			getMenu({
 				roleId: roleId
 			}).then((res) => {
@@ -109,6 +109,7 @@ export default {
 						role_name: role_name,
 						farm_id: farm_id,
 					 	roleId: roleId,
+						userId: userId,
 						routes: res.data.result
 		// 				farm_id:"FARM006",
 		// 				roleId:"85",

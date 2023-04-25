@@ -81,7 +81,7 @@ export const getAnimallistinfos = val => requestH5Other('/wisdomLivestockWH/PCan
 //获取当月小动物设备数据图方法 
 export const getAnimalChart = val => requestH5Other('/wisdomLivestockWH/PCanimalManagement/getanimalChart.hn', val, 'get');
 
-//获取设备的位置描述  <04-23>
+//获取设备的位置描述
 export const getFarmlayout = val => requestH5Other('/wisdomLivestockWH/PCequipmentManagement/getFarmlayout.hn', val, 'get');
 
 //获取熏蒸设备的详情列表 
@@ -131,4 +131,50 @@ export const editEntranceGuard = val => requestH5Other('/wisdomLivestockWH/PCAcc
 
 //删除门禁
 export const deleteEntranceGuardInfo = val => requestH5Other('/wisdomLivestockWH/PCAccessManagement/deleteEntranceGuardInfo.hn', val, 'get');
+
+//获取猪舍名称摄像头和耳环数量 栋舍布局
+export const getdisplaysum = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getdisplaysum.hn', val, 'get');
+
+//猪只个体健康历史记录
+export const getPigHistorylist = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getPigHistorylist.hn', val, 'get');
+
+//获取场区
+export const getPigSitearea = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getPigSitearea.hn', val, 'get');
+
+//根据场区ID获取栋舍
+export const getAllPiggery = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getAllPiggery.hn', val, 'get');
+
+//根据栋舍获取栏位
+export const getStyByPiggery = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getStyByPiggery.hn', val, 'get');
+
+//导出猪只个体健康历史记录
+export const ExportPigHistoryList = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/ExportPigHistoryList.hn', val, 'get');
+
+//根据主键获取耳环的温度活跃度图
+export const getShowLabelSumfilebyid = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/showLabelSumfilebyid.hn', val, 'get');
+
+//获取耳环温度和活跃度数据<4-25>
+export const getLabelTemActInfo = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getLabelTemActInfo.hn', val, 'get');
+
+//猪只个体档案 获取管理列表
+export const getpiglist = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getpiglist.hn', val, 'get');
+
+//猪只个体档案 新增信息
+export const addPiginfo = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/addPiginfo.hn', val, 'get');
+
+//猪只个体档案 获取品种列表
+export const getBreedlist = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getBreedlist.hn', val, 'get');
+
+//猪只个体档案 根据id获取猪只信息
+export const getPidinfobyid = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getPidinfobyid.hn', val, 'get');
+
+//猪只个体档案 修改猪只信息
+export const editPiginfo = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/editPiginfo.hn', val, 'get');
+
+//猪只个体档案 删除猪只档案信息
+export const deletePigfile = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/deletePigfile.hn', val, 'get');
+
+
+
+
 

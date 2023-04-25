@@ -483,7 +483,7 @@
       center
       :close-on-click-modal="false"
       :show-close="false">
-      <el-form ref="formOzoneObj" :model="formOzoneObj" label-width="140px">
+      <el-form ref="formOzoneObj" :rules="rulesOzone" :model="formOzoneObj" label-width="140px">
         <div class="device-flex-space">
           <el-form-item label="设备SN号*：">
             <el-input
@@ -548,7 +548,7 @@
       center
       :close-on-click-modal="false"
       :show-close="false">
-      <el-form ref="formDisObj" :model="formDisObj" label-width="160px">
+      <el-form ref="formDisObj" :rules="rulesDis" :model="formDisObj" label-width="160px">
         <div class="device-flex-center">
           <el-form-item label="设备SN号*：">
             <el-input
@@ -606,7 +606,7 @@
       center
       :close-on-click-modal="false"
       :show-close="false">
-      <el-form ref="formAnimalObj" :model="formAnimalObj" label-width="160px">
+      <el-form ref="formAnimalObj" :rules="rulesAnimal" :model="formAnimalObj" label-width="160px">
         <div class="device-flex-center">
           <el-form-item label="设备SN号*：">
             <el-input
@@ -658,7 +658,7 @@
       center
       :close-on-click-modal="false"
       :show-close="false">
-      <el-form ref="formAccessObj" :model="formAccessObj" label-width="140px">
+      <el-form ref="formAccessObj" :rules="rulesAccess" :model="formAccessObj" label-width="140px">
         <div class="device-flex-center">
           <el-form-item label="设备编号*：">
             <el-input
