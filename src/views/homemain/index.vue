@@ -104,7 +104,7 @@
             layout="total, sizes, prev, pager, next"
             @current-change="getFeverLabelInfo"
             @size-change="handleSizeChangeFever"
-            :page-sizes="[10, 20, 30, 40]"
+            :page-sizes="[5,10, 20, 30, 40]"
           />
         </div>
       </div>
@@ -173,7 +173,7 @@
             layout="total, sizes, prev, pager, next"
             @current-change="getAlarmList"
             @size-change="handleSizeChangeAlarm"
-            :page-sizes="[10, 20, 30, 40]"
+            :page-sizes="[5,10, 20, 30, 40]"
           />
         </div>
       </div>
@@ -237,7 +237,7 @@
             layout="total, sizes, prev, pager, next"
             @current-change="getGoodsRecord"
             @size-change="handleSizeChangeGoods"
-            :page-sizes="[10, 20, 30, 40]"
+            :page-sizes="[5,10, 20, 30, 40]"
           />
         </div>
       </div>
@@ -299,7 +299,7 @@
             layout="total, sizes, prev, pager, next"
             @current-change="getAnimalRecord"
             @size-change="handleSizeChangeAnimal"
-            :page-sizes="[10, 20, 30, 40]"
+            :page-sizes="[5,10, 20, 30, 40]"
           />
         </div>
       </div>

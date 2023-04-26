@@ -40,7 +40,8 @@
           align="center">
           <template slot-scope="scope">
             <div class="people-img">
-              <el-avatar :src="scope.row.head_url"></el-avatar>
+              <!-- <el-avatar shape="square" :size="50" fit="scale-down" :src="scope.row.head_url"></el-avatar> -->
+              <img :src="scope.row.head_url" style="width:30px;height:30px;border-radius: 100%;"></img>
             </div>
           </template>
         </el-table-column>
@@ -180,7 +181,7 @@
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload">
-            <img v-if="formObj.fileUrl" :src="formObj.fileUrl" class="avatar" />
+            <img v-if="formObj.fileUrl" :src="formObj.fileUrl" class="avatar" fit="cover"/>
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
