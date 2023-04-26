@@ -2,7 +2,7 @@
 	<div class="login-container">
 		<div class="login-wrapper">
 			<div class="login_img_view">
-				<img class="login_img" src="http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/pig/picture/login-img.png" />
+				<img class="login_img" src="https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/pig/picture/login-img.png" />
 			</div>
 			<div class="modal">
 				<el-form :model="user" status-icon :rules="rules" ref="userForm">
@@ -41,10 +41,12 @@ export default {
 	data() {
 		return {
 			user: {
+				username: "",
+				password: ""
 				// username: "shunxinC",
 				// password: "865528"
-				username: "pcyizhuang",
-				password: "888888"
+				// username: "pcyizhuang",
+				// password: "888888"
 			},
 			rules: {
 				username: [
@@ -105,7 +107,7 @@ export default {
 					window.localStorage.removeItem("userInfo")
 					Message({ type: 'success', message: "登录成功", showClose: true, duration: 3000 })
 					let item = {
-						avatar: "http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/pig/picture/login_logo.png",
+						avatar: "https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/pig/picture/login_logo.png",
 						role_name: role_name,
 						farm_id: farm_id,
 					 	roleId: roleId,

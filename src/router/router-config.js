@@ -10,7 +10,8 @@ router.beforeEach((to, from, next) => {
     NProgress.start()
 
     // 获取路由 meta 中的title，并设置给页面标题
-    document.title = "动态路由(" + to.meta.title + ")"
+    // document.title = "智慧畜牧(" + to.meta.title + ")"
+    document.title = "智慧畜牧"
     
     // 判断路由指向是否在需要过滤的路由地址数组里
     // 如果在，则直接跳进页面，无需判断
