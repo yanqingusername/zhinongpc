@@ -17,7 +17,7 @@ module.exports = {
     open: true,
       // proxy: {
       //   '/storemanage': {
-      //       target: 'http://syrdev.coyotebio-lab.com:8080',
+      //       target: 'https://monitor.coyotebio-lab.com:8443',
       //       changeOrigin: true,
       //       pathRewrite:{
       //           '^/storemanage': '/storemanage'
@@ -33,16 +33,4 @@ module.exports = {
       }
     }
   }
-
-  // devServer: {
-  //   proxy: {
-  //       '/storemanage': {
-  //           target: 'http://syrdev.coyotebio-lab.com:8080',
-  //           changeOrigin: true,
-  //           pathRewrite:{
-  //               '^/storemanage': '/storemanage'
-  //           }
-  //       },
-  //   }
-  // }
 }

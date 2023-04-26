@@ -389,7 +389,7 @@ export default {
       }
 
       window.open(
-        `http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/PCiwadom/ExportIwadomLists.hn?${stringify(params)}`
+        `https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/PCiwadom/ExportIwadomLists.hn?${stringify(params)}`
       );
     },
   },

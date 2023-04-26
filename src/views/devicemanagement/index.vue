@@ -485,14 +485,14 @@
       :show-close="false">
       <el-form ref="formOzoneObj" :rules="rulesOzone" :model="formOzoneObj" label-width="140px">
         <div class="device-flex-space">
-          <el-form-item label="设备SN号*：">
+          <el-form-item label="设备SN号*：" prop="ozone_sn">
             <el-input
               v-model="formOzoneObj.ozone_sn"
               style="width: 200px"
               placeholder="请输入设备SN号"></el-input>
           </el-form-item>
 
-          <el-form-item label="有效浓度(mg/m³)：" style="margin-left:20px;">
+          <el-form-item label="有效浓度(mg/m³)：" style="margin-left:20px;" prop="ozone_concentration">
             <el-input
               v-model="formOzoneObj.ozone_concentration"
               style="width: 200px"
@@ -501,7 +501,7 @@
         </div>
 
         <div class="device-flex-space">
-          <el-form-item label="消毒时长(分钟)*：">
+          <el-form-item label="消毒时长(分钟)*：" prop="ozone_time">
             <el-input
               v-model="formOzoneObj.ozone_time"
               style="width: 200px"
@@ -550,14 +550,14 @@
       :show-close="false">
       <el-form ref="formDisObj" :rules="rulesDis" :model="formDisObj" label-width="160px">
         <div class="device-flex-center">
-          <el-form-item label="设备SN号*：">
+          <el-form-item label="设备SN号*：" prop="dis_sn">
             <el-input
               v-model="formDisObj.dis_sn"
               style="width: 260px"
               placeholder="请输入设备SN号"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置：" style="margin-left:0px;">
+          <el-form-item label="位置：" style="margin-left:0px;" prop="dis_address">
             <el-input
               v-model="formDisObj.dis_address"
               style="width: 260px"
@@ -576,7 +576,7 @@
         </el-form-item>
 
         <!-- <div class="device-flex-space"> -->
-          <el-form-item label="有效淋浴时长(分钟)*：">
+          <el-form-item label="有效淋浴时长(分钟)*：" prop="dis_time">
             <el-input
               v-model="formDisObj.dis_time"
               style="width: 260px"
@@ -608,14 +608,14 @@
       :show-close="false">
       <el-form ref="formAnimalObj" :rules="rulesAnimal" :model="formAnimalObj" label-width="160px">
         <div class="device-flex-center">
-          <el-form-item label="设备SN号*：">
+          <el-form-item label="设备SN号*：" prop="animal_sn">
             <el-input
               v-model="formAnimalObj.animal_sn"
               style="width: 260px"
               placeholder="请输入设备SN号"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置：" style="margin-left:0px;">
+          <el-form-item label="位置：" style="margin-left:0px;" prop="animal_address">
             <el-input
               v-model="formAnimalObj.animal_address"
               style="width: 260px"
@@ -660,14 +660,14 @@
       :show-close="false">
       <el-form ref="formAccessObj" :rules="rulesAccess" :model="formAccessObj" label-width="140px">
         <div class="device-flex-center">
-          <el-form-item label="设备编号*：">
+          <el-form-item label="设备编号*：" prop="access_sn">
             <el-input
               v-model="formAccessObj.access_sn"
               style="width: 220px"
               placeholder="请输入设备编号"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置*：" style="margin-left:0px;">
+          <el-form-item label="位置*：" style="margin-left:0px;" prop="access_address">
             <el-select
               v-model="formAccessObj.access_address"
               placeholder="请选择位置"
@@ -682,7 +682,7 @@
         <!-- </div> -->
 
         <!-- <div class="device-flex-space"> -->
-          <el-form-item label="设备IP地址*：">
+          <el-form-item label="设备IP地址*：" prop="access_ip">
             <el-input
               v-model="formAccessObj.access_ip"
               style="width: 220px"

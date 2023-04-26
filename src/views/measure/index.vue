@@ -599,8 +599,8 @@
         <div class="measure-view_2">
           <div class="measure-view_2_1">
             <el-form :inline="true" class="measure-demo-form-inline">
-              <el-form-item label="栋舍" prop="door">
-                <el-input v-model="door" placeholder="请输入栋舍" clearable />
+              <el-form-item label="栋舍" prop="door_name">
+                <el-input v-model="door_name" placeholder="请输入栋舍" clearable />
               </el-form-item>
 
               <el-button
@@ -608,47 +608,63 @@
                 type="primary"
                 size="medium"
                 icon="el-icon-search"
-                @click="getList()">查询</el-button>
+                @click="getDoorlist()">查询</el-button>
+
+                <el-button
+                  type="primary"
+                  size="medium"
+                  @click="addDoor()"
+                  style="margin-left: 20px"
+                  icon="el-icon-plus">新增</el-button>
               
             </el-form>
-            <el-table :data="list" stripe style="width: 1140px;" border>
+            <el-table :data="listDoor" stripe style="width:100%" border
+              :row-style="iRowStyle1"
+              :cell-style="iCellStyle1"
+              :header-row-style="iHeaderRowStyle1"
+              :header-cell-style="iHeaderCellStyle1"
+              height="435" >
               <el-table-column
                 prop="Sitearea"
-                width="180"
+                width="160"
                 label="场区"
                 align="center"
               />
               <el-table-column
                 prop="door"
-                width="180"
+                width="160"
                 label="栋舍"
                 align="center"
               />
               <el-table-column
                 prop="dorm"
-                width="180"
+                width="300"
                 label="栏位"
                 align="center"
               />
               <el-table-column
-                prop="farm_name"
-                width="200"
+                prop="real_name"
+                width="110"
                 label="饲养员"
                 align="center"
               />
               <el-table-column
-                prop="farm_name"
-                width="200"
+                prop="HostName"
+                width="160"
                 label="耳环工作站"
                 align="center"
               />
 
-              <el-table-column label="操作" width="200" align="center">
+              <el-table-column label="操作" width="260" align="center">
                 <template slot-scope="scope">
                   <el-button
                     type="primary"
                     size="mini"
-                    @click="handlerEdit(scope.row.id)">编辑</el-button>
+                    @click="handlerDoorEdit(scope.row.Siteareaid,scope.row.Sitearea)">新增栋舍</el-button>
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    @click="handlerEdit(scope.row.id,scope.row.Siteareaid,scope.row.Hostid,scope.row.administrators)">编辑</el-button>
                   <el-button
                     type="danger"
                     size="mini"
@@ -658,15 +674,15 @@
             </el-table>
 
             <!-- 分页 -->
-            <div class="block" style="margin-top: 15px">
+            <div class="block" style="margin-top: 0px">
               <el-pagination
-                :current-page="current"
-                :page-size="limit"
-                :total="total"
+                :current-page="currentDoor"
+                :page-size="limitDoor"
+                :total="totalDoor"
                 style="padding: 30px 0; text-align: center"
                 layout="total, sizes, prev, pager, next"
-                @current-change="getList"
-                @size-change="handleSizeChange"
+                @current-change="getDoorlist"
+                @size-change="handleDoorSizeChange"
                 :page-sizes="[10, 20, 30, 40]"
               />
             </div>
@@ -677,17 +693,30 @@
       <div v-if="numberType == 5">
         <div class="measure-view_2">
           <div class="measure-view_2_1">
-            <el-form :inline="true" class="measure-demo-form-inline">
-              <el-button
+            <el-form :inline="true" class="measure-demo-form-inline2">
+              <!-- <el-button
                 style="margin-left:0px;"
                 type="primary"
                 size="medium"
                 icon="el-icon-plus"
-                @click="add()">增加</el-button>
-              <el-button type="primary" size="medium" @click="importData()" style="margin-left:20px;" icon="el-icon-document-add">导入Excel</el-button>
+                @click="add()">增加</el-button> -->
+                <el-upload
+                  class="upload-demo"
+                  ref="upload"
+                  :action="'https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/pig/Newcommon/uploadLabelInfo.hn?pig_farm_id='+userInfo.farm_id+'&userid='+userInfo.userId"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload">
+                  <el-button slot="trigger" type="primary" size="medium" style="margin-left:0px;" icon="el-icon-document-add">导入Excel</el-button>
+                </el-upload>
             </el-form>
-            <div style="height: 30px;"></div>
-            <el-table :data="list" stripe style="width: 1160px;" border>
+            <div style="height: 20px;"></div>
+            <el-table :data="listLairaging" stripe style="width: 100%;" border
+              :row-style="iRowStyle"
+              :cell-style="iCellStyle"
+              :header-row-style="iHeaderRowStyle"
+              :header-cell-style="iHeaderCellStyle"
+              height="435" >
               <el-table-column
                 prop="source_label"
                 width="120"
@@ -719,43 +748,45 @@
                 align="center"
               />
               <el-table-column
-                prop="status"
+                prop="breed"
                 width="120"
                 label="品种"
                 align="center"
               >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.status == '1'">大白</p>
-                  <p v-if="scope.row.status == '4'">小白</p>
-                  <p v-if="scope.row.status == '2'">杜洛克</p>
-                  <p v-if="scope.row.status == '3'">长白山</p>
+              </el-table-column>
+
+              <el-table-column
+                prop="label_type"
+                width="80"
+                label="性别"
+                align="center"
+              >
+              <template slot-scope="scope">
+                  <p v-if="scope.row.label_type == 0">育肥猪</p>
+                  <p v-if="scope.row.label_type == 1">母猪</p>
+                  <p v-if="scope.row.label_type == 2">仔猪</p>
+                  <p v-if="scope.row.label_type == 3">公猪</p>
                 </template>
               </el-table-column>
 
               <el-table-column
-                prop="door"
-                width="80"
-                label="性别"
-                align="center"
-              />
-              <el-table-column
-                prop="check_in_time"
-                width="180"
+                prop="create_time"
+                width="170"
                 label="入栏时间"
                 align="center"
               />
             </el-table>
 
              <!-- 分页 -->
-            <div class="block" style="margin-top: 15px">
+            <div class="block" style="margin-top: 0px">
               <el-pagination
-                :current-page="current"
-                :page-size="limit"
-                :total="total"
+                :current-page="currentLairaging"
+                :page-size="limitLairaging"
+                :total="totalLairaging"
                 style="padding: 30px 0; text-align: center"
                 layout="total, sizes, prev, pager, next"
-                @current-change="getList"
-                @size-change="handleSizeChange"
+                @current-change="getLairagingList"
+                @size-change="handleLairagingSizeChange"
                 :page-sizes="[10, 20, 30, 40]"
               />
             </div>
@@ -766,66 +797,70 @@
       <div v-if="numberType == 6">
         <div class="measure-view_2">
             <div class="measure-view_2_1">
-                <el-form :inline="true" class="measure-demo-form-inline">
+                <el-form :inline="true" class="measure-demo-form-inline2">
                     <el-form-item label="时间范围">
                         <el-date-picker
-                        v-model="timelist"
-                        type="datetimerange"
-                        @change="consoledata()"
+                        v-model="timeJumplist"
+                        type="daterange"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        >
+                        style="width: 260px">
                         </el-date-picker>
                     </el-form-item>
 
-                <el-form-item label="耳号" prop="source_label">
+                <el-form-item label="耳号" prop="jump_source_label">
                     <el-input
-                    v-model="source_label"
+                    v-model="jump_source_label"
                     placeholder="请输入耳号"
                     clearable
                     />
                 </el-form-item>
 
                 <el-button
-                    style="margin-left:20px;"
+                    style="margin-left:20px;height:40px;"
                     type="primary"
                     size="medium"
                     icon="el-icon-search"
-                    @click="getDetailsList()">查询</el-button>
+                    @click="getJumpList()">查询</el-button>
 
-                <el-button
+                <!-- <el-button
                     style="margin-left:20px;"
                     type="primary"
                     size="medium"
                     icon="el-icon-plus"
-                    @click="add()">增加</el-button>
-                <el-button type="primary" size="medium" @click="importData()" style="margin-left:20px;" icon="el-icon-document-add">导入Excel</el-button>
+                    @click="add()">增加</el-button> -->
+                <el-upload
+                  class="upload-demo"
+                  ref="upload1"
+                  :action="'https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/PCpigManagement/uploadjumpInfo.hn?pig_farm_id='+userInfo.farm_id+'&userid='+userInfo.userId"
+                  :show-file-list="false"
+                  :on-success="handleJumpSuccess"
+                  :before-upload="beforeJumpUpload">
+                  <el-button slot="trigger" type="primary" size="medium" style="margin-left:20px;height:40px;" icon="el-icon-document-add">导入Excel</el-button>
+                </el-upload>
+
                 </el-form>
-                <el-table :data="list" stripe style="width: 1100px;" border>
-                    <el-table-column
-                    prop="check_in_time"
-                    width="200"
-                    label="日期"
-                    align="center"
-                />
+                <el-table :data="listJump" stripe style="width: 100%;" border
+                  height="430" >
+                    
                 <el-table-column
                     prop="source_label"
-                    width="120"
+                    width="140"
                     label="耳号"
                     align="center"
                 />
                 <el-table-column
                     prop="label_id"
-                    width="120"
+                    width="150"
                     label="电子耳标号"
                     align="center"
                 />
                 
                 <el-table-column
-                    prop="door"
+                    prop="Sitearea"
                     width="260"
-                    label="转出栋舍"
+                    label="转入场区"
                     align="center"
                 />
                 <el-table-column
@@ -841,19 +876,24 @@
                     label="转入栏位"
                     align="center"
                 />
-                
+                <el-table-column
+                    prop="create_time"
+                    width="200"
+                    label="日期"
+                    align="center"
+                />
                 </el-table>
 
                 <!-- 分页 -->
-                <div class="block" style="margin-top: 15px;">
+                <div class="block" style="margin-top: 0px;">
                 <el-pagination
-                    :current-page="current"
-                    :page-size="limit"
-                    :total="total"
+                    :current-page="currentJump"
+                    :page-size="limitJump"
+                    :total="totalJump"
                     style="padding: 30px 0; text-align: center"
                     layout="total, sizes, prev, pager, next"
-                    @current-change="getList"
-                    @size-change="handleSizeChange"
+                    @current-change="getJumpList"
+                    @size-change="handleJumpSizeChange"
                     :page-sizes="[10, 20, 30, 40]"
                 />
                 </div>
@@ -872,14 +912,14 @@
       :show-close="false">
       <el-form ref="formDisObj" :rules="rulesDis" :model="formDisObj" label-width="160px">
         <div class="measure-flex-center">
-          <el-form-item label="耳号*：">
+          <el-form-item label="耳号*：" prop="dis_sn">
             <el-input
               v-model="formDisObj.dis_sn"
               style="width: 260px"
               placeholder="请输入耳号"></el-input>
           </el-form-item>
 
-          <el-form-item label="电子耳标：" style="margin-left:0px;">
+          <el-form-item label="电子耳标：" style="margin-left:0px;" prop="dis_address">
             <el-input
               v-model="formDisObj.dis_address"
               style="width: 260px"
@@ -932,133 +972,161 @@
 
     <!-- 删除 -->
     <el-dialog :visible.sync="deleteOzoneDialog" width="30%" center>
-      <span>确定要删除该记录吗？</span>
+      <span>确定要删除该数据吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="deleteOzoneDialog = false">取 消</el-button>
         <el-button @click="deleteOzoneClick()">确 定</el-button>
       </span>
     </el-dialog>
 
-    <!-- <el-dialog :visible.sync="centerDialogVisible" width="30%" center>
-          <div class="measure-aa-container">
-            <el-form :inline="true" :model="Obj" class="measure-demo-form-inline" ref="Obj">
-              <el-form-item label="日期">
-                <el-date-picker
-                  v-model="value2"
-                  value-format="timestamp"
-                  type="date"
-                  placeholder="请选择日期"
-                >
-                </el-date-picker>
-              </el-form-item>
-              <el-button type="primary" size="medium" @click="handlerTransfer()">转舍</el-button>
-            </el-form>
-            <div style="height: 30px;"></div>
-            <el-table :data="list" stripe style="width: 760px;" border>
-              <el-table-column
-                prop="source_label"
-                width="120"
-                label="耳号"
-                align="center"
-              />
-              <el-table-column
-                prop="label_id"
-                width="120"
-                label="电子耳标"
-                align="center"
-              />
-              <el-table-column
-                prop="Sitearea"
-                width="180"
-                label="转入场区"
-                align="center"
-              />
-              <el-table-column
-                prop="door"
-                width="180"
-                label="转入栋舍"
-                align="center"
-              />
-              <el-table-column
-                prop="dorm"
-                width="180"
-                label="转入栏位"
-                align="center"
-              />
-            </el-table>
-          </div>
-        </el-dialog> -->
-
-    <!--新添/修改弹框 -->
-    <!-- <el-dialog
-      title="新添/修改"
-      :visible.sync="showOzoneDialog"
-      width="55%"
+    <!--栋舍信息管理 新添弹框 -->
+    <el-dialog
+      title="新添"
+      :visible.sync="showDoorDialog"
+      width="40%"
       center
       :close-on-click-modal="false"
       :show-close="false">
-      <el-form ref="formOzoneObj" :model="formOzoneObj" label-width="140px">
-        <div class="measure-flex-space">
-          <el-form-item label="设备SN号*：">
+      <el-form ref="formDoorObj" :rules="rulesDoor" :model="formDoorObj" label-width="160px">
+        <div class="measure-flex-center">
+          <el-form-item label="场区名称*：" prop="door_sitearea">
             <el-input
-              v-model="formOzoneObj.ozone_sn"
-              style="width: 200px"
-              placeholder="请输入设备SN号"></el-input>
+              v-model="formDoorObj.door_sitearea"
+              style="width: 260px"
+              placeholder="请输入场区名称"
+              :readonly="isDoorEdit == 2 ? true: false"></el-input>
           </el-form-item>
 
-          <el-form-item label="有效浓度(mg/m³)：" style="margin-left:20px;">
+          <el-form-item label="栋舍名称*：" prop="door_doorname">
             <el-input
-              v-model="formOzoneObj.ozone_concentration"
-              style="width: 200px"
-              placeholder="请输入有效浓度(mg/m³)"></el-input>
+              v-model="formDoorObj.door_doorname"
+              style="width: 260px"
+              placeholder="请输入栋舍名称"></el-input>
           </el-form-item>
-        </div>
+        <!-- </div> -->
 
-        <div class="measure-flex-space">
-          <el-form-item label="消毒时长(分钟)*：">
-            <el-input
-              v-model="formOzoneObj.ozone_time"
-              style="width: 200px"
-              placeholder="请输入消毒时长(分钟)"></el-input>
-          </el-form-item>
-
-          <el-form-item label="位置*：" style="margin-left:20px;" prop="ozone_address_id">
-            <el-select
-              v-model="formOzoneObj.ozone_address_id"
-              placeholder="请选择位置"
-              style="width: 200px">
-              <el-option
-                v-for="(item, index) in listAccesslayoutdescr"
-                :key="index"
-                :label="item.location_descr"
-                :value="item.id+''"></el-option>
-            </el-select>
-          </el-form-item>
-        </div>
-
-        <el-form-item label="设备管理员*：" prop="ozone_device_people">
-          <el-checkbox-group v-model="formOzoneObj.ozone_device_people">
-            <el-checkbox v-for="(item,index) in listEmployees" :key="index" :label="item.id+''">{{item.real_name}}</el-checkbox>
-          </el-checkbox-group>
+        <el-form-item label="饲养员*：" prop="door_userid">
+          <el-select
+            v-model="formDoorObj.door_userid"
+            placeholder="请选择饲养员"
+            style="width: 260px">
+            <el-option
+                  v-for="(item, index) in listEmployees"
+                  :key="index"
+                  :label="item.real_name"
+                  :value="item.id+''"></el-option>
+          </el-select>
         </el-form-item>
 
-        <el-form-item label="审批人*：" prop="ozone_app_people">
-          <el-radio-group v-model="formOzoneObj.ozone_app_people" style="display: flex;flex-wrap: wrap;">
-            <el-radio style="height:40px;display: flex;align-items: center;" v-for="(item,index) in listEmployees" :key="index" :label="item.id+''">{{item.real_name}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
+        <!-- <div class="device-flex-space"> -->
+          <el-form-item label="工作站*：" prop="door_hostid">
+                <el-select
+                  v-model="formDoorObj.door_hostid"
+                  filterable
+                  clearable
+                  placeholder="请选择工作站"
+                  style="width: 260px"
+                >
+                <el-option
+                  v-for="(item, index) in listHost"
+                  :key="index"
+                  :label="item.host_name"
+                  :value="item.id+''"></el-option>
+                </el-select>
+              </el-form-item>
+          
+          <div class="measure-dorm-view">
+            <div class="measure-dorm-top">
+              <div class="measure-dorm-top-title">栏位*：</div>
+              <div class="measure-dorm-top-button" @click="addDorm()">新增栏位</div>
+            </div>
+
+            <div v-for="(item, index) in info.details" :key="index" class="measure-dorm_item">
+              <div class="measure-group1 measure-flex-col" style="width:240px;">
+                <el-input class="measure-word6" style="width:180px !important;" placeholder="请填写栏位名称" @input="setDorm('dormtitle-'+index, item.dorm_content)" v-model="item.dorm_content" maxlength="10"></el-input>
+              </div>
+              <div class="measure-group2 measure-flex-col" style="width:120px;">
+                <el-input class="measure-txt2" style="width:80px !important;" placeholder="栏号" @input="setDormStart('dormstart-'+index, item.dorm_start)" v-model="item.dorm_start" maxlength="3"></el-input>
+              </div>
+              <div>—</div>
+              <div class="measure-group2 measure-flex-col" style="width:120px;">
+                <el-input class="measure-txt2" style="width:80px !important;" placeholder="栏号" @input="setDormEnd('dormend-'+index, item.dorm_end)" v-model="item.dorm_end" maxlength="3"></el-input>
+              </div>
+
+              <div class="measure-group2 measure-flex-col" style="background: #FFFFFF;padding-left: 0px;width:50px;flex-direction: row;justify-content: center;display: flex;align-items: center;" @click="delFood(index)">
+                <!-- <i class="el-icon-circle-close"></i> -->
+                <img src="../../assets/icon_2023_01_06_27.png" class="measure-closeView"/>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- <el-form-item label="设备添加时间*：">
+            <el-input
+              v-model="dis_current_time"
+              style="width: 260px"
+              placeholder=""
+              :readonly="true"></el-input>
+          </el-form-item> -->
+        </div>
         <div class="measure-from-footer">
-          <el-button @click="resetOzoneForm('formOzoneObj')">取消</el-button>
-          <el-button type="primary" @click="onOzoneSubmit('formOzoneObj')">保存</el-button>
+          <el-button @click="resetDoorForm('formDoorObj')">取消</el-button>
+          <el-button type="primary" @click="onDoorSubmit('formDoorObj')">保存</el-button>
         </div>
       </el-form>
-    </el-dialog> -->
+    </el-dialog>
 
-    
+    <!--栋舍信息管理 编辑弹框 -->
+    <el-dialog
+      title="编辑"
+      :visible.sync="editDoorDialog"
+      width="40%"
+      center
+      :close-on-click-modal="false"
+      :show-close="false">
+      <el-form ref="formEditDoorObj" :rules="rulesEditDoor" :model="formEditDoorObj" label-width="160px">
+        <div class="measure-flex-center">
+
+        <el-form-item label="饲养员*：" prop="editdoor_userid">
+          <el-select
+            v-model="formEditDoorObj.editdoor_userid"
+            placeholder="请选择饲养员"
+            style="width: 260px">
+            <el-option
+                  v-for="(item, index) in listEmployees"
+                  :key="index"
+                  :label="item.real_name"
+                  :value="item.id+''"></el-option>
+          </el-select>
+        </el-form-item>
+
+          <el-form-item label="工作站*：" prop="editdoor_hostid">
+                <el-select
+                  v-model="formEditDoorObj.editdoor_hostid"
+                  filterable
+                  clearable
+                  placeholder="请选择工作站"
+                  style="width: 260px"
+                >
+                <el-option
+                  v-for="(item, index) in listHost"
+                  :key="index"
+                  :label="item.host_name"
+                  :value="item.id+''"></el-option>
+                </el-select>
+              </el-form-item>
+        </div>
+        <div class="measure-from-footer">
+          <el-button @click="resetEditDoorForm('formEditDoorObj')">取消</el-button>
+          <el-button type="primary" @click="onEditDoorSubmit('formEditDoorObj')">保存</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import moment from "moment";
 import * as echarts from 'echarts';
 import {
@@ -1074,7 +1142,15 @@ import {
   getBreedlist,
   getPidinfobyid,
   editPiginfo,
-  deletePigfile
+  deletePigfile,
+  getEmployeesLists,
+  getHostList,
+  getLairagingList,
+  addSitearea,
+  getDoorlist,
+  deleteDoor,
+  editadministrators,
+  getJumpList
 } from "../../request/api";
 import { Message } from "element-ui";
 import { stringify } from "qs";
@@ -1082,6 +1158,18 @@ import {
   getTodayLine,
   getPreMonthDay
 } from "../../utils/utils";
+/**
+ * Detail类 构造函数 
+ * @param {string} dorm_content 栏位名称
+ * @param {string} dorm_start 栏号
+ * @param {string} dorm_end 栏号
+ */
+function Detail(dorm_content, dorm_start, dorm_end) {
+  this.dorm_content = dorm_content;
+  this.dorm_start = dorm_start;
+  this.dorm_end = dorm_end;
+}
+
 export default {
   data() {
     return {
@@ -1125,187 +1213,6 @@ export default {
       listLabelTemActInfo: [],
 
 
-
-      timelist: [
-        new Date().getTime() - 3 * 24 * 60 * 60 * 1000,
-        new Date().getTime(),
-      ],
-      centerDialogVisible: false,
-      current: 1, //当前页
-      limit: 10, //每页显示记录数
-      total: 0, //总记录数
-      list: [
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏27",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3318,
-          label_id: "89000731",
-          source_label: "Y173708",
-          door: "西10舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 18:43",
-          serial: 5809,
-          parent_id: 3291,
-          temperature: 36,
-          activity: 2
-        },
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏27",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3318,
-          label_id: "89000899",
-          source_label: "L90904",
-          door: "西10舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 18:43",
-          serial: 5810,
-          parent_id: 3291,
-          temperature: 35.5,
-          activity: 1
-        },
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏27",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3318,
-          label_id: "89000860",
-          source_label: "Y174004",
-          door: "西10舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 18:43",
-          serial: 5811,
-          parent_id: 3291,
-          temperature: 35,
-          activity: 0
-        },
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏27",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3318,
-          label_id: "89000512",
-          source_label: "Y174110",
-          door: "西10舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 18:43",
-          serial: 5813,
-          parent_id: 3291,
-          temperature: 36,
-          activity: 2
-        },
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏27",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3318,
-          label_id: "89000749",
-          source_label: "Y173802",
-          door: "西10舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 18:43",
-          serial: 5814,
-          parent_id: 3291,
-          temperature: 37,
-          activity: 3
-        },
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏27",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3318,
-          label_id: "89000423",
-          source_label: "Y174002",
-          door: "西10舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 18:43",
-          serial: 5812,
-          parent_id: 3291,
-          temperature: 36,
-          activity: 2
-        },
-        {
-          operation: 1,
-          label_type: 3,
-          dorm: "栏33",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3369,
-          label_id: "89000774",
-          source_label: "Y170704",
-          door: "西11舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 10:21",
-          serial: 5633,
-          parent_id: 3336,
-          temperature: 36,
-          activity: 2
-        },
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏18",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3215,
-          label_id: "89000784",
-          source_label: "Y129711",
-          door: "西3舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 10:21",
-          serial: 5596,
-          parent_id: 3197,
-          temperature: 36,
-          activity: 2
-        },
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏18",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3215,
-          label_id: "89000558",
-          source_label: "Y131611",
-          door: "西3舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 10:21",
-          serial: 5595,
-          parent_id: 3197,
-          temperature: 36,
-          activity: 2
-        },
-        {
-          operation: 1,
-          label_type: 1,
-          dorm: "栏18",
-          status: 1,
-          Sitearea: "顺鑫西区",
-          layout_id: 3215,
-          label_id: "89000479",
-          source_label: "Y130807",
-          door: "西3舍",
-          farm_name: "顺鑫猪场",
-          check_in_time: "2023-04-06 10:21",
-          serial: 5594,
-          parent_id: 3197,
-          temperature: 36,
-          activity: 2
-        },
-      ],
       chartTempDom: "",
       myChartTemp: "",
       optionTemp: "",
@@ -1345,6 +1252,85 @@ export default {
       idDis: "", // 员工id
       isDisEdit: 1, // 1-新增  2-编辑
 
+      /**
+       *  栋舍信息管理
+       */ 
+      door_name: '',
+      listEmployees: [],
+      listHost: [],
+      listDoor: [],
+      currentDoor: 1, //当前页
+      limitDoor: 10, //每页显示记录数
+      totalDoor: 0, //总记录数
+      showDoorDialog: false,
+      formDoorObj: {
+        door_sitearea: "",
+        door_doorname: "",
+        door_userid: '', 
+        door_hostid: "",
+      },
+      rulesDoor: {
+        door_sitearea: [
+          { required: true, message: "请输入场区名称", trigger: "blur" },
+          // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        door_doorname: [
+          { required: true, message: "请输入栋舍名称", trigger: "blur" },
+        ],
+        door_userid: [{ required: true, message: "请选择饲养员", trigger: "change" }],
+        door_hostid: [
+          { required: true, message: "请选择工作站", trigger: "change" },
+        ],
+      },
+      idDoor: "", // id
+      isDoorEdit: 1, // 1-新增  2-编辑
+      info: {
+        details: [{
+          dorm_content: '',
+          dorm_start: '',
+          dorm_end: ''
+        }]
+      },
+      siteareaid: '',
+
+      editDoorDialog: false,
+      editDoorId: '',
+      editOldHostId: '',
+      editSiteareaId: '',
+      formEditDoorObj: {
+        editdoor_userid: '', 
+        editdoor_hostid: "",
+      },
+      rulesEditDoor: {
+        editdoor_userid: [{ required: true, message: "请选择饲养员", trigger: "change" }],
+        editdoor_hostid: [
+          { required: true, message: "请选择工作站", trigger: "change" },
+        ],
+      },
+
+      /**
+       * 猪只入栏
+       */
+      currentLairaging: 1, //当前页
+      limitLairaging: 10, //每页显示记录数
+      totalLairaging: 0, //总记录数
+      listLairaging: [],
+
+      /**
+       * 猪只转栏
+       */
+      currentJump: 1, //当前页
+      limitJump: 10, //每页显示记录数
+      totalJump: 0, //总记录数
+      listJump: [],
+      jump_source_label: '',
+      timeJumplist: [],
+      // timeJumplist: [
+      //   new Date().getTime(),
+      //   new Date().getTime(),
+      // ],
+
+
       deleteOzoneDialog: false,
       
       numberType: 1, // 1-栋舍设备布局  2-个体健康历史记录  3-猪只个体档案管理 4-栋舍信息管理 5-猪只批量入栏  6-猪只批量转栏
@@ -1366,6 +1352,18 @@ export default {
       return "padding:0px";
     },
     iHeaderCellStyle: function ({ row, column, rowIndex, columnIndex }) {
+      return "padding:0px";
+    },
+    iRowStyle1: function ({ row, rowIndex }) {
+      return "height:35px";
+    },
+    iHeaderRowStyle1: function ({ row, rowIndex }) {
+      return "height:46px";
+    },
+    iCellStyle1: function ({ row, column, rowIndex, columnIndex }) {
+      return "padding:6px";
+    },
+    iHeaderCellStyle1: function ({ row, column, rowIndex, columnIndex }) {
       return "padding:0px";
     },
     //日期格式化
@@ -1954,7 +1952,7 @@ export default {
         status: this.status2
       };
       window.open(
-        `http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/PCpigManagement/ExportPigHistoryList.hn?${stringify(
+        `https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/PCpigManagement/ExportPigHistoryList.hn?${stringify(
           params
         )}`
       );
@@ -2004,7 +2002,7 @@ export default {
         serial: this.pigInfoObj.serial,
       };
       window.open(
-        `http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/PCpigManagement/ExportLabelInfo.hn?${stringify(
+        `https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/PCpigManagement/ExportLabelInfo.hn?${stringify(
           params
         )}`
       );
@@ -2186,6 +2184,408 @@ export default {
       });
     },
     /**
+     * 栋舍信息管理
+     */
+    getEmployeesLists() {
+      getEmployeesLists({
+        pig_farm_id: this.userInfo.farm_id,
+        page: 1,
+        limit: 1000,
+        real_name: '',
+      }).then((res) => {
+        if (res.data.success) {
+          this.listEmployees = res.data.info;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    getHostList() {
+      getHostList({
+        pig_farm_id: this.userInfo.farm_id,
+      }).then((res) => {
+        if (res.data.success) {
+          this.listHost = res.data.data;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    addDorm() {
+      let info = this.info;
+      info.details.push(new Detail('', '', ''));
+      this.info = info;
+    },
+    setDorm(e,value) {
+      let index = parseInt(e.replace("dormtitle-", ""));
+      let dorm_content = value;
+      let info = this.info;
+      info.details[index].dorm_content = dorm_content;
+      this.info = info;
+    },
+    setDormStart(e,value) {
+      let index = parseInt(e.replace("dormstart-", ""));
+      let dorm_start = value;
+      let info = this.info;
+      info.details[index].dorm_start = dorm_start;
+      this.info = info;
+    },
+    setDormEnd(e,value) {
+      let index = parseInt(e.replace("dormend-", ""));
+      let dorm_end = value;
+      let info = this.info;
+      info.details[index].dorm_end = dorm_end;
+      this.info = info;
+    },
+    delFood(index) {
+      let closeIndex = index;
+      let that = this;
+      let info = that.info;
+      if (info && info.details && info.details.length == 1) {
+        info.details[0].dorm_content = '';
+        info.details[0].dorm_start = '';
+        info.details[0].dorm_end = '';
+        this.info = info;
+      } else {
+        if (closeIndex != -1) {
+          let index = closeIndex;
+          let info = that.info;
+          info.details.splice(index, 1);
+          this.info = info;
+        }
+      }
+    },
+    getDoorlist(page = 1) {
+      this.currentDoor = page;
+      getDoorlist({
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.currentDoor,
+        limit: this.limitDoor,
+        door: this.door_name,
+      }).then((res) => {
+        if (res.data.success) {
+          // Message({ type: 'success', message: res.data.msg, showClose: true, duration: 3000 })
+          this.listDoor = res.data.data;
+          this.totalDoor = parseInt(res.data.count);
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    handleDoorSizeChange(val){
+      this.limitDoor = val;
+      this.getDoorlist();
+    },
+    addDoor() {
+      this.isDoorEdit = 1;
+      this.showDoorDialog = true;
+    },
+    handlerDoorEdit(siteareaid, sitearea) {
+      this.isDoorEdit = 2;
+      this.showDoorDialog = true;
+      this.formDoorObj.door_sitearea = sitearea;
+      this.siteareaid = siteareaid;
+      
+    },
+    resetDoorForm(formName) {
+      this.$refs[formName].resetFields();
+      this.showDoorDialog = false;
+      this.formDoorObj.door_sitearea = "";
+      this.formDoorObj.door_doorname = "";
+      this.formDoorObj.door_userid = "";
+      this.formDoorObj.door_hostid = "";
+      this.info.details = [{
+        dorm_content: '',
+        dorm_start: '',
+        dorm_end: ''
+      }]
+      this.idDoor = "";
+      this.siteareaid = "";
+    },
+    onDoorSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          
+            let doorDormList = this.info.details
+            if (doorDormList.length == 1 && doorDormList[0].dorm_content == "" && doorDormList[0].dorm_start == "" && doorDormList[0].dorm_end == "") {
+              Message({
+                type: "warning",
+                message: "请填写栏位信息",
+                showClose: true,
+                duration: 3000,
+              });
+              return;
+            }
+            for (let i = 0; i < doorDormList.length; i++) { //删除双空白项
+              if (doorDormList[i].dorm_content == '' && doorDormList[i].dorm_start == '') {
+                doorDormList.splice(i, 1);
+                i--;
+              }
+            }
+
+            for (let i in doorDormList) {
+              if (doorDormList[i].dorm_content == '' && doorDormList[i].dorm_start != '' || doorDormList[i].dorm_content != '' && doorDormList[i].dorm_start == '') {
+                Message({
+                  type: "warning",
+                  message: "请填写栏位信息",
+                  showClose: true,
+                  duration: 3000,
+                });
+                return;
+              }
+              if (doorDormList[i].dorm_end == '') {
+                Message({
+                  type: "warning",
+                  message: "请填写栏位信息",
+                  showClose: true,
+                  duration: 3000,
+                });
+                return;
+              }
+            }
+
+            let dormList = []
+            for (let i in doorDormList) {
+              let number1 = parseInt(doorDormList[i].dorm_start);
+              let number2 = parseInt(doorDormList[i].dorm_end);
+
+              if (number1 > 0 && number2 > 0 && number1 <= number2  ) {
+                for (let j = number1; j <= number2; j++) {
+                  dormList.push(doorDormList[i].dorm_content + j + '')
+                }
+              } else {
+                Message({
+                  type: "warning",
+                  message: "栏号填写错误,请重新填写!",
+                  showClose: true,
+                  duration: 3000,
+                });
+                return;
+              }
+            }
+            let dormList1 = [...new Set(dormList)]
+
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              // Sitearea: this.formDoorObj.door_sitearea,
+              door: this.formDoorObj.door_doorname,
+              userId: this.formDoorObj.door_userid,
+              hostid: this.formDoorObj.door_hostid,
+              dorm: dormList1.join(','),
+              // type: '1',
+            }
+
+            if (this.isDoorEdit == 2) {
+              params.type = '2';
+              params.Sitearea = this.siteareaid;
+            }else{
+              params.type = '1';
+              params.Sitearea = this.formDoorObj.door_sitearea
+            }
+
+            axios({
+              method: 'post',
+              url: "https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/PCPigstyManagement/addSitearea.hn",
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+              },
+              data: params,
+            }).then((res)=>{
+              if (res.data.success) {
+                Message({
+                  type: "success",
+                  message: res.data.msg,
+                  showClose: true,
+                  duration: 3000,
+                });
+                // this.currentDoor = 1;
+                this.getDoorlist();
+
+                this.$refs[formName].resetFields();
+                this.showDoorDialog = false;
+                this.formDoorObj.door_sitearea = "";
+                this.formDoorObj.door_doorname = "";
+                this.formDoorObj.door_userid = "";
+                this.formDoorObj.door_hostid = "";
+                this.info.details = [{
+                  dorm_content: '',
+                  dorm_start: '',
+                  dorm_end: ''
+                }]
+                
+                this.idDoor = "";
+                this.siteareaid = "";
+              } else {
+                Message({
+                  type: "warning",
+                  message: res.data.msg,
+                  showClose: true,
+                  duration: 3000,
+                });
+              }
+            })
+          
+        } else {
+          return false;
+        }
+      });
+    },
+    handlerEdit(editDoorId,editSiteareaId,editHostId,administrators){
+      this.editDoorId = editDoorId;
+      this.editSiteareaId = editSiteareaId;
+      this.editOldHostId = editHostId;
+      this.formEditDoorObj.editdoor_hostid = editHostId;
+      this.formEditDoorObj.editdoor_userid = administrators;
+      this.editDoorDialog = true;
+    },
+    resetEditDoorForm(formName) {
+      this.$refs[formName].resetFields();
+      this.editDoorDialog = false;
+      this.editDoorId = "";
+      this.editSiteareaId = "";
+      this.editOldHostId = "";
+      this.formEditDoorObj.editdoor_hostid = "";
+      this.formEditDoorObj.editdoor_userid = "";
+    },
+    onEditDoorSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          editadministrators({
+            pig_farm_id: this.userInfo.farm_id,
+            door:  this.editDoorId, //（栋舍id）
+            HostId: this.formEditDoorObj.editdoor_hostid,
+            HostIdOld: this.editOldHostId,
+            Sitearea: this.editSiteareaId,
+            userId: this.formEditDoorObj.editdoor_userid,
+          }).then((res) => {
+            if (res.data.success) {
+              Message({ type: 'success', message: res.data.msg, showClose: true, duration: 3000 })
+
+              this.getDoorlist();
+
+              this.editDoorDialog = false;
+              this.editDoorId = "";
+              this.editSiteareaId = "";
+              this.editOldHostId = "";
+              this.formEditDoorObj.editdoor_hostid = "";
+              this.formEditDoorObj.editdoor_userid = "";
+
+            } else {
+              Message({
+                type: "warning",
+                message: res.data.msg,
+                showClose: true,
+                duration: 3000,
+              });
+            }
+          });
+        } else {
+          return false;
+        }
+      });
+    },
+    /**
+     * 猪只批量入栏
+     */
+    handleAvatarSuccess(res) {
+      console.log(res)
+      if (res.success) {
+        console.log(res)
+        Message({ type: 'success', message: res.msg, showClose: true, duration: 3000 });
+        this.currentLairaging = 1;
+        this.getLairagingList();
+      }else{
+        window.open(res.excelurl);
+      }
+    },
+    beforeAvatarUpload() {
+      
+    },
+    getLairagingList(page = 1) {
+      this.currentLairaging = page;
+      getLairagingList({
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.currentLairaging,
+        limit: this.limitLairaging,
+      }).then((res) => {
+        if (res.data.success) {
+          this.listLairaging = res.data.data;
+          this.totalLairaging = parseInt(res.data.count);
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    handleLairagingSizeChange(val){
+      this.limitLairaging = val;
+      this.getLairagingList();
+    },
+    /**
+     * 猪只批量转栏
+     */
+    handleJumpSuccess(res) {
+      console.log(res)
+      if (res.success) {
+        console.log(res)
+        Message({ type: 'success', message: res.msg, showClose: true, duration: 3000 });
+        this.currentJump = 1;
+        this.getJumpList();
+      }else{
+        window.open(res.excelurl);
+      }
+    },
+    beforeJumpUpload() {
+      
+    },
+    getJumpList(page = 1) {
+      this.currentJump = page;
+      getJumpList({
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.currentJump,
+        limit: this.limitJump,
+        start_time: this.timeJumplist.length > 0 ? this.dateFormat(this.timeJumplist[0]) : '',
+        end_time: this.timeJumplist.length > 0 ? this.dateFormat(this.timeJumplist[1]) : '',
+        source_label: this.jump_source_label
+      }).then((res) => {
+        if (res.data.success) {
+          this.listJump = res.data.data;
+          this.totalJump = parseInt(res.data.count);
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    handleJumpSizeChange(val){
+      this.limitJump = val;
+      this.getJumpList();
+    },
+
+    /**
      * 删除
      */
     handlerDelete(id) {
@@ -2194,7 +2594,7 @@ export default {
         this.idDis = id;
       } else if(this.numberType == 4){
         this.deleteOzoneDialog = true;
-        // this.idAccess = id;
+        this.idDoor = id;
       }
     },
     deleteOzoneClick() {
@@ -2229,7 +2629,32 @@ export default {
           });
         }
       } else if(this.numberType == 4){
-        
+        deleteDoor({
+            door: this.idDoor,
+            pig_farm_id: this.userInfo.farm_id
+          }).then((res) => {
+            if (res.data.success) {
+              Message({
+                type: "success",
+                message: res.data.msg,
+                showClose: true,
+                duration: 3000,
+              });
+
+              // this.limitDoor = 10;
+              // this.currentDoor = 1;
+              // this.resetOzoneForm('formDoorObj');
+              this.deleteOzoneDialog = false;
+              this.getDoorlist();
+            } else {
+              Message({
+                type: "warning",
+                message: res.data.msg,
+                showClose: true,
+                duration: 3000,
+              });
+            }
+          });
       }
     },
     /**
@@ -2241,10 +2666,20 @@ export default {
     handleClick(number) {
       this.numberType = number;
       if(number == 6){
-
+        this.timeJumplist = [];
+        this.currentJump = 1;
+        this.limitJump = 10;
+        this.getJumpList();
       } else if(number == 5){
-
+        this.currentLairaging = 1;
+        this.limitLairaging = 10;
+        this.getLairagingList();
       } else if(number == 4){
+        this.limitDoor = 10;
+        this.currentDoor = 1;
+        this.getEmployeesLists();
+        this.getHostList();
+        this.getDoorlist();
       } else if(number == 3){
         this.limitPig = 10;
         this.currentPig = 1;
@@ -2262,167 +2697,6 @@ export default {
         this.getdisplaysum();
       }
     },
-    getList(page = 1) {
-      this.current = page;
-      //   if (
-      //     !this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("1");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     !this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("2");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist) &&
-      //     this.isEmpty(this.searchObj.orderNumber) &&
-      //     this.isEmpty(this.searchObj.userId) &&
-      //     this.isEmpty(this.searchObj.name) &&
-      //     this.isEmpty(this.searchObj.phone)
-      //   ) {
-      //     console.log("3");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   }
-      //   order
-      //     .getorderinfo(this.current, this.limit, this.searchObj)
-      //     .then((response) => {
-      //       this.list = response.data.records;
-      //       //总记录数
-      //       this.total = response.data.total;
-      //       this.searchObj.startTime = "";
-      //       this.searchObj.endTime = "";
-      //     })
-      //     .catch((error) => {
-      //       //请求失败
-      //       console.log(error);
-      //     });
-    },
-    // 导出
-    exportData() {
-      if (this.searchObj.timelist == null) {
-        alert("导出时必须选择开始时间与结束时间，开始至结束之间不能超过3天。");
-      } else {
-        this.searchObj.startTime = moment(this.searchObj.timelist[0]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.searchObj.endTime = moment(this.searchObj.timelist[1]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.cleandata = true;
-        window.open(
-          `http://prod.coyotebio-lab.com:8995/admin/order/exportinfo?${stringify(
-            this.searchObj
-          )}`
-        );
-        // window.open(`http://localhost:8995/admin/order/exportinfo?${stringify(this.searchObj)}`)
-        this.searchObj.userid = "";
-        this.searchObj.orderStatus = "";
-        this.searchObj.status = "";
-        this.searchObj.orderNumber = "";
-        this.searchObj.userId = "";
-        this.searchObj.commodity = "";
-        this.searchObj.name = "";
-        this.searchObj.phone = "";
-      }
-    },
-    handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-    },
-    consoledata() {
-      if (!this.isEmpty(this.searchObj.timelist)) {
-        if (
-          this.searchObj.timelist[1].getTime() -
-            this.searchObj.timelist[0].getTime() >
-          3 * 24 * 60 * 60 * 1000
-        ) {
-          console.log("时间间隔大于三天");
-          this.$message.warning("时间范围不能超过3天");
-          this.searchObj.timelist = [];
-          return;
-        }
-      }
-    },
-    getDetailsList(page = 1) {
-      this.current = page;
-      //   if (
-      //     !this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("1");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     !this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist)
-      //   ) {
-      //     console.log("2");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   } else if (
-      //     this.isEmpty(this.searchObj.commodity) &&
-      //     this.isEmpty(this.searchObj.status) &&
-      //     this.isEmpty(this.searchObj.timelist) &&
-      //     this.isEmpty(this.searchObj.orderNumber) &&
-      //     this.isEmpty(this.searchObj.userId) &&
-      //     this.isEmpty(this.searchObj.name) &&
-      //     this.isEmpty(this.searchObj.phone)
-      //   ) {
-      //     console.log("3");
-      //     this.$message.warning("请选择三天内的时间范围");
-      //     return;
-      //   }
-      //   order
-      //     .getorderinfo(this.current, this.limit, this.searchObj)
-      //     .then((response) => {
-      //       this.list = response.data.records;
-      //       //总记录数
-      //       this.total = response.data.total;
-      //       this.searchObj.startTime = "";
-      //       this.searchObj.endTime = "";
-      //     })
-      //     .catch((error) => {
-      //       //请求失败
-      //       console.log(error);
-      //     });
-    },
-    exportDetailsData() {
-      if (this.searchObj.timelist == null) {
-        alert("导出时必须选择开始时间与结束时间，开始至结束之间不能超过3天。");
-      } else {
-        this.searchObj.startTime = moment(this.searchObj.timelist[0]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.searchObj.endTime = moment(this.searchObj.timelist[1]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.cleandata = true;
-        window.open(
-          `http://prod.coyotebio-lab.com:8995/admin/order/exportinfo?${stringify(
-            this.searchObj
-          )}`
-        );
-        // window.open(`http://localhost:8995/admin/order/exportinfo?${stringify(this.searchObj)}`)
-        this.searchObj.userid = "";
-        this.searchObj.orderStatus = "";
-        this.searchObj.status = "";
-        this.searchObj.orderNumber = "";
-        this.searchObj.userId = "";
-        this.searchObj.commodity = "";
-        this.searchObj.name = "";
-        this.searchObj.phone = "";
-      }
-    },
-    add(){
-      this.centerDialogVisible = true;
-    }
   },
 };
 </script>
@@ -2678,8 +2952,9 @@ export default {
     margin-left: 0px;
 }
 
-.measure-demo-form-inline{
+.measure-demo-form-inline2{
     margin-top: 20px;
+    display: flex;
 }
 
 .measure-view_2_top {
@@ -2791,5 +3066,109 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 20px;
 }
+
+.measure-dorm-view{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.measure-dorm-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.measure-dorm-top-title{
+  width: 160px;
+  /* text-align: right; */
+    vertical-align: middle;
+    float: left;
+    font-size: 14px;
+    color: #606266;
+    line-height: 40px;
+    padding: 0 12px 0 0;
+    box-sizing: border-box;
+}
+
+.measure-dorm-top-button{
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    font-size: 15px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: #58A4FD;
+    border: 1px solid #58A4FD;
+    border-radius: 30px;
+    margin-left: 160px;
+    height: 22px;
+    padding: 6px 20px;
+}
+
+.measure-dorm_item{
+  width: 480px;
+  height: 40px;
+  justify-content: space-between;
+  margin: 10px 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.measure-group1 {
+  height: 40px;
+  border-radius: 12px;
+  width: 200px;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 20px;
+}
+.measure-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.measure-word6 {
+  width: 180px;
+  height: 40px;
+  display: block;
+  overflow-wrap: break-word;
+  color:black;
+  font-size: 14px;
+  font-family: PingFangSC-Regular;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.measure-group2 {
+  height: 40px;
+  border-radius: 12px;
+  width: 120px;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 20px;
+}
+
+.measure-txt2 {
+  width: 100px;
+  height: 40px;
+  display: block;
+  overflow-wrap: break-word;
+  color: black;
+  font-size: 14px;
+  font-family: PingFangSC-Regular;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.measure-closeView{
+  width: 20px;
+  height: 20px;
+}
+
 </style>

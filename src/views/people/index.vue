@@ -176,7 +176,7 @@
           </el-upload> -->
           <el-upload
             class="avatar-uploader"
-            action="http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/PCpersonnelManagement/upload.hn"
+            action="https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/PCpersonnelManagement/upload.hn"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload">
@@ -522,7 +522,7 @@ export default {
         real_name: this.search_name,
       };
       window.open(
-        `http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/PCpersonnelManagement/ExportEmployeesLists.hn?${stringify(
+        `https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/PCpersonnelManagement/ExportEmployeesLists.hn?${stringify(
           params
         )}`
       );

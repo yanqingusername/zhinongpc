@@ -153,7 +153,7 @@ export const ExportPigHistoryList = val => requestH5Other('/wisdomLivestockWH/PC
 //根据主键获取耳环的温度活跃度图
 export const getShowLabelSumfilebyid = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/showLabelSumfilebyid.hn', val, 'get');
 
-//获取耳环温度和活跃度数据<4-25>
+//获取耳环温度和活跃度数据
 export const getLabelTemActInfo = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getLabelTemActInfo.hn', val, 'get');
 
 //猪只个体档案 获取管理列表
@@ -173,6 +173,34 @@ export const editPiginfo = val => requestH5Other('/wisdomLivestockWH/PCpigManage
 
 //猪只个体档案 删除猪只档案信息
 export const deletePigfile = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/deletePigfile.hn', val, 'get');
+
+//上传耳环文件，批量录入猪只档案和入栏  
+export const uploadLabelInfo = val => requestH5Other('/wisdomLivestockWH/pig/Newcommon/uploadLabelInfo.hn', val, 'get');
+
+//获取工作站
+export const getHostList = val => requestH5Other('/wisdomLivestockWH/PCPigstyManagement/getHostList.hn', val, 'get');
+
+//获取入栏信息列表 <4-26>
+export const getLairagingList = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getLairagingList.hn', val, 'get');
+
+//新增栋舍
+export const addSitearea = val => requestH5Other('/wisdomLivestockWH/PCPigstyManagement/addSitearea.hn', val, 'post');
+
+//获取栋舍列表
+export const getDoorlist = val => requestH5Other('/wisdomLivestockWH/PCPigstyManagement/getPCpigStyList.hn', val, 'get');
+
+//删除栋舍
+export const deleteDoor = val => requestH5Other('/wisdomLivestockWH/PCPigstyManagement/deleteDoor.hn', val, 'get');
+
+//修改栋舍管理员,工作站
+export const editadministrators = val => requestH5Other('/wisdomLivestockWH/PCPigstyManagement/editadministrators.hn', val, 'get');
+
+//获取转栏信息列表
+export const getJumpList = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getJumpList.hn', val, 'get');
+
+//上传耳环文件，批量猪只转栏
+export const uploadjumpInfo = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/uploadjumpInfo.hn', val, 'get');
+
 
 
 

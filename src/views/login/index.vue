@@ -105,7 +105,7 @@ export default {
 					window.localStorage.removeItem("userInfo")
 					Message({ type: 'success', message: "登录成功", showClose: true, duration: 3000 })
 					let item = {
-						avatar: "https://www.coyotebio.com/uploads/images/20210929/3d3b2a85e3a44f1c3f8cd97022441403.png",
+						avatar: "http://syrdev.coyotebio-lab.com:8080/wisdomLivestockWH/pig/picture/login_logo.png",
 						role_name: role_name,
 						farm_id: farm_id,
 					 	roleId: roleId,
