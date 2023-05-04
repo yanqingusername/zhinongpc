@@ -694,12 +694,6 @@
         <div class="measure-view_2">
           <div class="measure-view_2_1">
             <el-form :inline="true" class="measure-demo-form-inline2">
-              <!-- <el-button
-                style="margin-left:0px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-plus"
-                @click="add()">增加</el-button> -->
                 <el-upload
                   class="upload-demo"
                   ref="upload"
@@ -709,6 +703,13 @@
                   :before-upload="beforeAvatarUpload">
                   <el-button slot="trigger" type="primary" size="medium" style="margin-left:0px;" icon="el-icon-document-add">导入Excel</el-button>
                 </el-upload>
+
+                <el-button
+                  style="margin-left:20px;"
+                  type="primary"
+                  size="medium"
+                  icon="el-icon-plus"
+                  @click="addLairage()">转入</el-button>
             </el-form>
             <div style="height: 20px;"></div>
             <el-table :data="listLairaging" stripe style="width: 100%;" border
@@ -824,12 +825,12 @@
                     icon="el-icon-search"
                     @click="getJumpList()">查询</el-button>
 
-                <!-- <el-button
-                    style="margin-left:20px;"
-                    type="primary"
-                    size="medium"
-                    icon="el-icon-plus"
-                    @click="add()">增加</el-button> -->
+                 <el-button
+                  style="margin-left:20px;height:40px;"
+                  type="primary"
+                  size="medium"
+                  icon="el-icon-plus"
+                  @click="addSuch()">转栏</el-button>
                 <el-upload
                   class="upload-demo"
                   ref="upload1"
@@ -1122,6 +1123,222 @@
         </div>
       </el-form>
     </el-dialog>
+
+    <!--转入弹框 -->
+    <el-dialog
+      title="新增入栏"
+      :visible.sync="showLairageDialog"
+      width="40%"
+      center
+      :close-on-click-modal="false"
+      :show-close="false">
+      <el-form ref="formLairageObj" :rules="rulesLairage" :model="formLairageObj" label-width="160px">
+        <div class="measure-flex-center">
+          <el-form-item label="耳标ID*：" style="margin-bottom:10px;">
+            <el-input
+              v-model="lairage_sn"
+              style="width: 180px"
+              placeholder="请输入耳标ID"></el-input>
+              <el-button
+                style="margin-left:10px;"
+                type="primary"
+                size="medium"
+                @click="addList()">查询</el-button>
+          </el-form-item>
+
+          <!-- 耳环id列表 -->
+            <div style="margin-top:0px;overflow-y: scroll;max-height: 200px;" v-if="label_id_list.length > 0">
+                    <div class="new_label_id_item"  v-for="(item, index) in label_id_list" :key="index">
+                        <div class="new_label_id_item_1">
+                            <div class="font_label" style="width:40px;">{{(index+1)}}</div>
+                            <div class="font_label" style="width:120px;margin:0px 10px;">{{item.id}}</div>
+                            <div class="font_label" style="width:130px;">{{item.source_id}}</div>
+                        </div>
+                        <div class="new_label_id_item_1" style="margin-left:20px;">
+                          <img src="../../assets/icon_2023_01_06_27.png" class="measure-closeView" @click="delLabelId(index)"/>
+                        </div>
+                    </div>
+            </div>
+
+
+              <el-form-item label="场区*：" prop="lairage_sitearea" style="margin-top:10px;">
+                <el-select
+                  v-model="formLairageObj.lairage_sitearea"
+                  filterable
+                  clearable
+                  placeholder="请选择场区"
+                  @change="handlerChangeLairageSitearea"
+                  style="width: 260px"
+                >
+                <el-option
+                  v-for="(item, index) in listPigSitearea"
+                  :key="index"
+                  :label="item.location_descr"
+                  :value="item.id+''"></el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="栋舍*：" prop="lairage_door">
+                <el-select
+                  v-model="formLairageObj.lairage_door"
+                  filterable
+                  clearable
+                  placeholder="请选择栋舍"
+                  @change="handlerChangeLairageDoor"
+                  style="width: 260px"
+                >
+                <el-option
+                  v-for="(item, index) in piggeryList"
+                  :key="index"
+                  :label="item.location_descr"
+                  :value="item.id+''"></el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="栏位*：" prop="lairage_dorm">
+                <el-select
+                  v-model="formLairageObj.lairage_dorm"
+                  filterable
+                  clearable
+                  placeholder="请选择栏位"
+                  style="width: 260px"
+                >
+                <el-option
+                  v-for="(item, index) in styByPiggeryList"
+                  :key="index"
+                  :label="item.dorm"
+                  :value="item.dormid+''"></el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="日期*：">
+                <el-date-picker
+                  v-model="lairage_time"
+                  type="date"
+                  :clearable="false"
+                  placeholder="请选择日期时间"
+                  style="width: 260px">
+                </el-date-picker>
+              </el-form-item>
+        </div>
+        <div class="measure-from-footer">
+          <el-button @click="resetLairageForm('formLairageObj')">取消</el-button>
+          <el-button type="primary" @click="onLairageSubmit('formLairageObj')">保存</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
+
+    <!--转栏弹框 -->
+    <el-dialog
+      title="新增转栏"
+      :visible.sync="showSuchDialog"
+      width="40%"
+      center
+      :close-on-click-modal="false"
+      :show-close="false">
+      <el-form ref="formSuchObj" :rules="rulesSuch" :model="formSuchObj" label-width="160px">
+        <div class="measure-flex-center">
+          <el-form-item label="耳号*：">
+            <el-input
+              v-model="such_sn"
+              style="width: 260px"
+              placeholder="请输入耳号"></el-input>
+          </el-form-item>
+
+          <el-form-item label="耳标ID*：" style="margin-bottom:10px;">
+            <el-input
+              v-model="such_lableid"
+              style="width: 180px"
+              placeholder="请输入耳标ID"></el-input>
+              <el-button
+                style="margin-left:10px;"
+                type="primary"
+                size="medium"
+                @click="addSuchList()">查询</el-button>
+          </el-form-item>
+
+          <!-- 耳环id列表 -->
+            <div style="margin-top:0px;overflow-y: scroll;max-height: 200px;" v-if="suchlabel_id_list.length > 0">
+                    <div class="new_label_id_item"  v-for="(item, index) in suchlabel_id_list" :key="index">
+                        <div class="new_label_id_item_1">
+                            <div class="font_label" style="width:40px;">{{(index+1)}}</div>
+                            <div class="font_label" style="width:90px;margin-right:10px;">{{item.label_id}}</div>
+                            <div class="font_label" style="width:120px;margin-right:10px;">{{item.source_label}}</div>
+                            <div class="font_label" style="width:130px;">{{item.Sitearea}}{{item.door}}{{item.dorm}}</div>
+                        </div>
+                        <div class="new_label_id_item_1" style="margin-left:20px;">
+                          <img src="../../assets/icon_2023_01_06_27.png" class="measure-closeView" @click="delSuchLabelId(index)"/>
+                        </div>
+                    </div>
+            </div>
+              <el-form-item label="场区*：" prop="such_sitearea" style="margin-top:10px;">
+                <el-select
+                  v-model="formSuchObj.such_sitearea"
+                  filterable
+                  clearable
+                  placeholder="请选择场区"
+                  @change="handlerChangeSuchSitearea"
+                  style="width: 260px"
+                >
+                <el-option
+                  v-for="(item, index) in listSuchPigSitearea"
+                  :key="index"
+                  :label="item.location_descr"
+                  :value="item.id+''"></el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="栋舍*：" prop="such_door">
+                <el-select
+                  v-model="formSuchObj.such_door"
+                  filterable
+                  clearable
+                  placeholder="请选择栋舍"
+                  @change="handlerChangeSuchDoor"
+                  style="width: 260px"
+                >
+                <el-option
+                  v-for="(item, index) in piggerySuchList"
+                  :key="index"
+                  :label="item.location_descr"
+                  :value="item.id+''"></el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="栏位*：" prop="such_dorm">
+                <el-select
+                  v-model="formSuchObj.such_dorm"
+                  filterable
+                  clearable
+                  placeholder="请选择栏位"
+                  style="width: 260px"
+                >
+                <el-option
+                  v-for="(item, index) in stySuchByPiggeryList"
+                  :key="index"
+                  :label="item.dorm"
+                  :value="item.dormid+''"></el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="日期*：">
+                <el-date-picker
+                  v-model="such_time"
+                  type="date"
+                  :clearable="false"
+                  placeholder="请选择日期时间"
+                  style="width: 260px">
+                </el-date-picker>
+              </el-form-item>
+
+          
+        </div>
+        <div class="measure-from-footer">
+          <el-button @click="resetSuchForm('formSuchObj')">取消</el-button>
+          <el-button type="primary" @click="onSuchSubmit('formSuchObj')">保存</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -1150,13 +1367,19 @@ import {
   getDoorlist,
   deleteDoor,
   editadministrators,
-  getJumpList
+  getJumpList,
+  getPiggerybyid,
+  lairage,
+  getSourceLabelByLabelId,
+  getPigInfoBylable,
+  NewSuch
 } from "../../request/api";
 import { Message } from "element-ui";
 import { stringify } from "qs";
 import {
   getTodayLine,
-  getPreMonthDay
+  getPreMonthDay,
+  exist_arr
 } from "../../utils/utils";
 /**
  * Detail类 构造函数 
@@ -1316,6 +1539,26 @@ export default {
       totalLairaging: 0, //总记录数
       listLairaging: [],
 
+      showLairageDialog: false,
+      label_id_list: [],
+      lairage_sn: "",
+      formLairageObj: {
+        lairage_sitearea: "",
+        lairage_door: '',
+        lairage_dorm: "",
+      },
+      lairage_time: new Date().getTime(),
+      rulesLairage: {
+        // lairage_sn: [
+        //   { required: true, message: "请输入耳标ID", trigger: "blur" },
+        // ],
+        lairage_sitearea: [{ required: true, message: "请选择场区", trigger: "change" }],
+        lairage_door: [{ required: true, message: "请选择栋舍", trigger: "change" }],
+        lairage_dorm: [{ required: true, message: "请选择栏位", trigger: "change" }],
+      },
+      piggeryList: [],
+      styByPiggeryList: [],
+
       /**
        * 猪只转栏
        */
@@ -1330,6 +1573,27 @@ export default {
       //   new Date().getTime(),
       // ],
 
+      showSuchDialog: false,
+      suchlabel_id_list: [],
+      such_sn: "",
+      such_lableid: '',
+      formSuchObj: {
+        such_sitearea: "",
+        such_door: '',
+        such_dorm: "",
+      },
+      such_time: new Date().getTime(),
+      rulesSuch: {
+        // lairage_sn: [
+        //   { required: true, message: "请输入耳标ID", trigger: "blur" },
+        // ],
+        such_sitearea: [{ required: true, message: "请选择场区", trigger: "change" }],
+        such_door: [{ required: true, message: "请选择栋舍", trigger: "change" }],
+        such_dorm: [{ required: true, message: "请选择栏位", trigger: "change" }],
+      },
+      listSuchPigSitearea: [],
+      piggerySuchList: [],
+      stySuchByPiggeryList: [],
 
       deleteOzoneDialog: false,
       
@@ -1365,6 +1629,14 @@ export default {
     },
     iHeaderCellStyle1: function ({ row, column, rowIndex, columnIndex }) {
       return "padding:0px";
+    },
+    //日期时间格式化
+    dateTimeFormat: function (date) {
+      // var date = row[column.property];
+      if (date == undefined) {
+        return "";
+      }
+      return moment(date).format("YYYY-MM-DD HH:mm:ss");
     },
     //日期格式化
     dateFormat: function (date) {
@@ -2540,6 +2812,191 @@ export default {
       this.limitLairaging = val;
       this.getLairagingList();
     },
+    addLairage(){
+      this.lairage_time = this.dateFormat(new Date().getTime());
+      this.showLairageDialog = true;
+      this.getPigSitearea();
+    },
+    handlerChangeLairageSitearea(){
+      this.getPiggerybyid();
+      this.formLairageObj.lairage_door = '';
+      this.formLairageObj.lairage_dorm = '';
+      this.piggeryList = [];
+      this.styByPiggeryList = [];
+    },
+    getPiggerybyid() {
+      getPiggerybyid({
+        SiteAreaid: this.formLairageObj.lairage_sitearea,
+      }).then((res) => {
+        if (res.data.success) {
+          this.piggeryList = res.data.msg;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    handlerChangeLairageDoor(){
+      this.getStyByPiggery();
+      this.formLairageObj.lairage_dorm = '';
+      this.styByPiggeryList = [];
+    },
+    getStyByPiggery() {
+      getStyByPiggery({
+        pig_farm_id: this.userInfo.farm_id,
+        doorid: this.formLairageObj.lairage_door
+      }).then((res) => {
+        if (res.data.success) {
+          this.styByPiggeryList = res.data.msg;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    addList(){
+        let label_id_list = this.label_id_list;
+        let inputInfo = this.lairage_sn;
+        if(!inputInfo) {
+            Message({
+              type: "warning",
+              message: '请输入耳环编号',
+              showClose: true,
+              duration: 3000,
+            });
+        } else if (inputInfo.length!=8){
+            Message({
+              type: "warning",
+              message: '耳环编号位数不对',
+              showClose: true,
+              duration: 3000,
+            });
+        } else if (exist_arr(label_id_list, 'id', inputInfo)){
+            Message({
+              type: "warning",
+              message: '请勿重复录入',
+              showClose: true,
+              duration: 3000,
+            });
+        }else{
+            this.getSourceLabelByLabelId(inputInfo, 2);
+        }
+    },
+
+    // 删除耳环id
+    delLabelId(e){
+        let index = e;
+        let label_id_list = this.label_id_list;
+        label_id_list.splice(index, 1);
+        this.label_id_list = label_id_list;
+    },
+    getSourceLabelByLabelId(label_id, typestring) {
+      getSourceLabelByLabelId({
+        pig_farm_id: this.userInfo.farm_id,
+        label_id: label_id
+      }).then((res) => {
+        if (res.data.success) {
+                let label_id_list = this.label_id_list;
+                let dataList = res.data.data;
+                let source_label;
+                if(dataList && dataList.length > 0){
+                    source_label = dataList[0].source_label;
+                }else{
+                    source_label= '';
+                }
+                let label_id_info_array = {"id":label_id,"source_id":source_label,'time': this.dateTimeFormat(new Date)};
+                label_id_list.push(label_id_info_array)
+                this.label_id_list = label_id_list
+                
+
+                if(typestring == 2){
+                  this.lairage_sn = '';
+                }
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    resetLairageForm(formName) {
+      this.$refs[formName].resetFields();
+      this.showLairageDialog = false;
+      this.label_id_list = [];
+      this.lairage_sn = "";
+      this.formLairageObj.lairage_sitearea = "";
+      this.formLairageObj.lairage_door = "";
+      this.formLairageObj.lairage_dorm = "";
+    },
+    onLairageSubmit(formName) {
+      var label_id_list = this.label_id_list;
+      if (label_id_list.length == 0){
+        Message({
+            type: "warning",
+            message: '暂无任何数据，请手动输入！',
+            showClose: true,
+            duration: 3000,
+          });
+      } else {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let timeString = this.dateTimeFormat(new Date().getTime());
+            timeString= timeString.substring(11,19);
+              let params = {
+                // pig_farm_id: this.userInfo.farm_id,
+                  sty_number: this.formLairageObj.lairage_dorm,
+                  label_ids: JSON.stringify(label_id_list),
+                  user_serial:this.userInfo.userId,
+                  pig_type: 0,
+                  checkinTime: this.dateFormat(this.lairage_time) + " " + timeString //入栏
+              };
+
+              console.log('---->:',params)
+
+              lairage(params).then((res) => {
+                if (res.data.success) {
+                  Message({
+                    type: "success",
+                    message: res.data.msg,
+                    showClose: true,
+                    duration: 3000,
+                  });
+                  // this.current = 1;
+                  this.getLairagingList();
+
+                  this.$refs[formName].resetFields();
+                  this.showLairageDialog = false;
+                  this.label_id_list = [];
+                  this.lairage_sn = "";
+                  this.formLairageObj.lairage_sitearea = "";
+                  this.formLairageObj.lairage_door = "";
+                  this.formLairageObj.lairage_dorm = "";
+                } else {
+                  Message({
+                    type: "warning",
+                    message: res.data.msg,
+                    showClose: true,
+                    duration: 3000,
+                  });
+                }
+              });
+          } else {
+            return false;
+          }
+        });
+      }
+    },
     /**
      * 猪只批量转栏
      */
@@ -2584,7 +3041,211 @@ export default {
       this.limitJump = val;
       this.getJumpList();
     },
+    addSuch(){
+      this.such_time = this.dateFormat(new Date().getTime());
+      this.showSuchDialog = true;
+      this.getSuchPigSitearea();
+    },
+    getSuchPigSitearea() {
+      getPigSitearea({
+        pig_farm_id: this.userInfo.farm_id,
+      }).then((res) => {
+        if (res.data.success) {
+          this.listSuchPigSitearea = res.data.msg;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    handlerChangeSuchSitearea(){
+      this.getSuchPiggerybyid();
+      this.formSuchObj.such_door = '';
+      this.formSuchObj.such_dorm = '';
+      this.piggerySuchList = [];
+      this.stySuchByPiggeryList = [];
+    },
+    getSuchPiggerybyid() {
+      getPiggerybyid({
+        SiteAreaid: this.formSuchObj.such_sitearea,
+      }).then((res) => {
+        if (res.data.success) {
+          this.piggerySuchList = res.data.msg;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    handlerChangeSuchDoor(){
+      this.getSuchStyByPiggery();
+      this.formSuchObj.such_dorm = '';
+      this.stySuchByPiggeryList = [];
+    },
+    getSuchStyByPiggery() {
+      getStyByPiggery({
+        pig_farm_id: this.userInfo.farm_id,
+        doorid: this.formSuchObj.such_door
+      }).then((res) => {
+        if (res.data.success) {
+          this.stySuchByPiggeryList = res.data.msg;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    addSuchList(){
+        let suchlabel_id_list = this.suchlabel_id_list;
+        let such_sn = this.such_sn;
+        let such_lableid = this.such_lableid;
+        if(!such_sn && !such_lableid) {
+            Message({
+              type: "warning",
+              message: '请输入耳号或电子耳标',
+              showClose: true,
+              duration: 3000,
+            });
+        } else if (such_lableid && such_lableid.length!=8){
+            Message({
+              type: "warning",
+              message: '耳环编号位数不对',
+              showClose: true,
+              duration: 3000,
+            });
+        } else if (exist_arr(suchlabel_id_list, 'source_label', such_sn)){
+            Message({
+              type: "warning",
+              message: '请勿重复录入',
+              showClose: true,
+              duration: 3000,
+            });
+        } else if (exist_arr(suchlabel_id_list, 'label_id', such_lableid)){
+            Message({
+              type: "warning",
+              message: '请勿重复录入',
+              showClose: true,
+              duration: 3000,
+            });
+        } else{
+            this.getPigInfoBylable(such_sn, such_lableid);
+        }
+    },
 
+    // 删除耳环id
+    delSuchLabelId(e){
+        let index = e;
+        let suchlabel_id_list = this.suchlabel_id_list;
+        suchlabel_id_list.splice(index, 1);
+        this.suchlabel_id_list = suchlabel_id_list;
+    },
+    getPigInfoBylable(sourcelable, label_id) {
+      getPigInfoBylable({
+        pig_farm_id: this.userInfo.farm_id,
+        label_id: label_id,
+        source_label: sourcelable
+      }).then((res) => {
+        if (res.data.success) {
+                let suchlabel_id_list = this.suchlabel_id_list;
+                let dataList = res.data.data;
+                if(dataList && dataList.length > 0){
+                    let label_id_info_array = dataList[0];
+                    suchlabel_id_list.push(label_id_info_array)
+                    this.suchlabel_id_list = suchlabel_id_list;
+                    this.such_sn = '';
+                    this.such_lableid = '';
+                }
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    resetSuchForm(formName) {
+      this.$refs[formName].resetFields();
+      this.showSuchDialog = false;
+      this.suchlabel_id_list = [];
+      this.such_sn = "";
+      this.such_lableid = "";
+      this.formSuchObj.such_sitearea = "";
+      this.formSuchObj.such_door = "";
+      this.formSuchObj.such_dorm = "";
+    },
+    onSuchSubmit(formName) {
+      var suchlabel_id_list = this.suchlabel_id_list;
+      if (suchlabel_id_list.length == 0){
+        Message({
+            type: "warning",
+            message: '暂无任何数据，请手动输入！',
+            showClose: true,
+            duration: 3000,
+          });
+      } else {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let timeString = this.dateTimeFormat(new Date().getTime());
+            timeString= timeString.substring(11,19);
+              let params = {
+                // pig_farm_id: this.userInfo.farm_id,
+                  sty_number: this.formSuchObj.such_dorm,
+                  label_ids: JSON.stringify(suchlabel_id_list),
+                  user_serial:this.userInfo.userId,
+                  pig_type: 0,
+                  checkinTime: this.dateFormat(this.such_time) + " " + timeString //入栏
+              };
+
+              console.log('---->:',params)
+
+              NewSuch(params).then((res) => {
+                if (res.data.success) {
+                  Message({
+                    type: "success",
+                    message: res.data.msg,
+                    showClose: true,
+                    duration: 3000,
+                  });
+                  // this.current = 1;
+                  this.getJumpList();
+
+                  this.$refs[formName].resetFields();
+                  this.showSuchDialog = false;
+                  this.suchlabel_id_list = [];
+                  this.such_sn = "";
+                  this.such_lableid = "";
+                  this.formSuchObj.such_sitearea = "";
+                  this.formSuchObj.such_door = "";
+                  this.formSuchObj.such_dorm = "";
+                } else {
+                  Message({
+                    type: "warning",
+                    message: res.data.msg,
+                    showClose: true,
+                    duration: 3000,
+                  });
+                }
+              });
+          } else {
+            return false;
+          }
+        });
+      }
+    },
     /**
      * 删除
      */
@@ -3169,6 +3830,26 @@ export default {
 .measure-closeView{
   width: 20px;
   height: 20px;
+}
+
+  /* 耳环列表 */
+.new_label_id_item{
+    /* margin: 0 10px; */
+    /* width: 200px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0px;
+}
+.new_label_id_item_1{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.font_label{
+    font-size: 16px;
+    color: #999999;
 }
 
 </style>

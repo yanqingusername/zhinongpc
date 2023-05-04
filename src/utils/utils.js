@@ -63,3 +63,14 @@ export function getPreMonthDay(date, monthNum){
   var t2 = year2 + '-' + month2 + '-' + day2
   return t2
 }
+
+// 判断 JSONArray是否存在摸个元素
+export function exist_arr(arr, self_value, self_item){
+  var flag = false;
+  arr.forEach(item=>{
+      if(item[self_value]==self_item){
+          flag = true;
+      }
+  });
+  return flag
+}

@@ -79,7 +79,11 @@
             width="80"
             label="体温(°C)"
             align="center"
-          />
+          >
+            <template slot-scope="scope">
+              <p style="color: #F32222">{{scope.row.temp}}</p>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="act"
             width="120"
@@ -163,7 +167,7 @@
           >
             <template slot-scope="scope">
               <p v-if="scope.row.status == '1'">成功</p>
-              <p v-if="scope.row.status == '0'">失败</p>
+              <p v-if="scope.row.status == '0'" style="color: #F32222">失败</p>
             </template>
           </el-table-column>
         </el-table>
@@ -216,7 +220,7 @@
           >
             <template slot-scope="scope">
               <p v-if="scope.row.status == '1' || scope.row.status == '2' || scope.row.status == '3' || scope.row.status == '6'">正常</p>
-              <p v-if="scope.row.status == '0' || scope.row.status == '4' || scope.row.status == '5'">违规</p>
+              <p v-if="scope.row.status == '0' || scope.row.status == '4' || scope.row.status == '5'" style="color: #F32222">违规</p>
             </template>
           </el-table-column>
           <el-table-column

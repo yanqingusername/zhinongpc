@@ -180,7 +180,7 @@ export const uploadLabelInfo = val => requestH5Other('/wisdomLivestockWH/pig/New
 //获取工作站
 export const getHostList = val => requestH5Other('/wisdomLivestockWH/PCPigstyManagement/getHostList.hn', val, 'get');
 
-//获取入栏信息列表 <4-26>
+//获取入栏信息列表
 export const getLairagingList = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getLairagingList.hn', val, 'get');
 
 //新增栋舍
@@ -201,6 +201,20 @@ export const getJumpList = val => requestH5Other('/wisdomLivestockWH/PCpigManage
 //上传耳环文件，批量猪只转栏
 export const uploadjumpInfo = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/uploadjumpInfo.hn', val, 'get');
 
+//根据场区Id获取栋舍
+export const getPiggerybyid = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getPiggerybyid.hn', val, 'get');
+
+//确认转入
+export const lairage = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/lairage.hn', val, 'get');
+
+//根据电子耳标获取耳号
+export const getSourceLabelByLabelId = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getSourceLabelByLabelId.hn', val, 'get');
+
+//根据电子耳标/耳号获取数据
+export const getPigInfoBylable = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getPigInfoBylable.hn', val, 'get');
+
+//确认转栏
+export const NewSuch = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/NewSuch.hn', val, 'get');
 
 
 
