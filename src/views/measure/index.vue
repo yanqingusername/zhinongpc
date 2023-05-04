@@ -1571,8 +1571,8 @@ export default {
       getShowLabelSumfilebyid({
         pig_farm_id: this.userInfo.farm_id,
         serial: this.pigInfoObj.serial,
-        start_time: this.dateFormat(this.timeEchartslist[0]),
-        end_time: this.dateFormat(this.timeEchartslist[1]),
+        start_time: (this.timeEchartslist != null && this.timeEchartslist.length > 0) ? this.dateFormat(this.timeEchartslist[0]) : '',
+        end_time: (this.timeEchartslist != null && this.timeEchartslist.length > 0) ? this.dateFormat(this.timeEchartslist[1]) : '',
         // start_time: '2023-03-21',
         // end_time: '2023-03-27',
         type: this.temp_date_type == '2' ? 'month' : 'day' //(day是天 month是月)
@@ -1970,8 +1970,8 @@ export default {
     getLabelTemActInfo(page = 1) {
       this.currentLabel = page;
       getLabelTemActInfo({
-        start_time: this.dateFormat(this.timepiglist[0]),
-        end_time: this.dateFormat(this.timepiglist[1]),
+        start_time: (this.timepiglist != null && this.timepiglist.length > 0) ? this.dateFormat(this.timepiglist[0]) : '',
+        end_time: (this.timepiglist != null && this.timepiglist.length > 0) ? this.dateFormat(this.timepiglist[1]) : '',
         page: this.currentLabel,
         limit: this.limitLabel,
         serial: this.pigInfoObj.serial,
@@ -1997,8 +1997,8 @@ export default {
     // 获取个体详情导出
     exportPigDetailsData() {
       let params = {
-        start_time: this.dateFormat(this.timepiglist[0]),
-        end_time: this.dateFormat(this.timepiglist[1]),
+        start_time: (this.timepiglist != null && this.timepiglist.length > 0) ? this.dateFormat(this.timepiglist[0]) : '',
+        end_time: (this.timepiglist != null && this.timepiglist.length > 0) ? this.dateFormat(this.timepiglist[1]) : '',
         serial: this.pigInfoObj.serial,
       };
       window.open(
@@ -2563,8 +2563,8 @@ export default {
         pig_farm_id: this.userInfo.farm_id,
         page: this.currentJump,
         limit: this.limitJump,
-        start_time: this.timeJumplist.length > 0 ? this.dateFormat(this.timeJumplist[0]) : '',
-        end_time: this.timeJumplist.length > 0 ? this.dateFormat(this.timeJumplist[1]) : '',
+        start_time: (this.timeJumplist != null && this.timeJumplist.length > 0) ? this.dateFormat(this.timeJumplist[0]) : '',
+        end_time: (this.timeJumplist != null && this.timeJumplist.length > 0) ? this.dateFormat(this.timeJumplist[1]) : '',
         source_label: this.jump_source_label
       }).then((res) => {
         if (res.data.success) {

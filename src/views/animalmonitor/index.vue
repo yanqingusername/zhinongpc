@@ -222,9 +222,9 @@ export default {
         pig_farm_id: this.userInfo.farm_id,
         page: this.current,
         limit: this.limit,
-        start_time: this.numberType == 3 ? '' : this.dateFormat(this.timelist[0]) + ' 00:00:00',
+        start_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[0]) + ' 00:00:00' : '',
         // start_time: '2023-03-17 00:00:00',
-        end_time: this.numberType == 3 ? '' : this.dateFormat(this.timelist[1]) + ' 23:59:59',
+        end_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[1]) + ' 23:59:59' : '',
         address: this.location_id,
       }
       console.log(params)

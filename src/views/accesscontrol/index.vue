@@ -159,7 +159,7 @@ export default {
       return "height:46px";
     },
     iCellStyle: function ({ row, column, rowIndex, columnIndex }) {
-      return "padding:0px";
+      return "padding:0px;height:44px;";
     },
     iHeaderCellStyle: function ({ row, column, rowIndex, columnIndex }) {
       return "padding:0px";
@@ -201,9 +201,9 @@ export default {
         pig_farm_id: this.userInfo.farm_id,
         page: this.current,
         limit: this.limit,
-        start_time: this.dateFormat(this.timelist[0]),
+        start_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[0]) : '',
         // start_time: '2023-03-17',
-        end_time: this.dateFormat(this.timelist[1]),
+        end_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[1]) : '',
         location_id: this.location_id,
         status: this.results, //(5&75-人脸认证通过  5&1-合法卡认证通过  5&76-人脸认证失败  5&9-无此卡号)
         real_name: this.real_name
