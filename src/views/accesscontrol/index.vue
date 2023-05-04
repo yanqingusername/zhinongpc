@@ -3,14 +3,6 @@
     <div class="access-container-right access-pulic_box_shadow">
       <el-form :inline="true" class="access-demo-form-inline">
         <el-form-item label="时间范围">
-          <!-- <el-date-picker
-            v-model="timelist"
-            type="datetimerange"
-            @change="consoledata()"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker> -->
           <el-date-picker
             style="width: 260px"
             v-model="timelist"
@@ -74,7 +66,11 @@
           align="center">
           <template slot-scope="scope">
             <div class="accesscontrol-img">
-              <el-avatar :src="scope.row.headerimg || scope.row.header_img"></el-avatar>
+              <el-image
+                style="width:30px;height:30px;border-radius: 100%;"
+                :src="scope.row.headerimg || scope.row.header_img"
+                fit="cover"></el-image>
+              <!-- <el-avatar :src="scope.row.headerimg || scope.row.header_img"></el-avatar> -->
             </div>
           </template>
         </el-table-column>
@@ -230,20 +226,6 @@ export default {
     handleSizeChange(val) {
       this.limit = val;
       this.getEntranceGuardList();
-    },
-    consoledata() {
-      if (!this.isEmpty(this.timelist)) {
-        if (
-          this.timelist[1].getTime() -
-            this.timelist[0].getTime() >
-          3 * 24 * 60 * 60 * 1000
-        ) {
-          console.log("时间间隔大于三天");
-          this.$message.warning("时间范围不能超过3天");
-          this.timelist = [];
-          return;
-        }
-      }
     },
   },
 };

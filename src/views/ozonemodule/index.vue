@@ -126,7 +126,8 @@
               >
                 <template slot-scope="scope">
                   <div class="ozone-img">
-                    <el-image 
+                    <el-image
+                      fit="cover"
                       style="width: 200px; height: 60px"
                       :src="scope.row.img[0]"
                       :preview-src-list="scope.row.img">

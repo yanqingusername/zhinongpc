@@ -72,6 +72,7 @@
                 <template slot-scope="scope">
                   <div class="animal-img">
                     <el-image 
+                      fit="cover"
                       style="width: 200px; height: 60px"
                       :src="scope.row.img"
                       :preview-src-list="srcList">

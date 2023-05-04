@@ -134,7 +134,11 @@
             <template slot-scope="scope">
               <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
               <div class="el-img">
-                <el-avatar :src="scope.row.head_url"></el-avatar>
+                <!-- <el-avatar :src="scope.row.head_url"></el-avatar> -->
+                <el-image
+                  style="width:30px;height:30px;border-radius: 100%;"
+                  :src="scope.row.head_url"
+                  fit="cover"></el-image> 
               </div>
             </template>
           </el-table-column>
@@ -277,6 +281,7 @@
             <template slot-scope="scope">
               <div class="el-img">
                 <el-image
+                  fit="cover"
                   style="width: 160px; height: 60px"
                   :src="scope.row.img"
                   :preview-src-list="srcList"

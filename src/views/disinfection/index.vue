@@ -86,7 +86,11 @@
           align="center">
           <template slot-scope="scope">
             <div class="dis-img">
-              <el-avatar :src="scope.row.head_url"></el-avatar>
+              <el-image
+                style="width:30px;height:30px;border-radius: 100%;"
+                :src="scope.row.head_url"
+                fit="cover"></el-image>
+              <!-- <el-avatar :src="scope.row.head_url"></el-avatar> -->
             </div>
           </template>
         </el-table-column>
