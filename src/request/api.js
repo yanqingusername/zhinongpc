@@ -219,6 +219,12 @@ export const NewSuch = val => requestH5Other('/wisdomLivestockWH/PCpigManagement
 //转栏记录
 export const getColumntransferrecord = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getColumntransferrecord.hn', val, 'get');
 
+//获取离场记录列表
+export const getOnlineList = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getCheckOutlist.hn', val, 'get');
+
+//离场处理
+export const pighandle = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/pighandle.hn', val, 'get');
+
 
 
 

@@ -22,6 +22,10 @@
       <div
         :class="[numberType == 6 ?'measure-click_view_activity':'measure-click_view']"
         @click="handleClick(6)">猪只批量转栏</div>
+
+      <div
+        :class="[numberType == 7 ?'measure-click_view_activity':'measure-click_view']"
+        @click="handleClick(7)">猪只离场记录</div>
     </div>
 
     <div class="measure-container-right measure-pulic_box_shadow">
@@ -647,6 +651,7 @@
                 width="300"
                 label="栏位"
                 align="center"
+                :show-overflow-tooltip="true"
               />
               <el-table-column
                 prop="real_name"
@@ -716,6 +721,8 @@
                   size="medium"
                   icon="el-icon-plus"
                   @click="addLairage()">转入</el-button>
+
+                  <el-button type="primary" size="medium" @click="downloadLairage()" style="margin-left:20px;" icon="el-icon-download">下载模版</el-button>
             </el-form>
             <div style="height: 20px;"></div>
             <el-table :data="listLairaging" stripe style="width: 100%;" border
@@ -847,6 +854,7 @@
                   <el-button slot="trigger" type="primary" size="medium" style="margin-left:20px;height:40px;" icon="el-icon-document-add">导入Excel</el-button>
                 </el-upload>
 
+                  <el-button type="primary" size="medium" @click="downloadSuch()" style="margin-left:20px;height:40px;" icon="el-icon-download">下载模版</el-button>
                 </el-form>
                 <el-table :data="listJump" stripe style="width: 100%;" border
                   height="430" >
@@ -901,6 +909,78 @@
                     layout="total, sizes, prev, pager, next"
                     @current-change="getJumpList"
                     @size-change="handleJumpSizeChange"
+                    :page-sizes="[10, 20, 30, 40]"
+                />
+                </div>
+            </div>
+           </div>
+      </div>
+
+      <div v-if="numberType == 7">
+        <div class="measure-view_2">
+            <div class="measure-view_2_1">
+              <el-form :inline="true" class="measure-demo-form-inline3">
+                <el-button
+                    style="margin-left:0px;"
+                    type="primary"
+                    size="medium"
+                    icon="el-icon-plus"
+                    @click="addOnline()">新增</el-button>
+                </el-form>
+                <el-table :data="listOnline" stripe style="width: 100%;" border
+                  :row-style="iRowStyle2"
+              :cell-style="iCellStyle2"
+              :header-row-style="iHeaderRowStyle2"
+              :header-cell-style="iHeaderCellStyle2"
+                  height="435" >
+                    
+                <el-table-column
+                    prop="label_id"
+                    width="230"
+                    label="电子耳标号"
+                    align="center"
+                />
+
+                <el-table-column
+                    prop="source_label"
+                    width="230"
+                    label="耳号"
+                    align="center"
+                />
+                
+                <el-table-column
+                    prop="status"
+                    width="230"
+                    label="状态"
+                    align="center"
+                />
+                  
+                <el-table-column
+                    prop="remarks"
+                    width="230"
+                    label="离场原因"
+                    align="center"
+                />
+
+                  <el-table-column
+                    prop="check_out_time"
+                    width="230"
+                    label="离场日期"
+                    align="center"
+                  />
+                
+                </el-table>
+
+                <!-- 分页 -->
+                <div class="block" style="margin-top: 0px;">
+                <el-pagination
+                    :current-page="currentOnline"
+                    :page-size="limitOnline"
+                    :total="totalOnline"
+                    style="padding: 30px 0; text-align: center"
+                    layout="total, sizes, prev, pager, next"
+                    @current-change="getOnlineList"
+                    @size-change="handleOnlineSizeChange"
                     :page-sizes="[10, 20, 30, 40]"
                 />
                 </div>
@@ -1416,6 +1496,65 @@
                 </div>
         </div>
     </el-dialog>
+
+    <!--离场弹框 -->
+    <el-dialog
+      title="新增离场"
+      :visible.sync="showOnlineDialog"
+      width="40%"
+      center
+      :close-on-click-modal="false"
+      :show-close="false">
+      <el-form ref="formOnlineObj" :rules="rulesOnline" :model="formOnlineObj" label-width="160px">
+        <div class="measure-flex-center">
+          <el-form-item label="耳号*：" prop="online_sn">
+            <el-input
+              v-model="formOnlineObj.online_sn"
+              style="width: 260px"
+              placeholder="请输入耳号"></el-input>
+          </el-form-item>
+
+          <el-form-item label="耳标ID*：" prop="online_lableid">
+            <el-input
+              v-model="formOnlineObj.online_lableid"
+              style="width: 260px"
+              placeholder="请输入耳标ID"></el-input>
+          </el-form-item>
+
+              <el-form-item label="离场原因*：" prop="online_remark">
+                <el-select
+                  v-model="formOnlineObj.online_remark"
+                  filterable
+                  clearable
+                  placeholder="请选择离场原因"
+                  style="width: 260px"
+                >
+                <el-option
+                  v-for="(item, index) in onlineRemarkList"
+                  :key="index"
+                  :label="item.title"
+                  :value="item.id+''"></el-option>
+                </el-select>
+              </el-form-item>
+
+              <!-- <el-form-item label="日期*：">
+                <el-date-picker
+                  v-model="online_time"
+                  type="date"
+                  :clearable="false"
+                  placeholder="请选择日期时间"
+                  style="width: 260px">
+                </el-date-picker>
+              </el-form-item> -->
+
+          
+        </div>
+        <div class="measure-from-footer">
+          <el-button @click="resetOnlineForm('formOnlineObj')">取消</el-button>
+          <el-button type="primary" @click="onOnlineSubmit('formOnlineObj')">保存</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -1450,7 +1589,9 @@ import {
   getSourceLabelByLabelId,
   getPigInfoBylable,
   NewSuch,
-  getColumntransferrecord
+  getColumntransferrecord,
+  getOnlineList,
+  pighandle
 } from "../../request/api";
 import { Message } from "element-ui";
 import { stringify } from "qs";
@@ -1681,8 +1822,35 @@ export default {
       totalColumn: 0, //总记录数
       listColumn: [],
 
+      currentOnline: 1, //当前页
+      limitOnline: 10, //每页显示记录数
+      totalOnline: 0, //总记录数
+      listOnline: [],
+      showOnlineDialog: false,
+      onlineRemarkList: [{
+        id: '2',
+        title: '出栏'
+      },{
+        id: '3',
+        title: '死亡'
+      }],
+      formOnlineObj: {
+        online_sn: "",
+        online_lableid: '',
+        online_remark: "",
+      },
+      online_time: new Date().getTime(),
+      rulesOnline: {
+        online_sn: [
+          { required: true, message: "请输入耳号", trigger: "blur" },
+        ],
+        online_lableid: [
+          { required: true, message: "请输入耳标ID", trigger: "blur" },
+        ],
+        online_remark: [{ required: true, message: "请选择离场原因", trigger: "change" }],
+      },
       
-      numberType: 1, // 1-栋舍设备布局  2-个体健康历史记录  3-猪只个体档案管理 4-栋舍信息管理 5-猪只批量入栏  6-猪只批量转栏
+      numberType: 1, // 1-栋舍设备布局  2-个体健康历史记录  3-猪只个体档案管理 4-栋舍信息管理 5-猪只批量入栏  6-猪只批量转栏  7-猪只离场记录
     };
   },
   created() {
@@ -1713,6 +1881,18 @@ export default {
       return "padding:6px";
     },
     iHeaderCellStyle1: function ({ row, column, rowIndex, columnIndex }) {
+      return "padding:0px";
+    },
+    iRowStyle2: function ({ row, rowIndex }) {
+      return "height:35px";
+    },
+    iHeaderRowStyle2: function ({ row, rowIndex }) {
+      return "height:46px";
+    },
+    iCellStyle2: function ({ row, column, rowIndex, columnIndex }) {
+      return "padding:0px;height:45px;";
+    },
+    iHeaderCellStyle2: function ({ row, column, rowIndex, columnIndex }) {
       return "padding:0px";
     },
     //日期时间格式化
@@ -3295,10 +3475,8 @@ export default {
                   checkinTime: this.dateFormat(this.such_time) + " " + timeString //入栏
               };
 
-            console.log('---->:',params)
             axios({
               method: 'post',
-              // url:'http://172.16.23.37:8080/wisdomLivestockWH/PCpigManagement/NewSuch.hn',
               url: "https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/PCpigManagement/NewSuch.hn",
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
@@ -3337,6 +3515,90 @@ export default {
           }
         });
       }
+    },
+    /**
+     * 离场记录
+     */
+    getOnlineList(page = 1) {
+      this.currentOnline = page;
+      getOnlineList({
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.currentOnline,
+        limit: this.limitOnline,
+      }).then((res) => {
+        if (res.data.success) {
+          this.listOnline = res.data.data;
+          this.totalOnline = parseInt(res.data.count);
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
+    handleOnlineSizeChange(val){
+      this.limitOnline = val;
+      this.getOnlineList();
+    },
+    addOnline(){
+      this.online_time = this.dateFormat(new Date().getTime());
+      this.showOnlineDialog = true;
+    },
+    resetOnlineForm(formName) {
+      this.$refs[formName].resetFields();
+      this.showOnlineDialog = false;
+      this.formOnlineObj.online_sn = "";
+      this.formOnlineObj.online_lableid = "";
+      this.formOnlineObj.online_remark = "";
+    },
+    onOnlineSubmit(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let timeString = this.dateTimeFormat(new Date().getTime());
+            timeString= timeString.substring(11,19);
+            
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              source_label: this.formOnlineObj.online_sn,
+              label_id: this.formOnlineObj.online_lableid,
+              user_id:this.userInfo.userId,
+              // checkinTime: this.dateFormat(this.online_time) + " " + timeString, //入栏
+              operation: this.formOnlineObj.online_remark, //2是健康出栏 //3是死亡
+              remarks: this.formOnlineObj.online_remark == '2' ? '出栏' : '死亡'
+            };
+
+            pighandle(params).then((res) => {
+              if (res.data.success) {
+                  Message({
+                    type: "success",
+                    message: res.data.msg,
+                    showClose: true,
+                    duration: 3000,
+                  });
+                  // this.current = 1;
+                  this.getOnlineList();
+
+                  this.$refs[formName].resetFields();
+                  this.showOnlineDialog = false;
+                  this.formOnlineObj.online_sn = "";
+                  this.formOnlineObj.online_lableid = "";
+                  this.formOnlineObj.online_remark = "";
+              } else {
+                  Message({
+                    type: "warning",
+                    message: res.data.msg,
+                    showClose: true,
+                    duration: 3000,
+                  });
+              }
+            });
+          } else {
+            return false;
+          }
+        });
     },
     /**
      * 删除
@@ -3418,7 +3680,12 @@ export default {
     },
     handleClick(number) {
       this.numberType = number;
-      if(number == 6){
+      if(number == 7){
+        this.listOnline = [];
+        this.currentOnline = 1;
+        this.limitOnline = 10;
+        this.getOnlineList();
+      } else if(number == 6){
         this.timeJumplist = [];
         this.currentJump = 1;
         this.limitJump = 10;
@@ -3478,6 +3745,19 @@ export default {
       this.limitColumn = val;
       this.getColumntransferrecord();
     },
+    /**
+     * 
+     */
+    downloadLairage(){
+      window.open(
+        `https://monitor.coyotebio-lab.com/lairaging.xlsx`
+      );
+    },
+    downloadSuch(){
+      window.open(
+        `https://monitor.coyotebio-lab.com/jump.xlsx`
+      );
+    },
   },
 };
 </script>
@@ -3529,6 +3809,10 @@ export default {
 
 .measure-demo-form-inline {
   margin-top: 20px;
+}
+
+.measure-demo-form-inline3 {
+  margin: 20px 0px;
 }
 
 .measure-img{
