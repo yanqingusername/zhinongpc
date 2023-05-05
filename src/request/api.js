@@ -216,6 +216,9 @@ export const getPigInfoBylable = val => requestH5Other('/wisdomLivestockWH/PCpig
 //确认转栏
 export const NewSuch = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/NewSuch.hn', val, 'get');
 
+//转栏记录
+export const getColumntransferrecord = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/getColumntransferrecord.hn', val, 'get');
+
 
 
 

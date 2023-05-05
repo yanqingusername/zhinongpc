@@ -69,6 +69,7 @@
               <el-image
                 style="width:30px;height:30px;border-radius: 100%;"
                 :src="scope.row.headerimg || scope.row.header_img"
+                :preview-src-list="srcListEntranceGuard"
                 fit="cover"></el-image>
               <!-- <el-avatar :src="scope.row.headerimg || scope.row.header_img"></el-avatar> -->
             </div>
@@ -138,6 +139,7 @@ export default {
       limit: 10, //每页显示记录数
       total: 0, //总记录数
       listEntranceGuard: [],
+      srcListEntranceGuard: [],
       timelist: [
         new Date().getTime(),
         new Date().getTime(),
@@ -213,6 +215,10 @@ export default {
           // Message({ type: 'success', message: res.data.msg, showClose: true, duration: 3000 })
           this.listEntranceGuard = res.data.data;
           this.total = parseInt(res.data.count);
+          this.listEntranceGuard.forEach(element => {
+            this.srcListEntranceGuard.push(element.headerimg||element.header_img)
+          });
+          
         } else {
           Message({
             type: "warning",

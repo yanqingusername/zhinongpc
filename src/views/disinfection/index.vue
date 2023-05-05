@@ -89,6 +89,7 @@
               <el-image
                 style="width:30px;height:30px;border-radius: 100%;"
                 :src="scope.row.head_url"
+                :preview-src-list="srcList"
                 fit="cover"></el-image>
               <!-- <el-avatar :src="scope.row.head_url"></el-avatar> -->
             </div>
@@ -200,6 +201,7 @@ export default {
       limit: 10, //每页显示记录数
       total: 0, //总记录数
       listIwadom: [],
+      srcList: [],
       timelist: [
         new Date().getTime(),
         new Date().getTime(),
@@ -304,6 +306,10 @@ export default {
           // Message({ type: 'success', message: res.data.msg, showClose: true, duration: 3000 })
           this.listIwadom = res.data.data;
           this.total = parseInt(res.data.count);
+          this.listIwadom.forEach(element => {
+            this.srcList.push(element.head_url)
+          });
+
         } else {
           Message({
             type: "warning",

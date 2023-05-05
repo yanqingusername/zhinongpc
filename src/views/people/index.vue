@@ -45,6 +45,7 @@
               <el-image
                 style="width:30px;height:30px;border-radius: 100%;"
                 :src="scope.row.head_url"
+                :preview-src-list="srcList"
                 fit="cover"></el-image>
             </div>
           </template>
@@ -235,6 +236,7 @@ export default {
       total: 0, //总记录数
       list: [],
       listRole: [],
+      srcList: [],
 
       showDialog: false,
       formObj: {
@@ -314,6 +316,9 @@ export default {
           // Message({ type: 'success', message: res.data.msg, showClose: true, duration: 3000 })
           this.list = res.data.info;
           this.total = parseInt(res.data.count);
+          this.list.forEach(element => {
+            this.srcList.push(element.head_url)
+          });
         } else {
           Message({
             type: "warning",

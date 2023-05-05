@@ -285,6 +285,10 @@
                 <span class="measure-view_2_top_1_1">{{pigInfoObj.label_type == 0 ? '育肥猪' : pigInfoObj.label_type == 1 ? '母猪' : pigInfoObj.label_type == 2 ? '仔猪' : '公猪'}}</span>
                 <span class="measure-view_2_top_1_2">性别</span>
               </div>
+              <div class="measure-view_2_top_1">
+                <span class="measure-view_2_top_1_1">{{pigInfoObj.breed}}</span>
+                <span class="measure-view_2_top_1_2">品种</span>
+              </div>
             </div>
             <el-form :inline="true" class="measure-demo-form-inline">
               <el-form-item label="时间范围">
@@ -306,6 +310,8 @@
                 @click="getLabelTemActInfo()">查询</el-button>
 
               <el-button type="primary" size="medium" @click="exportPigDetailsData()" style="margin-left:20px;" icon="el-icon-folder">导出</el-button>
+
+              <el-button type="primary" size="medium" @click="showColumn()" style="margin-left:20px;" icon="el-icon-document">转栏记录</el-button>
             </el-form>
             <el-table :data="listLabelTemActInfo" stripe style="width: 100%;" border
             :row-style="iRowStyle"
@@ -1339,6 +1345,77 @@
         </div>
       </el-form>
     </el-dialog>
+
+    <!--转栏记录 -->
+    <el-dialog
+      title="转栏记录"
+      :visible.sync="showColumnDialog"
+      width="810px"
+      center>
+        <div class="measure-flex-center" style="margin-left:0px;height:450px;">
+          <div style="margin-bottom:10px;font-size:18px;">耳号: {{pigInfoObj.source_label}}</div>
+          <el-table :data="listColumn" stripe style="width: 100%;" border 
+          :row-style="iRowStyle"
+              :cell-style="iCellStyle"
+              :header-row-style="iHeaderRowStyle"
+              :header-cell-style="iHeaderCellStyle"
+              height="430">
+                <el-table-column
+                    prop="create_time"
+                    width="180"
+                    label="日期"
+                    align="center"
+                />
+
+                <el-table-column
+                    prop="Sitearea"
+                    width="160"
+                    label="场区"
+                    align="center"
+                />
+                <el-table-column
+                    prop="door"
+                    width="160"
+                    label="栋舍"
+                    align="center"
+                />
+
+                <el-table-column
+                    prop="dorm"
+                    width="160"
+                    label="栏位"
+                    align="center"
+                />
+
+                <el-table-column
+                    prop="status || operation"
+                    width="99"
+                    label="周转信息"
+                    align="center"
+                >
+                  <template slot-scope="scope">
+                    <p v-if="scope.row.status == '0'">离场</p>
+                    <p v-if="scope.row.operation == '1'">入栏</p>
+                    <p v-if="scope.row.operation == '2'">转栏</p>
+                  </template>
+                </el-table-column>
+                </el-table>
+
+                <!-- 分页 -->
+                <div class="block" style="margin-top: 0px;">
+                <el-pagination
+                    :current-page="currentColumn"
+                    :page-size="limitColumn"
+                    :total="totalColumn"
+                    style="padding: 30px 0 0 0; text-align: center"
+                    layout="total, sizes, prev, pager, next"
+                    @current-change="getColumntransferrecord"
+                    @size-change="handleColumnSizeChange"
+                    :page-sizes="[10, 20, 30, 40]"
+                />
+                </div>
+        </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -1372,7 +1449,8 @@ import {
   lairage,
   getSourceLabelByLabelId,
   getPigInfoBylable,
-  NewSuch
+  NewSuch,
+  getColumntransferrecord
 } from "../../request/api";
 import { Message } from "element-ui";
 import { stringify } from "qs";
@@ -1596,6 +1674,13 @@ export default {
       stySuchByPiggeryList: [],
 
       deleteOzoneDialog: false,
+
+      showColumnDialog: false,
+      currentColumn: 1, //当前页
+      limitColumn: 10, //每页显示记录数
+      totalColumn: 0, //总记录数
+      listColumn: [],
+
       
       numberType: 1, // 1-栋舍设备布局  2-个体健康历史记录  3-猪只个体档案管理 4-栋舍信息管理 5-猪只批量入栏  6-猪只批量转栏
     };
@@ -3210,10 +3295,17 @@ export default {
                   checkinTime: this.dateFormat(this.such_time) + " " + timeString //入栏
               };
 
-              console.log('---->:',params)
-
-              NewSuch(params).then((res) => {
-                if (res.data.success) {
+            console.log('---->:',params)
+            axios({
+              method: 'post',
+              // url:'http://172.16.23.37:8080/wisdomLivestockWH/PCpigManagement/NewSuch.hn',
+              url: "https://monitor.coyotebio-lab.com:8443/wisdomLivestockWH/PCpigManagement/NewSuch.hn",
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+              },
+              data: params,
+            }).then((res)=>{
+              if (res.data.success) {
                   Message({
                     type: "success",
                     message: res.data.msg,
@@ -3231,15 +3323,15 @@ export default {
                   this.formSuchObj.such_sitearea = "";
                   this.formSuchObj.such_door = "";
                   this.formSuchObj.such_dorm = "";
-                } else {
+              } else {
                   Message({
                     type: "warning",
                     message: res.data.msg,
                     showClose: true,
                     duration: 3000,
                   });
-                }
-              });
+              }
+            })
           } else {
             return false;
           }
@@ -3357,6 +3449,34 @@ export default {
       } else {
         this.getdisplaysum();
       }
+    },
+    showColumn(){
+      this.showColumnDialog = true;
+      this.getColumntransferrecord();
+    },
+    getColumntransferrecord(){
+      getColumntransferrecord({
+            label_id: this.pigInfoObj.label_id,
+            page: this.currentColumn,
+            limit: this.limitColumn,
+            pig_farm_id: this.userInfo.farm_id
+          }).then((res) => {
+            if (res.data.success) {
+              this.listColumn = res.data.data;
+              this.totalColumn = parseInt(res.data.count);
+            } else {
+              Message({
+                type: "warning",
+                message: res.data.msg,
+                showClose: true,
+                duration: 3000,
+              });
+            }
+          });
+    },
+    handleColumnSizeChange(val){
+      this.limitColumn = val;
+      this.getColumntransferrecord();
     },
   },
 };
@@ -3850,6 +3970,9 @@ export default {
 .font_label{
     font-size: 16px;
     color: #999999;
+}
+.el-dialog--center .el-dialog__body {
+    padding: 10px 25px 30px 25px !important;
 }
 
 </style>

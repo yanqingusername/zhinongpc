@@ -142,6 +142,7 @@
                 <el-image
                   style="width:30px;height:30px;border-radius: 100%;"
                   :src="scope.row.head_url"
+                  :preview-src-list="srcListAlarm"
                   fit="cover"></el-image> 
               </div>
             </template>
@@ -361,6 +362,7 @@ export default {
       limitAlarm: 5, //每页显示记录数
       totalAlarm: 0, //总记录数
       listAlarm: [],
+      srcListAlarm: [],
 
       currentGoods: 1, //当前页
       limitGoods: 5, //每页显示记录数
@@ -497,7 +499,10 @@ export default {
         if (res.data.code == 200) {
           // Message({ type: 'success', message: res.data.msg, showClose: true, duration: 3000 })
           this.listAlarm = res.data.data;
-          this.totalAlarm = res.data.count;
+          this.totalAlarm = parseInt(res.data.count);
+          this.listAlarm.forEach(element => {
+            this.srcListAlarm.push(element.head_url)
+          });
         } else {
           Message({
             type: "warning",
