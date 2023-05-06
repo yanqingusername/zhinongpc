@@ -1,4 +1,4 @@
-# dynamic_router
+# smart_animal_husbandry
 
 ## Project setup
 ```
