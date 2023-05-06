@@ -17,11 +17,11 @@
 
       <!-- <div
         :class="[numberType == 5 ?'device-click_view_activity':'device-click_view']"
-        @click="handleClick(5)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />液体消毒监测</div> -->
+        @click="handleClick(5)"><img src="../../assets/icon_2023_02_14_10.png" class="device-image" />液体消毒监测</div> -->
 
       <!-- <div
         :class="[numberType == 6 ?'device-click_view_activity':'device-click_view']"
-        @click="handleClick(6)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />车辆消毒监测</div> -->
+        @click="handleClick(6)"><img src="../../assets/icon_2023_02_14_11.png" class="device-image" />车辆消毒监测</div> -->
     </div>
 
     <div class="device-container-right device-pulic_box_shadow">
@@ -36,7 +36,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listOzone" stripe style="width: 1150px" border
+        <el-table :data="listOzone" stripe style="width: 1150px" height="425" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -115,7 +115,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listDis" stripe style="width: 1150px" border
+        <el-table :data="listDis" stripe style="width: 1150px" height="425" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -188,7 +188,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listAnimal" stripe style="width: 1150px" border
+        <el-table :data="listAnimal" stripe style="width: 1150px" height="425" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -254,7 +254,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listAccess" stripe style="width: 1150px" border
+        <el-table :data="listAccess" stripe style="width: 1150px" height="425" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -334,7 +334,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listLiquid" stripe style="width: 1150px;" height="420" border
+        <el-table :data="listLiquid" stripe style="width: 1150px;" height="425" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -371,7 +371,19 @@
             width="270"
             label="设备管理员"
             align="center"
-          />
+            :show-overflow-tooltip="true"
+          >
+            <template slot-scope="scope">
+              <el-popover
+                placement="top-start"
+                title=""
+                width="300"
+                trigger="hover"
+                :content="scope.row.device_people">
+                <div class="device_people_view" slot="reference">{{scope.row.device_people}}</div>
+              </el-popover>
+            </template>
+          </el-table-column>
           <el-table-column prop="approve_people" width="100" label="审批人" align="center" />
 
           <el-table-column label="操作" width="200" align="center">
@@ -395,7 +407,7 @@
             :total="totalLiquid"
             style="padding: 30px 0; text-align: center"
             layout="total, sizes, prev, pager, next"
-            @current-change="getEmployeesLists"
+            @current-change="getLiquidLists"
             @size-change="handleLiquidSizeChange"
             :page-sizes="[10, 20, 30, 40]"
           />
@@ -413,7 +425,7 @@
             icon="el-icon-plus">新增</el-button>
         </div>
 
-        <el-table :data="listCar" stripe style="width: 1150px" border
+        <el-table :data="listCar" stripe style="width: 1150px" height="425" border
           :row-style="iRowStyle"
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
@@ -467,7 +479,7 @@
             :total="totalCar"
             style="padding: 30px 0; text-align: center"
             layout="total, sizes, prev, pager, next"
-            @current-change="getEmployeesLists"
+            @current-change="getCarLists"
             @size-change="handleCarSizeChange"
             :page-sizes="[10, 20, 30, 40]"
           />
@@ -2038,9 +2050,28 @@ export default {
     /**
      * 液体消毒
      */
+    getLiquidLists() {
+      getEmployeesLists({
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.currentLiquid,
+        limit: this.limitLiquid,
+        real_name: '',
+      }).then((res) => {
+        if (res.data.success) {
+          this.listLiquid = res.data.info;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
     handleLiquidSizeChange(val) {
       this.limitLiquid = val;
-      this.getEmployeesLists();
+      this.getLiquidLists();
     },
     handlerLiquidEdit(id) {
       this.isLiquidEdit = 2;
@@ -2093,7 +2124,7 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getLiquidLists();
 
                 this.$refs[formName].resetFields();
                 this.showLiquidDialog = false;
@@ -2123,7 +2154,7 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getLiquidLists();
 
                 this.$refs[formName].resetFields();
                 this.showLiquidDialog = false;
@@ -2154,9 +2185,28 @@ export default {
     /**
      * 车辆消毒监测
      */
+    getCarLists() {
+      getEmployeesLists({
+        pig_farm_id: this.userInfo.farm_id,
+        page: this.currentCar,
+        limit: this.limitCar,
+        real_name: '',
+      }).then((res) => {
+        if (res.data.success) {
+          this.listCar = res.data.info;
+        } else {
+          Message({
+            type: "warning",
+            message: res.data.msg,
+            showClose: true,
+            duration: 3000,
+          });
+        }
+      });
+    },
     handleCarSizeChange(val) {
       this.limitCar = val;
-      this.getEmployeesLists();
+      this.getCarLists();
     },
     handlerCarEdit(id) {
       this.isCarEdit = 2;
@@ -2205,7 +2255,7 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getCarLists();
 
                 this.$refs[formName].resetFields();
                 this.showCarDialog = false;
@@ -2233,7 +2283,7 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getEmployeesLists();
+                this.getCarLists();
 
                 this.$refs[formName].resetFields();
                 this.showCarDialog = false;
@@ -2391,5 +2441,19 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.device_people_view{
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+  white-space: normal;
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 </style>
