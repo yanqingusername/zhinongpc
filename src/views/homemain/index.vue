@@ -1,7 +1,7 @@
 <template>
   <div class="index-index-container">
     <div class="index-index-container-1">
-      <div class="index-container-left index-pulic_box_shadow">
+      <div class="index-container-left index-pulic_box_shadow" style="padding: 20px 0px 0px 0px;">
         <div class="index-pie-top">
           <div class="index-pie-top-title">猪只个体健康</div>
           <el-row>
@@ -25,7 +25,7 @@
       </div>
 
       <div class="index-container-right index-pulic_box_shadow">
-        <div style="padding: 20px">发热猪信息</div>
+        <div style="padding: 10px">发热猪信息</div>
 
         <el-table
           :data="listFever"
@@ -116,7 +116,7 @@
 
     <div class="index-index-container-2">
       <div class="index-container-2-left index-pulic_box_shadow">
-        <div style="padding: 20px">淋浴预警 失败累计数量({{totalAlarm}})</div>
+        <div style="padding: 10px">淋浴预警 失败累计数量({{totalAlarm}})</div>
 
         <el-table
           :data="listAlarm"
@@ -188,7 +188,7 @@
       </div>
 
       <div class="index-container-2-right index-pulic_box_shadow">
-        <div style="padding: 20px">物资消毒预警 违规累计数量({{totalGoods}})</div>
+        <div style="padding: 10px">物资消毒预警 违规累计数量({{totalGoods}})</div>
 
         <el-table
           :data="listGoods"
@@ -252,7 +252,7 @@
       </div>
 
       <div class="index-container-2-right index-pulic_box_shadow">
-        <div style="padding: 20px">小动物预警</div>
+        <div style="padding: 10px">小动物预警</div>
 
         <el-table
           :data="listAnimal"
@@ -709,8 +709,8 @@ export default {
   /* align-items: center; */
   justify-content: space-between;
   width: 100%;
-  /* height: 317px; */
-  height: 400px;
+  height: 300px;
+  /* height: 400px; */
 }
 
 .index-container-left {
@@ -756,7 +756,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .echart-view {

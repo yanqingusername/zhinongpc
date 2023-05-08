@@ -8,8 +8,8 @@ const requestH5 = axios.create({
   crewithdentials: true, // 跨域请求时发送cookies
   timeout: 10000, // requestH5 timeout
   // baseURL: '/storemanage'
-  // baseURL: 'http://172.16.23.37:8080'
-  baseURL: 'https://monitor.coyotebio-lab.com:8443'
+  baseURL: 'http://172.16.23.37:8080'
+  // baseURL: 'https://monitor.coyotebio-lab.com:8443'
   // baseURL: 'http://syrdev.coyotebio-lab.com:8080'
 });
 // axios.defaults.baseURL = '/storemanage'

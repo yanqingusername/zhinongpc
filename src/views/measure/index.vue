@@ -1638,10 +1638,11 @@ export default {
       listStyByPiggery: [],
       logisticsDialog: true,
       pigInfoObj: '',
-      timepiglist: [
-        new Date().getTime(),
-        new Date().getTime(),
-      ],
+      // timepiglist: [
+      //   new Date().getTime(),
+      //   new Date().getTime(),
+      // ],
+      timepiglist: [],
       timeEchartslist: [
         new Date().getTime(),
         new Date().getTime(),
@@ -2034,10 +2035,11 @@ export default {
     logisticsClick(item) {
       this.logisticsDialog = false;
       this.pigInfoObj = item;
-      this.timepiglist = [
-        new Date().getTime(),
-        new Date().getTime(),
-      ];
+      // this.timepiglist = [
+      //   new Date().getTime(),
+      //   new Date().getTime(),
+      // ];
+      this.timepiglist = [];
       this.timeEchartslist = [
         new Date().getTime(),
         new Date().getTime(),

@@ -18,7 +18,7 @@
           type="primary"
           size="medium"
           icon="el-icon-search"
-          @click="getCarlistinfos()">查询</el-button>
+          @click="getcarwashoutProcessList()">查询</el-button>
 
       </el-form>
 
@@ -74,7 +74,7 @@
           :total="total"
           style="padding: 30px 0; text-align: center"
           layout="total, sizes, prev, pager, next"
-          @current-change="getCarlistinfos"
+          @current-change="getcarwashoutProcessList"
           @size-change="handleSizeChange"
           :page-sizes="[10, 20, 30, 40]"
         />
@@ -103,8 +103,8 @@
 import * as echarts from "echarts";
 import moment from "moment";
 import {
-  getAnimallistinfos,
-  getAnimalChart
+  getcarwashoutProcessList,
+  getChartinfo
 } from "../../request/api";
 import { Message } from "element-ui";
 export default {
@@ -117,10 +117,7 @@ export default {
       total: 0, //总记录数
       listCar: [],
       srcList: [],
-      timelist: [
-        new Date().getTime(),
-        new Date().getTime(),
-      ],
+      timelist: [],
       chartTempDom: "",
       myChartTemp: "",
       optionTemp: "",
@@ -134,8 +131,8 @@ export default {
       this.chartTempDom = this.$refs.echarttemp;
       this.myChartTemp = echarts.init(this.chartTempDom);
 
-      this.getCarlistinfos();
-      this.getCarChart();
+      this.getcarwashoutProcessList();
+      this.getChartinfo();
     });
   },
   methods: {
@@ -166,8 +163,8 @@ export default {
         return false;
       }
     },
-    getCarChart() {
-      getAnimalChart({
+    getChartinfo() {
+      getChartinfo({
         pig_farm_id: this.userInfo.farm_id,
       }).then((res) => {
         if (res.data.success) {
@@ -180,7 +177,7 @@ export default {
               color: '#5470c6',
               // data: ydata,
               // barWidth: 12,
-              data: [820, 932, 901, 934, 1290, 1330, 1320],
+              data: ydata,
               type: 'line',
               areaStyle: {}
             },
@@ -203,7 +200,7 @@ export default {
         }
       });
     },
-    getCarlistinfos(page = 1) {
+    getcarwashoutProcessList(page = 1) {
       this.current = page;
       let params = {
         pig_farm_id: this.userInfo.farm_id,
@@ -212,10 +209,9 @@ export default {
         start_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[0]) + ' 00:00:00' : '',
         // start_time: '2023-03-17 00:00:00',
         end_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[1]) + ' 23:59:59' : '',
-        address: this.location_id,
       }
       console.log(params)
-      getAnimallistinfos(params).then((res) => {
+      getcarwashoutProcessList(params).then((res) => {
         if (res.data.success) {
           // Message({ type: 'success', message: res.data.msg, showClose: true, duration: 3000 })
           this.listCar = res.data.data;
@@ -235,7 +231,7 @@ export default {
     },
     handleSizeChange(val) {
       this.limit = val;
-      this.getCarlistinfos();
+      this.getcarwashoutProcessList();
     },
     initChart(xdata, series) {
       // 绘制图表
@@ -269,9 +265,8 @@ export default {
           type: 'category',
           axisTick: { show: false },
           name: "月",
-          // data: xdata,
+          data: xdata,
           boundaryGap: false,
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         },
         yAxis: {
           name: "数量(次)",

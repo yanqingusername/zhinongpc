@@ -15,13 +15,13 @@
         :class="[numberType == 4 ?'device-click_view_activity':'device-click_view']"
         @click="handleClick(4)"><img src="../../assets/icon_2023_02_14_8.png" class="device-image" />门禁系统管理</div>
 
-      <!-- <div
+      <div
         :class="[numberType == 5 ?'device-click_view_activity':'device-click_view']"
-        @click="handleClick(5)"><img src="../../assets/icon_2023_02_14_10.png" class="device-image" />液体消毒监测</div> -->
+        @click="handleClick(5)"><img src="../../assets/icon_2023_02_14_10.png" class="device-image" />液体消毒监测</div>
 
-      <!-- <div
+      <div
         :class="[numberType == 6 ?'device-click_view_activity':'device-click_view']"
-        @click="handleClick(6)"><img src="../../assets/icon_2023_02_14_11.png" class="device-image" />车辆消毒监测</div> -->
+        @click="handleClick(6)"><img src="../../assets/icon_2023_02_14_11.png" class="device-image" />车辆消毒监测</div>
     </div>
 
     <div class="device-container-right device-pulic_box_shadow">
@@ -325,7 +325,7 @@
 
       <div v-if="numberType == 5">
         <div class="device-top-view">
-          <div class="device-title">物资液体消毒监测工作站管理(1000)</div>
+          <div class="device-title">物资液体消毒监测工作站管理({{totalLiquid}})</div>
           <el-button
             type="primary"
             size="medium"
@@ -341,33 +341,33 @@
           :header-cell-style="iHeaderCellStyle">
         
           <el-table-column
-            prop="device_sn"
-            width="160"
+            prop="sn"
+            width="120"
             label="设备SN号"
             align="center"
           />
 
           <el-table-column
             prop="address"
-            width="120"
+            width="160"
             label="位置"
             align="center">
           </el-table-column>
 
           <el-table-column
-            prop="concentration"
+            prop="PH"
             width="150"
             label="有效PH值"
             align="center"
           />
           <el-table-column
-            prop="disinfect_time"
+            prop="duration"
             width="150"
             label="消毒时长(分钟)"
             align="center"
           />
           <el-table-column
-            prop="device_people"
+            prop="controller"
             width="270"
             label="设备管理员"
             align="center"
@@ -379,12 +379,12 @@
                 title=""
                 width="300"
                 trigger="hover"
-                :content="scope.row.device_people">
-                <div class="device_people_view" slot="reference">{{scope.row.device_people}}</div>
+                :content="scope.row.controller">
+                <div class="device_people_view" slot="reference">{{scope.row.controller}}</div>
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="approve_people" width="100" label="审批人" align="center" />
+          <el-table-column prop="reviewer" width="100" label="审批人" align="center" />
 
           <el-table-column label="操作" width="200" align="center">
             <template slot-scope="scope">
@@ -407,7 +407,7 @@
             :total="totalLiquid"
             style="padding: 30px 0; text-align: center"
             layout="total, sizes, prev, pager, next"
-            @current-change="getLiquidLists"
+            @current-change="getLiquidDevicelist"
             @size-change="handleLiquidSizeChange"
             :page-sizes="[10, 20, 30, 40]"
           />
@@ -416,7 +416,7 @@
 
       <div v-if="numberType == 6">
         <div class="device-top-view">
-          <div class="device-title">车辆消毒监测工作站(1000)</div>
+          <div class="device-title">车辆消毒监测工作站({{totalCar}})</div>
           <el-button
             type="primary"
             size="medium"
@@ -432,7 +432,7 @@
           :header-cell-style="iHeaderCellStyle">
         
           <el-table-column
-            prop="device_sn"
+            prop="sn"
             width="200"
             label="设备SN号"
             align="center"
@@ -446,17 +446,29 @@
           </el-table-column>
 
           <el-table-column
-            prop="disinfect_time"
+            prop="create_time"
             width="200"
             label="设备添加时间"
             align="center"
           />
           <el-table-column
-            prop="device_people"
+            prop="controller"
             width="350"
             label="管理员"
             align="center"
-          />
+            :show-overflow-tooltip="true"
+          >
+            <template slot-scope="scope">
+              <el-popover
+                placement="top-start"
+                title=""
+                width="300"
+                trigger="hover"
+                :content="scope.row.controller">
+                <div class="device_people_view" slot="reference">{{scope.row.controller}}</div>
+              </el-popover>
+            </template>
+          </el-table-column>
 
           <el-table-column label="操作" width="200" align="center">
             <template slot-scope="scope">
@@ -479,7 +491,7 @@
             :total="totalCar"
             style="padding: 30px 0; text-align: center"
             layout="total, sizes, prev, pager, next"
-            @current-change="getCarLists"
+            @current-change="getCarStiflingDevicelist"
             @size-change="handleCarSizeChange"
             :page-sizes="[10, 20, 30, 40]"
           />
@@ -735,14 +747,14 @@
       :show-close="false">
       <el-form ref="formLiquidObj" :model="formLiquidObj" label-width="140px">
         <div class="device-flex-space">
-          <el-form-item label="设备SN号*：">
+          <el-form-item label="设备SN号*：" prop="liquid_sn">
             <el-input
               v-model="formLiquidObj.liquid_sn"
               style="width: 200px"
               placeholder="请输入设备SN号"></el-input>
           </el-form-item>
 
-          <el-form-item label="有效PH值：" style="margin-left:20px;">
+          <el-form-item label="有效PH值：" style="margin-left:20px;" prop="liquid_concentration">
             <el-input
               v-model="formLiquidObj.liquid_concentration"
               style="width: 200px"
@@ -751,16 +763,16 @@
         </div>
 
         <div class="device-flex-space">
-          <el-form-item label="消毒时长(分钟)*：">
+          <el-form-item label="消毒时长(分钟)*：" prop="liquid_time">
             <el-input
               v-model="formLiquidObj.liquid_time"
               style="width: 200px"
               placeholder="请输入消毒时长(分钟)"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置*：" prop="liquid_address" style="margin-left:20px;">
+          <el-form-item label="位置*：" prop="liquid_address_id" style="margin-left:20px;">
             <el-select
-              v-model="formLiquidObj.liquid_address"
+              v-model="formLiquidObj.liquid_address_id"
               placeholder="请选择位置"
               style="width: 200px">
               <el-option
@@ -773,23 +785,23 @@
         </div>
 
         <el-form-item label="设备管理员*：" prop="liquid_device_people">
-          <el-checkbox-group v-model="liquid_device_people">
-            <el-checkbox v-for="(item,index) in device_people" :key="index" :label="item.id">{{item.name}}</el-checkbox>
+          <el-checkbox-group v-model="formLiquidObj.liquid_device_people">
+            <el-checkbox v-for="(item,index) in listEmployees" :key="index" :label="item.id+''">{{item.real_name}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
 
-        <el-form-item label="审批人*：" v-model="liquid_app_people">
-          <el-radio-group v-model="liquid_app_people">
-            <el-radio v-for="(item,index) in device_people" :key="index" :label="item.id">{{item.name}}</el-radio>
+        <el-form-item label="审批人*：" prop="liquid_app_people">
+          <el-radio-group v-model="formLiquidObj.liquid_app_people" style="display: flex;flex-wrap: wrap;">
+            <el-radio style="height:40px;display: flex;align-items: center;" v-for="(item,index) in listEmployees" :key="index" :label="item.id+''">{{item.real_name}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="设备添加时间*：">
+        <!-- <el-form-item label="设备添加时间*：">
             <el-input
               v-model="liquid_current_time"
               style="width: 200px"
               placeholder=""
               :readonly="true"></el-input>
-          </el-form-item>
+          </el-form-item> -->
         <div class="device-from-footer">
           <el-button @click="resetLiquidForm('formLiquidObj')">取消</el-button>
           <el-button type="primary" @click="onLiquidSubmit('formLiquidObj')">保存</el-button>
@@ -807,16 +819,16 @@
       :show-close="false">
       <el-form ref="formCarObj" :model="formCarObj" label-width="140px">
         <!-- <div class="device-flex-space"> -->
-          <el-form-item label="设备SN号*：">
+          <el-form-item label="设备SN号*：" prop="car_sn">
             <el-input
               v-model="formCarObj.car_sn"
               style="width: 200px"
               placeholder="请输入设备SN号"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置*：" prop="car_address" style="margin-left:0px;">
+          <el-form-item label="位置*：" prop="car_address_id" style="margin-left:0px;">
             <el-select
-              v-model="formCarObj.car_address"
+              v-model="formCarObj.car_address_id"
               placeholder="请选择位置"
               style="width: 200px">
               <el-option
@@ -829,18 +841,18 @@
         <!-- </div> -->
 
         <el-form-item label="管理员*：" prop="car_device_people">
-          <el-checkbox-group v-model="car_device_people">
-            <el-checkbox v-for="(item,index) in device_people" :key="index" :label="item.id">{{item.name}}</el-checkbox>
+          <el-checkbox-group v-model="formCarObj.car_device_people">
+            <el-checkbox v-for="(item,index) in listEmployees" :key="index" :label="item.id+''">{{item.real_name}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
 
-        <el-form-item label="设备添加时间*：">
+        <!-- <el-form-item label="设备添加时间*：">
             <el-input
               v-model="car_current_time"
               style="width: 200px"
               placeholder=""
               :readonly="true"></el-input>
-          </el-form-item>
+          </el-form-item> -->
         <div class="device-from-footer">
           <el-button @click="resetCarForm('formCarObj')">取消</el-button>
           <el-button type="primary" @click="onCarSubmit('formCarObj')">保存</el-button>
@@ -880,10 +892,12 @@ import {
   getAccessdeviceinfobyid,
   editEntranceGuard,
   deleteEntranceGuardInfo,
-
-  adduserinfo,
-  getuserinfo,
-  edituserinfo,
+  addLiquidDeviceinfo,
+  getLiquidDevicelist,
+  editLiquidinfo,
+  addCarStiflingDeviceinfo,
+  getCarStiflingDevicelist,
+  editCarStiflinginfo
 } from "../../request/api";
 import { Message } from "element-ui";
 export default {
@@ -1015,107 +1029,17 @@ export default {
       currentLiquid: 1, //当前页
       limitLiquid: 10, //每页显示记录数
       totalLiquid: 0, //总记录数
-      listLiquid: [
-        {
-          "id": '1',
-          "address": '位置1',
-          "device_sn": '120101010111',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        },
-        {
-          "id": '2',
-          "address": '位置2',
-          "device_sn": '120101010112',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        },
-        {
-          "id": '3',
-          "address": '位置3',
-          "device_sn": '120101010113',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        },
-        {
-          "id": '4',
-          "address": '位置4',
-          "device_sn": '120101010114',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        },
-        {
-          "id": '5',
-          "address": '位置5',
-          "device_sn": '120101010115',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        },
-        {
-          "id": '1',
-          "address": '位置1',
-          "device_sn": '120101010111',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        },
-        {
-          "id": '2',
-          "address": '位置2',
-          "device_sn": '120101010112',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        },
-        {
-          "id": '3',
-          "address": '位置3',
-          "device_sn": '120101010113',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四,米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        },
-        {
-          "id": '4',
-          "address": '位置4',
-          "device_sn": '120101010114',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        },
-        {
-          "id": '5',
-          "address": '位置5',
-          "device_sn": '120101010115',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '米洪杰,白长命,包金龙,武保平,王玉斌,付学强,王煥福,曾高生,丁世军,李忠,石厚川,尚凌华,郑祥瑞,崔志明,韩凤会,丁晓东,王凤庆,邢善林,李正明,张海辉,来访人员1,来访人员2,来访人员3,来访人员4,来访人员5',
-          "approve_people": '张三',
-        }
-      ],
-      listLiquidPosition: [],
+      listLiquid: [],
       showLiquidDialog: false,
       formLiquidObj: {
         liquid_sn: "",
         liquid_concentration: "",
         liquid_time: "",
-        liquid_address: "",
+        liquid_address_id: "",
+        liquid_device_people: [],
+        liquid_app_people: ''
       },
-      liquid_current_time: new Date().getTime(),
+      // liquid_current_time: new Date().getTime(),
       rulesLiquid: {
         liquid_sn: [
           { required: true, message: "请输入设备SN号", trigger: "blur" },
@@ -1127,11 +1051,14 @@ export default {
         liquid_time: [
           { required: true, message: "请输入消毒时长(分钟)", trigger: "blur" },
         ],
-        liquid_address: [{ required: true, message: "请选择位置", trigger: "change" }],
+        liquid_address_id: [{ required: true, message: "请选择位置", trigger: "change" }],
+        liquid_device_people: [
+          { type: 'array', required: true, message: '请至少选择一个设备管理员', trigger: 'change' }
+        ],
+        liquid_app_people: [
+          { required: true, message: '请选择审批人', trigger: 'change' }
+        ],
       },
-      liquid_device_people: ['1', '2'],
-      device_people: [{'id': '1', name: '张三'}, {'id': '2', name: '李四'},{'id': '3', name: '王五'},{'id': '4', name: '赵六'}],
-      liquid_app_people: "3",
       deleteLiquidDialog: false,
       idLiquid: "", // 员工id
       isLiquidEdit: 1, // 1-新增  2-编辑
@@ -1139,69 +1066,24 @@ export default {
       currentCar: 1, //当前页
       limitCar: 10, //每页显示记录数
       totalCar: 0, //总记录数
-      listCar: [
-        {
-          "id": '1',
-          "address": '位置1',
-          "device_sn": '120101010111',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '2',
-          "address": '位置2',
-          "device_sn": '120101010112',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '3',
-          "address": '位置3',
-          "device_sn": '120101010113',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '4',
-          "address": '位置4',
-          "device_sn": '120101010114',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        },
-        {
-          "id": '5',
-          "address": '位置5',
-          "device_sn": '120101010115',
-          "concentration": '20',
-          "disinfect_time": '5',
-          "device_people": '张三,李四',
-          "approve_people": '张三',
-        }
-      ],
-      listCarPosition: [],
+      listCar: [],
       showCarDialog: false,
       formCarObj: {
         car_sn: "",
-        car_address: "",
+        car_address_id: "",
+        car_device_people: [],
       },
-      car_current_time: new Date().getTime(),
+      // car_current_time: new Date().getTime(),
       rulesCar: {
         car_sn: [
           { required: true, message: "请输入设备SN号", trigger: "blur" },
           // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
-        car_address: [{ required: true, message: "请选择位置", trigger: "change" }],
+        car_address_id: [{ required: true, message: "请选择位置", trigger: "change" }],
+        car_device_people: [
+          { type: 'array', required: true, message: '请至少选择一个设备管理员', trigger: 'change' }
+        ],
       },
-      car_device_people: ['1', '2'],
-      device_people: [{'id': '1', name: '张三'}, {'id': '2', name: '李四'},{'id': '3', name: '王五'},{'id': '4', name: '赵六'}],
       deleteCarDialog: false,
       idCar: "", // 员工id
       isCarEdit: 1, // 1-新增  2-编辑
@@ -1215,8 +1097,8 @@ export default {
       this.dis_current_time = this.dateFormat(this.dis_current_time);
       this.animal_current_time = this.dateFormat(this.animal_current_time);
       this.access_current_time = this.dateFormat(this.access_current_time);
-      this.liquid_current_time = this.dateFormat(this.liquid_current_time);
-      this.car_current_time = this.dateFormat(this.car_current_time);
+      // this.liquid_current_time = this.dateFormat(this.liquid_current_time);
+      // this.car_current_time = this.dateFormat(this.car_current_time);
       this.getEmployeesLists();
       this.getFarmlayout();
 
@@ -1289,9 +1171,13 @@ export default {
     handleClick(number) {
       this.numberType = number;
       if(number == 6){
-
+        this.limitCar = 10;
+        this.currentCar = 1;
+        this.getCarStiflingDevicelist()
       } else if(number == 5){
-
+        this.limitLiquid = 10;
+        this.currentLiquid = 1;
+        this.getLiquidDevicelist()
       } else if(number == 4){
         this.limitAccess = 10;
         this.currentAccess = 1;
@@ -1327,6 +1213,12 @@ export default {
       } else if(this.numberType == 4){
         this.deleteOzoneDialog = true;
         this.idAccess = id;
+      } else if(this.numberType == 5){
+        this.deleteOzoneDialog = true;
+        this.idLiquid = id;
+      } else if(this.numberType == 6){
+        this.deleteOzoneDialog = true;
+        this.idCar = id;
       }
     },
     deleteOzoneClick() {
@@ -1371,6 +1263,14 @@ export default {
             }
           });
         }
+      } else if(this.numberType == 5){
+        if (this.idLiquid) {
+          this.publicDelete(this.idLiquid);
+        }
+      } else if(this.numberType == 6){
+        if (this.idCar) {
+          this.publicDelete(this.idCar);
+        }
       }
     },
     publicDelete(id){
@@ -1404,6 +1304,12 @@ export default {
                 // this.resetAnimalForm('formAnimalObj');
                 this.deleteOzoneDialog = false;
                 this.getForeignMatterManageList()
+              } else if(this.numberType == 5){
+                this.deleteOzoneDialog = false;
+                this.getLiquidDevicelist()
+              } else if(this.numberType == 6){
+                this.deleteOzoneDialog = false;
+                this.getCarStiflingDevicelist()
               }
             } else {
               Message({
@@ -2050,15 +1956,15 @@ export default {
     /**
      * 液体消毒
      */
-    getLiquidLists() {
-      getEmployeesLists({
+    getLiquidDevicelist() {
+      getLiquidDevicelist({
         pig_farm_id: this.userInfo.farm_id,
         page: this.currentLiquid,
         limit: this.limitLiquid,
-        real_name: '',
       }).then((res) => {
         if (res.data.success) {
-          this.listLiquid = res.data.info;
+          this.listLiquid = res.data.data;
+          this.totalLiquid = parseInt(res.data.count);
         } else {
           Message({
             type: "warning",
@@ -2071,22 +1977,26 @@ export default {
     },
     handleLiquidSizeChange(val) {
       this.limitLiquid = val;
-      this.getLiquidLists();
+      this.getLiquidDevicelist();
     },
     handlerLiquidEdit(id) {
       this.isLiquidEdit = 2;
-      this.showLiquidDialog = true;
-      getuserinfo({
+      getdeviceinfobyid({
         id: id,
+        pig_farm_id: this.userInfo.farm_id,
       }).then((res) => {
         if (res.data.success) {
+          this.showLiquidDialog = true;
           let infoList = res.data.data;
           if (infoList && infoList.length > 0) {
             let itemInfo = infoList[0];
-            this.formLiquidObj.liquid_sn = itemInfo.real_name;
-            this.formLiquidObj.liquid_concentration = itemInfo.job_number;
-            this.formLiquidObj.liquid_time = itemInfo.phone;
-            this.formLiquidObj.liquid_address = itemInfo.roleId;
+            let controller = itemInfo.controller.split(',')
+            this.formLiquidObj.liquid_sn = itemInfo.sn;
+            this.formLiquidObj.liquid_concentration = itemInfo.PH;
+            this.formLiquidObj.liquid_time = itemInfo.duration;
+            this.formLiquidObj.liquid_address_id = itemInfo.layout_id;
+            this.formLiquidObj.liquid_device_people = controller;
+            this.formLiquidObj.liquid_app_people = itemInfo.reviewer;
             this.idLiquid = itemInfo.id;
           }
         } else {
@@ -2105,17 +2015,35 @@ export default {
       this.formLiquidObj.liquid_sn = "";
       this.formLiquidObj.liquid_concentration = "";
       this.formLiquidObj.liquid_time = "";
-      this.formLiquidObj.liquid_address = "";
+      this.formLiquidObj.liquid_address_id = "";
+      this.formLiquidObj.liquid_device_people = [];
+      this.formLiquidObj.liquid_app_people = "";
       this.idLiquid = "";
     },
     onLiquidSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.isLiquidEdit == 2) {
-            let params = this.formLiquidObj;
-            params.id = this.idLiquid;
-            // params.pig_farm_id = this.userInfo.farm_id
-            edituserinfo(params).then((res) => {
+            let addressText = '';
+            for(let i = 0; i < this.listAccesslayoutdescr.length; i++){
+              if(this.listAccesslayoutdescr[i].id == this.formLiquidObj.liquid_address_id){
+                addressText = this.listAccesslayoutdescr[i].location_descr;
+                break;
+              }
+            }
+            let liquid_device_people = this.formLiquidObj.liquid_device_people.join(',')
+            let params = {
+              id: this.idLiquid,
+              sn: this.formLiquidObj.liquid_sn,
+              address: addressText,
+              layout_id: this.formLiquidObj.liquid_address_id,
+              controller: liquid_device_people,
+              reviewer: this.formLiquidObj.liquid_app_people,
+              duration: this.formLiquidObj.liquid_time,
+              PH: this.formLiquidObj.liquid_concentration,
+            };
+
+            editLiquidinfo(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -2124,14 +2052,16 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getLiquidLists();
+                this.getLiquidDevicelist();
 
                 this.$refs[formName].resetFields();
                 this.showLiquidDialog = false;
                 this.formLiquidObj.liquid_sn = "";
                 this.formLiquidObj.liquid_concentration = "";
                 this.formLiquidObj.liquid_time = "";
-                this.formLiquidObj.liquid_address = "";
+                this.formLiquidObj.liquid_address_id = "";
+                this.formLiquidObj.liquid_device_people = [];
+                this.formLiquidObj.liquid_app_people = "";
                 this.idLiquid = "";
               } else {
                 Message({
@@ -2143,9 +2073,27 @@ export default {
               }
             });
           } else {
-            let params = this.formLiquidObj;
-            params.pig_farm_id = this.userInfo.farm_id;
-            adduserinfo(params).then((res) => {
+            let addressText = '';
+            for(let i = 0; i < this.listAccesslayoutdescr.length; i++){
+              if(this.listAccesslayoutdescr[i].id == this.formLiquidObj.liquid_address_id){
+                addressText = this.listAccesslayoutdescr[i].location_descr;
+                break;
+              }
+            }
+            let liquid_device_people = this.formLiquidObj.liquid_device_people.join(',')
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              type: '4',
+              sn: this.formLiquidObj.liquid_sn,
+              address: addressText,
+              layout_id: this.formLiquidObj.liquid_address_id,
+              controller: liquid_device_people,
+              reviewer: this.formLiquidObj.liquid_app_people,
+              duration: this.formLiquidObj.liquid_time,
+              PH: this.formLiquidObj.liquid_concentration,
+            };
+
+            addLiquidDeviceinfo(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -2154,14 +2102,16 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getLiquidLists();
+                this.getLiquidDevicelist();
 
                 this.$refs[formName].resetFields();
                 this.showLiquidDialog = false;
                 this.formLiquidObj.liquid_sn = "";
                 this.formLiquidObj.liquid_concentration = "";
                 this.formLiquidObj.liquid_time = "";
-                this.formLiquidObj.liquid_address = "";
+                this.formLiquidObj.liquid_address_id = "";
+                this.formLiquidObj.liquid_device_people = [];
+                this.formLiquidObj.liquid_app_people = "";
                 this.idLiquid = "";
               } else {
                 Message({
@@ -2185,15 +2135,15 @@ export default {
     /**
      * 车辆消毒监测
      */
-    getCarLists() {
-      getEmployeesLists({
+    getCarStiflingDevicelist() {
+      getCarStiflingDevicelist({
         pig_farm_id: this.userInfo.farm_id,
         page: this.currentCar,
         limit: this.limitCar,
-        real_name: '',
       }).then((res) => {
         if (res.data.success) {
-          this.listCar = res.data.info;
+          this.listCar = res.data.data;
+          this.totalCar = parseInt(res.data.count);
         } else {
           Message({
             type: "warning",
@@ -2206,20 +2156,23 @@ export default {
     },
     handleCarSizeChange(val) {
       this.limitCar = val;
-      this.getCarLists();
+      this.getCarStiflingDevicelist();
     },
     handlerCarEdit(id) {
       this.isCarEdit = 2;
-      this.showCarDialog = true;
-      getuserinfo({
+      getdeviceinfobyid({
         id: id,
+        pig_farm_id: this.userInfo.farm_id,
       }).then((res) => {
         if (res.data.success) {
+          this.showCarDialog = true;
           let infoList = res.data.data;
           if (infoList && infoList.length > 0) {
             let itemInfo = infoList[0];
-            this.formCarObj.car_sn = itemInfo.real_name;
-            this.formCarObj.car_address = itemInfo.roleId;
+            let controller = itemInfo.controller.split(',')
+            this.formCarObj.car_sn = itemInfo.sn;
+            this.formCarObj.car_address_id = itemInfo.layout_id;
+            this.formCarObj.car_device_people = controller;
             this.idCar = itemInfo.id;
           }
         } else {
@@ -2236,17 +2189,31 @@ export default {
       this.$refs[formName].resetFields();
       this.showCarDialog = false;
       this.formCarObj.car_sn = "";
-      this.formCarObj.car_address = "";
+      this.formCarObj.car_address_id = "";
+      this.formCarObj.car_device_people = [];
       this.idCar = "";
     },
     onCarSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.isCarEdit == 2) {
-            let params = this.formCarObj;
-            params.id = this.idCar;
-            // params.pig_farm_id = this.userInfo.farm_id
-            edituserinfo(params).then((res) => {
+            let addressText = '';
+            for(let i = 0; i < this.listAccesslayoutdescr.length; i++){
+              if(this.listAccesslayoutdescr[i].id == this.formCarObj.car_address_id){
+                addressText = this.listAccesslayoutdescr[i].location_descr;
+                break;
+              }
+            }
+            let car_device_people = this.formCarObj.car_device_people.join(',')
+            let params = {
+              id: this.idCar,
+              sn: this.formCarObj.car_sn,
+              address: addressText,
+              layout_id: this.formCarObj.car_address_id,
+              controller: car_device_people
+            };
+
+            editCarStiflinginfo(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -2255,12 +2222,13 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getCarLists();
+                this.getCarStiflingDevicelist();
 
                 this.$refs[formName].resetFields();
                 this.showCarDialog = false;
                 this.formCarObj.car_sn = "";
-                this.formCarObj.car_address = "";
+                this.formCarObj.car_address_id = "";
+                this.formCarObj.car_device_people = [];
                 this.idCar = "";
               } else {
                 Message({
@@ -2272,9 +2240,24 @@ export default {
               }
             });
           } else {
-            let params = this.formCarObj;
-            params.pig_farm_id = this.userInfo.farm_id;
-            adduserinfo(params).then((res) => {
+            let addressText = '';
+            for(let i = 0; i < this.listAccesslayoutdescr.length; i++){
+              if(this.listAccesslayoutdescr[i].id == this.formCarObj.car_address_id){
+                addressText = this.listAccesslayoutdescr[i].location_descr;
+                break;
+              }
+            }
+            let car_device_people = this.formCarObj.car_device_people.join(',')
+            let params = {
+              pig_farm_id: this.userInfo.farm_id,
+              type: '5',
+              sn: this.formCarObj.car_sn,
+              address: addressText,
+              layout_id: this.formCarObj.car_address_id,
+              controller: car_device_people
+            };
+
+            addCarStiflingDeviceinfo(params).then((res) => {
               if (res.data.success) {
                 Message({
                   type: "success",
@@ -2283,12 +2266,13 @@ export default {
                   duration: 3000,
                 });
                 // this.current = 1;
-                this.getCarLists();
+                this.getCarStiflingDevicelist();
 
                 this.$refs[formName].resetFields();
                 this.showCarDialog = false;
                 this.formCarObj.car_sn = "";
-                this.formCarObj.car_address = "";
+                this.formCarObj.car_address_id = "";
+                this.formCarObj.car_device_people = [];
                 this.idCar = "";
               } else {
                 Message({

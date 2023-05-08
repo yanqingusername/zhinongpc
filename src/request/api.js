@@ -225,6 +225,30 @@ export const getOnlineList = val => requestH5Other('/wisdomLivestockWH/PCpigMana
 //离场处理
 export const pighandle = val => requestH5Other('/wisdomLivestockWH/PCpigManagement/pighandle.hn', val, 'get');
 
+//新增物资液体消毒设备 <05-08>
+export const addLiquidDeviceinfo = val => requestH5Other('/wisdomLivestockWH/LiquidDisinfection/addLiquidDeviceinfo.hn', val, 'get');
+
+//获取物资液体消毒设备的详情列表
+export const getLiquidDevicelist = val => requestH5Other('/wisdomLivestockWH/LiquidDisinfection/getLiquidDevicelist.hn', val, 'get');
+
+//修改液体消毒设备信息
+export const editLiquidinfo = val => requestH5Other('/wisdomLivestockWH/LiquidDisinfection/editLiquidinfo.hn', val, 'get');
+
+//新增车辆设备信息
+export const addCarStiflingDeviceinfo = val => requestH5Other('/wisdomLivestockWH/stifling/addCarStiflingDeviceinfo.hn', val, 'get');
+
+//获取车辆设备信息列表
+export const getCarStiflingDevicelist = val => requestH5Other('/wisdomLivestockWH/stifling/getCarStiflingDevicelist.hn', val, 'get');
+
+//修改车辆设备
+export const editCarStiflinginfo = val => requestH5Other('/wisdomLivestockWH/stifling/editCarStiflinginfo.hn', val, 'get');
+
+//获取车辆消毒记录列表
+export const getcarwashoutProcessList = val => requestH5Other('/wisdomLivestockWH/stifling/getcarwashoutProcessList.hn', val, 'get');
+
+//获取车辆消毒柱状图
+export const getChartinfo = val => requestH5Other('/wisdomLivestockWH/stifling/getChartinfo.hn', val, 'get');
+
 
 
 
