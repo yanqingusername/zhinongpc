@@ -2,7 +2,7 @@
   <div class="access-index-container">
     <div class="access-container-right access-pulic_box_shadow">
       <el-form :inline="true" class="access-demo-form-inline">
-        <el-form-item label="时间范围">
+        <!-- <el-form-item label="时间范围">
           <el-date-picker
             style="width: 260px"
             v-model="timelist"
@@ -11,9 +11,26 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期">
           </el-date-picker>
+        </el-form-item> -->
+        <el-form-item label="开始日期">
+          <el-date-picker
+            style="width: 140px"
+            v-model="timelist1"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="结束日期">
+          <el-date-picker
+            style="width: 140px"
+            v-model="timelist2"
+            type="date"
+            @change="handlerEndTime"
+            placeholder="选择日期">
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="姓名" prop="real_name">
-          <el-input v-model="real_name" placeholder="请输入姓名" clearable style="width: 160px"/>
+          <el-input v-model="real_name" placeholder="请输入姓名" clearable style="width: 140px"/>
         </el-form-item>
         <el-form-item label="位置" prop="location_id">
           <el-select
@@ -47,7 +64,7 @@
         </el-form-item>
 
         <el-button
-          style="margin-left: 20px"
+          style="margin-left: 10px"
           type="primary"
           size="medium"
           icon="el-icon-search"
@@ -140,10 +157,12 @@ export default {
       total: 0, //总记录数
       listEntranceGuard: [],
       srcListEntranceGuard: [],
-      timelist: [
-        new Date().getTime(),
-        new Date().getTime(),
-      ],
+      // timelist: [
+      //   new Date().getTime(),
+      //   new Date().getTime(),
+      // ],
+      timelist1: '',
+      timelist2: '',
       listAccesslayoutdescr: []
     };
   },
@@ -203,12 +222,14 @@ export default {
         pig_farm_id: this.userInfo.farm_id,
         page: this.current,
         limit: this.limit,
-        start_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[0]) : '',
-        // start_time: '2023-03-17',
-        end_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[1]) : '',
+        // start_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[0]) : '',
+        // // start_time: '2023-03-17',
+        // end_time: (this.timelist != null && this.timelist.length > 0) ? this.dateFormat(this.timelist[1]) : '',
         location_id: this.location_id,
         status: this.results, //(5&75-人脸认证通过  5&1-合法卡认证通过  5&76-人脸认证失败  5&9-无此卡号)
-        real_name: this.real_name
+        real_name: this.real_name,
+        start_time: (this.timelist1 != null && this.timelist1 != '') ? this.dateFormat(this.timelist1) : '',
+        end_time: (this.timelist2 != null && this.timelist2 != '') ? this.dateFormat(this.timelist2) : '',
       }
       getEntranceGuardList(params).then((res) => {
         if (res.data.success) {
@@ -232,6 +253,25 @@ export default {
     handleSizeChange(val) {
       this.limit = val;
       this.getEntranceGuardList();
+    },
+    handlerEndTime(date){
+      console.log(date,this.timelist1)
+      if (!date) {
+        this.timelist2 = '';
+        return
+      } else {
+        let minDate = new Date(this.timelist1);
+        if(date < minDate){
+          this.timelist2 = '';
+          Message({
+            type: "warning",
+            message: '结束日期需大于开始日期',
+            showClose: true,
+            duration: 3000,
+          });
+          return ;
+        }
+      }
     },
   },
 };
