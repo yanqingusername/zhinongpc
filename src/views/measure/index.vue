@@ -3732,6 +3732,7 @@ export default {
         this.getpiglist();
         this.getBreedlist();
       } else if (number == 2){
+        this.status2 = '';
         this.limit2 = 10;
         this.current2 = 1;
         this.logisticsDialog = true;
