@@ -73,7 +73,6 @@
             width="270"
             label="设备管理员"
             align="center"
-            :show-overflow-tooltip="true"
           >
             <template slot-scope="scope">
               <el-popover
@@ -298,7 +297,6 @@
             width="300"
             label="授权使用人员"
             align="center"
-            :show-overflow-tooltip="true"
           >
             <template slot-scope="scope">
               <el-popover
@@ -395,7 +393,6 @@
             width="270"
             label="设备管理员"
             align="center"
-            :show-overflow-tooltip="true"
           >
             <template slot-scope="scope">
               <el-popover
@@ -480,7 +477,6 @@
             width="350"
             label="管理员"
             align="center"
-            :show-overflow-tooltip="true"
           >
             <template slot-scope="scope">
               <el-popover

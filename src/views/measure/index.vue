@@ -651,7 +651,6 @@
                 width="300"
                 label="栏位"
                 align="center"
-                :show-overflow-tooltip="true"
               >
                 <template slot-scope="scope">
                   <el-popover
