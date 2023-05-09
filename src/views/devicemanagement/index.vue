@@ -73,7 +73,19 @@
             width="270"
             label="设备管理员"
             align="center"
-          />
+            :show-overflow-tooltip="true"
+          >
+            <template slot-scope="scope">
+              <el-popover
+                placement="top-start"
+                title=""
+                width="300"
+                trigger="hover"
+                :content="scope.row.controller">
+                <div class="device_people_view" slot="reference">{{scope.row.controller}}</div>
+              </el-popover>
+            </template>
+          </el-table-column>
           <el-table-column prop="reviewer" width="100" label="审批人" align="center" />
 
           <el-table-column label="操作" width="200" align="center">
@@ -286,7 +298,19 @@
             width="300"
             label="授权使用人员"
             align="center"
-          />
+            :show-overflow-tooltip="true"
+          >
+            <template slot-scope="scope">
+              <el-popover
+                placement="top-start"
+                title=""
+                width="300"
+                trigger="hover"
+                :content="scope.row.Person_authority">
+                <div class="device_people_view" slot="reference">{{scope.row.Person_authority}}</div>
+              </el-popover>
+            </template>
+          </el-table-column>
 
           <el-table-column
             prop="create_time"

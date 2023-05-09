@@ -652,7 +652,18 @@
                 label="栏位"
                 align="center"
                 :show-overflow-tooltip="true"
-              />
+              >
+                <template slot-scope="scope">
+                  <el-popover
+                    placement="top-start"
+                    title=""
+                    width="300"
+                    trigger="hover"
+                    :content="scope.row.dorm">
+                    <div class="measure_people_view" slot="reference">{{scope.row.dorm}}</div>
+                  </el-popover>
+                </template>
+              </el-table-column>
               <el-table-column
                 prop="real_name"
                 width="110"
@@ -1855,6 +1866,20 @@ export default {
     };
   },
   created() {
+    if(this.$route && this.$route.query && this.$route.query.np){
+      this.numberType = this.$route.query.np;
+      if(this.numberType == 1){
+        this.getdisplaysum();
+      } else if(this.numberType == 2){
+        this.status2 = '4';
+        this.limit2 = 10;
+        this.current2 = 1;
+        this.logisticsDialog = true;
+        this.getPigHistorylist();
+        this.getPigSitearea();
+        this.getAllPiggery();
+      }
+    }
   },
   mounted() {
       this.getdisplaysum();
@@ -4259,6 +4284,20 @@ export default {
 }
 .el-dialog--center .el-dialog__body {
     padding: 10px 25px 30px 25px !important;
+}
+
+.measure_people_view{
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+  white-space: normal;
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 </style>

@@ -6,11 +6,11 @@
           <div class="index-pie-top-title">猪只个体健康</div>
           <el-row>
             <el-date-picker
-              v-model="currentDate"
+              v-model="currentDate1"
               align="center"
               type="date"
-              format="yyyy 年 MM 月 dd 日"
-              value-format="yyyy-MM-dd"
+              format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="选择日期"
               readonly
             >
@@ -19,7 +19,7 @@
         </div>
         <div class="index-pie-view">
           <div id="echarttemp1" class="echart-view" ref="echarttemp1"></div>
-          <div id="echarttemp2" class="echart-view" ref="echarttemp2"></div>
+          <div id="echarttemp2" class="echart-view" ref="echarttemp2" @click="handlerRouter(2)"></div>
           <div id="echarttemp3" class="echart-view" ref="echarttemp3"></div>
         </div>
       </div>
@@ -38,6 +38,7 @@
           :header-row-style="iHeaderRowStyle"
           :header-cell-style="iHeaderCellStyle"
           size="mini"
+          @row-click="handlerRouter(1)"
         >
         
         <!-- <el-table
@@ -128,6 +129,7 @@
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
           :header-cell-style="iHeaderCellStyle"
+          @row-click="handlerAlarmRouter()"
           >
           <el-table-column
             prop="head_url"
@@ -200,6 +202,7 @@
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
           :header-cell-style="iHeaderCellStyle"
+          @row-click="handlerGoodsRouter()"
         >
           <el-table-column
             prop="address"
@@ -264,6 +267,7 @@
           :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
           :header-cell-style="iHeaderCellStyle"
+          @row-click="handlerAnimalRouter()"
           >
           <el-table-column
             prop="address"
@@ -341,6 +345,7 @@ export default {
       showImg: false,
       imgSrc: "",
       currentDate: new Date(),
+      currentDate1: new Date(),
       chartTempDom1: "",
       myChartTemp1: "",
       optionTemp1: "",
@@ -391,6 +396,7 @@ export default {
       this.myChartTemp3 = echarts.init(this.chartTempDom3);
 
       this.currentDate = this.dateFormat(this.currentDate);
+      this.currentDate1 = this.dateFormat1(this.currentDate1);
 
       // this.$previewRefresh()
 
@@ -430,6 +436,13 @@ export default {
         return "";
       }
       return moment(date).format("YYYY-MM-DD");
+    },
+    dateFormat1: function (date) {
+      // var date = row[column.property];
+      if (date == undefined) {
+        return "";
+      }
+      return moment(date).format("YYYY-MM-DD HH:mm:ss");
     },
     isEmpty(obj) {
       if (obj == null || obj == undefined || obj == "") {
@@ -689,6 +702,27 @@ export default {
           },
         ],
       });
+    },
+    handlerRouter(n){
+      this.$router.replace({ 
+        path: "/measure/index",
+        query:{np: n+''}
+      })
+    },
+    handlerAlarmRouter(){
+      this.$router.replace({ 
+        path: "/disinfection/index"
+      })
+    },
+    handlerGoodsRouter(){
+      this.$router.replace({ 
+        path: "/ozonemodule/index"
+      })
+    },
+    handlerAnimalRouter(){
+      this.$router.replace({ 
+        path: "/animalmonitor/index"
+      })
     },
   },
 };
