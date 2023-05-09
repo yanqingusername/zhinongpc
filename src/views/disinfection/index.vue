@@ -332,7 +332,10 @@ export default {
           // text: "成功/失败",
           // fontSize: 12
         },
-        tooltip: {},
+        tooltip: {
+          show: true,
+          trigger: 'axis'
+        },
         legend: {
           show: true
         },
@@ -386,6 +389,7 @@ export default {
       this.current = 1;
       this.limit = 10;
       this.getIwadomlistinfos();
+      this.getIwadomChart();
     },
     //导出数据
     exportData() {

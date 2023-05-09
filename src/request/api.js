@@ -249,7 +249,11 @@ export const getcarwashoutProcessList = val => requestH5Other('/wisdomLivestockW
 //获取车辆消毒柱状图
 export const getChartinfo = val => requestH5Other('/wisdomLivestockWH/stifling/getChartinfo.hn', val, 'get');
 
+//获取浸泡消毒柱状图
+export const getLiquidChart = val => requestH5Other('/wisdomLivestockWH/LiquidDisinfection/getLiquidChart.hn', val, 'get');
 
+//获取浸泡列表信息
+export const getLiquidlist = val => requestH5Other('/wisdomLivestockWH/LiquidDisinfection/getLiquidlist.hn', val, 'get');
 
 
 

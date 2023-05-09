@@ -258,7 +258,10 @@ export default {
           // text: "成功/失败",
           // fontSize: 12
         },
-        tooltip: {},
+        tooltip: {
+          show: true,
+          trigger: 'axis'
+        },
         legend: {
           show: true
         },
@@ -278,7 +281,7 @@ export default {
         xAxis: {
           type: 'category',
           axisTick: { show: false },
-          name: "位置",
+          name: "天",
           data: xdata,
         },
         yAxis: {

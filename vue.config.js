@@ -26,11 +26,11 @@ module.exports = {
       // }
   
   },
-  configureWebpack: {
-    resolve: {
-      alias: {
-        '@': resolve('src')
-      }
-    }
-  }
+  // configureWebpack: {
+  //   resolve: {
+  //     alias: {
+  //       '@': resolve('src')
+  //     }
+  //   }
+  // }
 }
