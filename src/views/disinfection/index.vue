@@ -166,6 +166,24 @@
         <div class="dis-echarts_view_top">
           <div class="dis-echarts_view_l">
             <div class="dis-echarts_view_title">员⼯淋浴监控⽉统计表</div>
+            <el-form :inline="true" class="ozone-demo-form-inline">
+                <el-form-item label="时间范围">
+                  <el-date-picker
+                    v-model="currentMonth"
+                    align="right"
+                    type="month"
+                    placeholder="选择月份"
+                    :clearable="false">
+                  </el-date-picker>
+                </el-form-item>
+
+                <el-button
+                  style="margin-left: 20px"
+                  type="primary"
+                  size="medium"
+                  icon="el-icon-search"
+                  @click="getIwadomChart()">查询</el-button>
+              </el-form>
             <div
               id="echarttemp"
               style="width: 1150px; height: 400px"
@@ -211,6 +229,8 @@ export default {
       optionTemp: "",
       
       numberType: 1, // 1-今日预警  2-今日淋浴记录  3-淋浴历史记录
+
+      currentMonth: new Date().getTime(),
     };
   },
   created() {
@@ -237,6 +257,13 @@ export default {
     iHeaderCellStyle: function ({ row, column, rowIndex, columnIndex }) {
       return "padding:0px";
     },
+    dateFormatMonth: function (date) {
+      // var date = row[column.property];
+      if (date == undefined) {
+        return "";
+      }
+      return moment(date).format("YYYY-MM");
+    },
     //日期格式化
     dateFormat: function (date) {
       // var date = row[column.property];
@@ -255,6 +282,7 @@ export default {
     getIwadomChart() {
       getIwadomChart({
         pig_farm_id: this.userInfo.farm_id,
+         month: this.dateFormatMonth(this.currentMonth)
       }).then((res) => {
         if (res.data.success) {
           let xdata = res.data.xdata;
@@ -328,6 +356,14 @@ export default {
       // 绘制图表
 
       this.myChartTemp.setOption({
+      //   dataZoom: [{
+      //   type: 'inside', //1平移 缩放
+      //   throttle: '50', //设置触发视图刷新的频率。单位为毫秒（ms）。
+      //   minValueSpan: 6, //用于限制窗口大小的最小值,在类目轴上可以设置为 5 表示 5 个类目
+      //   start: 1, //数据窗口范围的起始百分比 范围是：0 ~ 100。表示 0% ~ 100%。
+      //   end: 50, //数据窗口范围的结束百分比。范围是：0 ~ 100。
+      //   zoomLock: true, //如果设置为 true 则锁定选择区域的大小，也就是说，只能平移，不能缩放。
+      // }],
         title: {
           // text: "成功/失败",
           // fontSize: 12
@@ -357,6 +393,11 @@ export default {
           axisTick: { show: false },
           name: "天",
           data: xdata,
+          axisLabel: {
+            show: true,
+            interval: 0,
+            rotate: 40
+          },
         },
         yAxis: {
           name: "数量(次)",

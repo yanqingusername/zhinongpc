@@ -3,231 +3,26 @@
     <div class="ozone-container-left ozone-pulic_box_shadow">
       <div
         :class="[numberType == 1 ?'ozone-click_view_activity':'ozone-click_view']"
-        @click="handleClick(1)">今日预警</div>
+        @click="handleClick(1)">今日臭氧预警</div>
       <div
         :class="[numberType == 2 ?'ozone-click_view_activity':'ozone-click_view']"
-        @click="handleClick(2)">今日消毒记录</div>
+        @click="handleClick(2)">今日臭氧记录</div>
       <div
         :class="[numberType == 3 ?'ozone-click_view_activity':'ozone-click_view']"
-        @click="handleClick(3)">消毒历史记录</div>
+        @click="handleClick(3)">臭氧消毒记录</div>
+
+      <div
+        :class="[numberType == 4 ?'ozone-click_view_activity':'ozone-click_view']"
+        @click="handleClick(4)">液体消毒记录</div>
     </div>
 
     <div class="ozone-container-right ozone-pulic_box_shadow">
-      <div style="width: 100%;margin-top:20px;font-size: 20px;">物资臭氧监测记录</div>
-      <el-form :inline="true" class="ozone-demo-form-inline1">
-        <el-form-item label="时间范围">
-          <el-date-picker
-            v-model="timelist"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="width: 260px"
-            :readonly="(numberType == 3) ? false : true">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="位置" prop="location_id">
-          <el-select
-            v-model="location_id"
-            filterable
-            clearable
-            placeholder="请选择位置"
-          >
-          <el-option
-            v-for="(item, index) in listDevice"
-            :key="index"
-            :label="item.location_descr"
-            :value="item.layout_id"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="结果" prop="results" v-if="numberType == 2 || numberType == 3">
-          <el-select
-            v-model="results"
-            filterable
-            clearable
-            placeholder="请选择结果"
-            style="width: 160px">
-            <!-- <el-option label="全部" value=""></el-option> -->
-            <el-option label="正常" value="0"></el-option>
-            <el-option label="违规" value="1"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-button
-          style="margin-left: 20px"
-          type="primary"
-          size="medium"
-          icon="el-icon-search"
-          @click="getGoodslistinfos()">查询</el-button>
-
-      </el-form>
-
-      <el-table :data="listOzone" stripe style="width: 1150px" border
-        :row-style="iRowStyle"
-        :cell-style="iCellStyle"
-        :header-row-style="iHeaderRowStyle"
-        :header-cell-style="iHeaderCellStyle"
-        height="415">
-              <el-table-column
-                prop="address"
-                width="160"
-                label="位置"
-                align="center"
-              />
-              <el-table-column
-                prop="start_fumigation_time"
-                width="180"
-                label="时间"
-                align="center"
-              />
-              <el-table-column
-                prop="duration"
-                width="100"
-                label="时长(分钟)"
-                align="center"
-              />
-              
-              <el-table-column
-                prop="status"
-                width="120"
-                label="结果"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.status == '1' || scope.row.status == '2' || scope.row.status == '3' || scope.row.status == '6'">正常</p>
-                  <p v-if="scope.row.status == '0' || scope.row.status == '4' || scope.row.status == '5'">违规</p>
-                </template>
-              </el-table-column>
-
-              <el-table-column
-                prop="ViolationReason"
-                width="210"
-                label="原因"
-                align="center"
-              />
-
-              <el-table-column
-                prop="status"
-                width="140"
-                label="审批状态"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.status == '3'">待审批</p>
-                  <p v-if="scope.row.status == '5'">审批失败</p>
-                  <p v-if="scope.row.status == '6'">审批通过</p>
-                </template>
-              </el-table-column>
-
-              <el-table-column
-                prop="img"
-                width="240"
-                label="图片"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <div class="ozone-img">
-                    <el-image
-                      fit="cover"
-                      style="width: 200px; height: 60px"
-                      :src="scope.row.img[0]"
-                      :preview-src-list="scope.row.img">
-                    </el-image>
-                  </div>
-                </template>
-              </el-table-column>
-            </el-table>
-
-      <div class="block" style="margin-top: 0px">
-        <el-pagination
-          :current-page="current"
-          :page-size="limit"
-          :total="total"
-          style="padding: 30px 0; text-align: center"
-          layout="total, sizes, prev, pager, next"
-          @current-change="getGoodslistinfos"
-          @size-change="handleSizeChange"
-          :page-sizes="[10, 20, 30, 40]"
-        />
-      </div>
-
-      <div class="ozone-echarts_view">
-        <div class="ozone-echarts_view_top">
-          <div class="ozone-echarts_view_l">
-            <!-- <div class="ozone-echarts_view_title"></div> -->
-            <!-- <el-form :inline="true" class="ozone-demo-form-inline">
-              <el-form-item label="时间范围">
-                <el-date-picker
-                  v-model="timeEchartslist"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  style="width: 260px">
-                </el-date-picker>
-              </el-form-item>
-
-              <el-button
-                style="margin-left: 20px"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getGoodsChart()">查询</el-button>
-            </el-form> -->
-            <!-- <div class="ozone-echarts_view_title">臭氧消毒监测结果月统计图</div> -->
-            <el-form :inline="true" class="ozone-demo-form-inline">
-              <el-form-item label="时间范围">
-                <el-date-picker
-                  v-model="currentMonth"
-                  align="right"
-                  type="month"
-                  placeholder="选择月份">
-                </el-date-picker>
-              </el-form-item>
-
-              <el-button
-                style="margin-left: 20px"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getGoodsChart()">查询</el-button>
-            </el-form>
-
-            <!-- <el-row>
-                    <el-button round style="margin-right: 10px;">上一月</el-button>
-                    <el-date-picker
-                        v-model="currentDate"
-                        align="right"
-                        type="month"
-                        placeholder="选择日期">
-                    </el-date-picker>
-                    <el-button round style="margin-left: 10px;">下一月</el-button>
-                        <el-date-picker
-                        v-model="timelist"
-                        type="daterange"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        >
-                        </el-date-picker>
-                </el-row> -->
-            <div
-              id="echarttemp"
-              style="width: 1150px; height: 400px;margin-top:20px;"
-              ref="echarttemp"></div>
-          </div>
-          <div class="ozone-echarts_view_r">
-          </div>
-        </div>
-        <div class="ozone-echarts_view_center"></div>
-      </div>
-
-      <div style="width: 100%;margin-top:20px;font-size: 20px;">液体浸泡消毒历史记录</div>
+      <div class="ozonemodule-dis-flex" v-show="numberType== 1 || numberType == 2 || numberType == 3">
+        <div style="width: 100%;margin-top:20px;font-size: 20px;">物资臭氧监测记录</div>
         <el-form :inline="true" class="ozone-demo-form-inline1">
           <el-form-item label="时间范围">
             <el-date-picker
-              v-model="timelist1"
+              v-model="timelist"
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
@@ -236,134 +31,347 @@
               :readonly="(numberType == 3) ? false : true">
             </el-date-picker>
           </el-form-item>
+          <el-form-item label="位置" prop="location_id">
+            <el-select
+              v-model="location_id"
+              filterable
+              clearable
+              placeholder="请选择位置"
+            >
+            <el-option
+              v-for="(item, index) in listDevice"
+              :key="index"
+              :label="item.location_descr"
+              :value="item.layout_id"></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="结果" prop="results" v-if="numberType == 2 || numberType == 3">
+            <el-select
+              v-model="results"
+              filterable
+              clearable
+              placeholder="请选择结果"
+              style="width: 160px">
+              <!-- <el-option label="全部" value=""></el-option> -->
+              <el-option label="正常" value="0"></el-option>
+              <el-option label="违规" value="1"></el-option>
+            </el-select>
+          </el-form-item>
 
           <el-button
             style="margin-left: 20px"
             type="primary"
             size="medium"
             icon="el-icon-search"
-            @click="getLiquidlist()">查询</el-button>
+            @click="getGoodslistinfos()">查询</el-button>
 
         </el-form>
 
-      <el-table :data="listOzone1" stripe style="width: 1150px" border
-        :row-style="iRowStyle"
-        :cell-style="iCellStyle"
-        :header-row-style="iHeaderRowStyle"
-        :header-cell-style="iHeaderCellStyle"
-        height="415">
+        <el-table :data="listOzone" stripe style="width: 1150px" border
+          :row-style="iRowStyle"
+          :cell-style="iCellStyle"
+          :header-row-style="iHeaderRowStyle"
+          :header-cell-style="iHeaderCellStyle">
+                <el-table-column
+                  prop="address"
+                  width="160"
+                  label="位置"
+                  align="center"
+                />
+                <el-table-column
+                  prop="start_fumigation_time"
+                  width="180"
+                  label="时间"
+                  align="center"
+                />
+                <el-table-column
+                  prop="duration"
+                  width="100"
+                  label="时长(分钟)"
+                  align="center"
+                />
+                
+                <el-table-column
+                  prop="status"
+                  width="120"
+                  label="结果"
+                  align="center"
+                >
+                  <template slot-scope="scope">
+                    <p v-if="scope.row.status == '1' || scope.row.status == '2' || scope.row.status == '3' || scope.row.status == '6'">正常</p>
+                    <p v-if="scope.row.status == '0' || scope.row.status == '4' || scope.row.status == '5'">违规</p>
+                  </template>
+                </el-table-column>
 
-              <el-table-column
-                prop="SN"
-                width="140"
-                label="SN号"
-                align="center"
-              >
-              </el-table-column>
+                <el-table-column
+                  prop="ViolationReason"
+                  width="210"
+                  label="原因"
+                  align="center"
+                />
 
-              <el-table-column
-                prop="address"
-                width="180"
-                label="位置"
-                align="center"
-              />
-              <el-table-column
-                prop="create_time"
-                width="180"
-                label="创建时间"
-                align="center"
-              />
-              <el-table-column
-                prop="remain_time"
-                width="140"
-                label="时:分:秒"
-                align="center"
-              />
+                <el-table-column
+                  prop="status"
+                  width="140"
+                  label="审批状态"
+                  align="center"
+                >
+                  <template slot-scope="scope">
+                    <p v-if="scope.row.status == '3'">待审批</p>
+                    <p v-if="scope.row.status == '5'">审批失败</p>
+                    <p v-if="scope.row.status == '6'">审批通过</p>
+                  </template>
+                </el-table-column>
 
-              <el-table-column
-                prop="remain_time"
-                width="120"
-                label="PH值/浓度值"
-                align="center"
-              >
-              <template>
-                  <p >-</p>
-                </template>
-              </el-table-column>
-              
-              <el-table-column
-                prop="status"
-                width="150"
-                label="结果"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.status == '4'">失败</p>
-                  <p v-else>正常</p>
-                </template>
-              </el-table-column>
+                <el-table-column
+                  prop="img"
+                  width="240"
+                  label="图片"
+                  align="center"
+                >
+                  <template slot-scope="scope">
+                    <div class="ozone-img">
+                      <el-image
+                        fit="cover"
+                        style="width: 200px; height: 60px"
+                        :src="scope.row.img[0]"
+                        :preview-src-list="scope.row.img">
+                      </el-image>
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
 
-              <el-table-column
-                prop="img"
-                width="240"
-                label="图片"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <div class="ozone-img">
-                    <el-image
-                      fit="cover"
-                      style="width: 200px; height: 60px"
-                      :src="scope.row.img"
-                      :preview-src-list="imgList">
-                    </el-image>
-                  </div>
-                </template>
-              </el-table-column>
-            </el-table>
+        <div class="block" style="margin-top: 0px">
+          <el-pagination
+            :current-page="current"
+            :page-size="limit"
+            :total="total"
+            style="padding: 30px 0; text-align: center"
+            layout="total, sizes, prev, pager, next"
+            @current-change="getGoodslistinfos"
+            @size-change="handleSizeChange"
+            :page-sizes="[10, 20, 30, 40]"
+          />
+        </div>
 
-      <div class="block" style="margin-top: 0px">
-        <el-pagination
-          :current-page="current1"
-          :page-size="limit1"
-          :total="total1"
-          style="padding: 30px 0; text-align: center"
-          layout="total, sizes, prev, pager, next"
-          @current-change="getLiquidlist"
-          @size-change="handleSizeChange1"
-          :page-sizes="[10, 20, 30, 40]"
-        />
+        <div class="ozone-echarts_view">
+          <div class="ozone-echarts_view_top">
+            <div class="ozone-echarts_view_l">
+              <!-- <div class="ozone-echarts_view_title"></div> -->
+              <!-- <el-form :inline="true" class="ozone-demo-form-inline">
+                <el-form-item label="时间范围">
+                  <el-date-picker
+                    v-model="timeEchartslist"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    style="width: 260px">
+                  </el-date-picker>
+                </el-form-item>
+
+                <el-button
+                  style="margin-left: 20px"
+                  type="primary"
+                  size="medium"
+                  icon="el-icon-search"
+                  @click="getGoodsChart()">查询</el-button>
+              </el-form> -->
+              <!-- <div class="ozone-echarts_view_title">臭氧消毒监测结果月统计图</div> -->
+              <el-form :inline="true" class="ozone-demo-form-inline">
+                <el-form-item label="时间范围">
+                  <el-date-picker
+                    v-model="currentMonth"
+                    align="right"
+                    type="month"
+                    placeholder="选择月份"
+                    :clearable="false">
+                  </el-date-picker>
+                </el-form-item>
+
+                <el-button
+                  style="margin-left: 20px"
+                  type="primary"
+                  size="medium"
+                  icon="el-icon-search"
+                  @click="getGoodsChart()">查询</el-button>
+              </el-form>
+
+              <!-- <el-row>
+                      <el-button round style="margin-right: 10px;">上一月</el-button>
+                      <el-date-picker
+                          v-model="currentDate"
+                          align="right"
+                          type="month"
+                          placeholder="选择日期">
+                      </el-date-picker>
+                      <el-button round style="margin-left: 10px;">下一月</el-button>
+                          <el-date-picker
+                          v-model="timelist"
+                          type="daterange"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          >
+                          </el-date-picker>
+                  </el-row> -->
+              <div
+                id="echarttemp"
+                style="width: 1150px; height: 400px;margin-top:20px;"
+                ref="echarttemp"></div>
+            </div>
+            <div class="ozone-echarts_view_r">
+            </div>
+          </div>
+          <div class="ozone-echarts_view_center"></div>
+        </div>
+
       </div>
 
-      <div class="ozone-echarts_view">
-        <div class="ozone-echarts_view_top">
-          <div class="ozone-echarts_view_l">
-            <el-form :inline="true" class="ozone-demo-form-inline">
-              <el-form-item label="时间范围">
-                <el-date-picker
-                  v-model="currentMonth1"
-                  align="right"
-                  type="year"
-                  placeholder="选择年份">
-                </el-date-picker>
-              </el-form-item>
+      <div class="ozonemodule-dis-flex" v-show="numberType== 4">
+        <div style="width: 100%;margin-top:20px;font-size: 20px;">液体浸泡消毒历史记录</div>
+          <el-form :inline="true" class="ozone-demo-form-inline1">
+            <el-form-item label="时间范围">
+              <el-date-picker
+                v-model="timelist1"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                style="width: 260px"
+                :readonly="(numberType == 3) ? false : true">
+              </el-date-picker>
+            </el-form-item>
 
-              <el-button
-                style="margin-left: 20px"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getLiquidChart()">查询</el-button>
-            </el-form>
-            <div
-              id="echarttemp1"
-              style="width: 1150px; height: 400px;margin-top:20px;"
-              ref="echarttemp1"></div>
-          </div>
-          <div class="ozone-echarts_view_r">
-          </div>
+            <el-button
+              style="margin-left: 20px"
+              type="primary"
+              size="medium"
+              icon="el-icon-search"
+              @click="getLiquidlist()">查询</el-button>
+
+          </el-form>
+
+        <el-table :data="listOzone1" stripe style="width: 1150px" border
+          :row-style="iRowStyle"
+          :cell-style="iCellStyle"
+          :header-row-style="iHeaderRowStyle"
+          :header-cell-style="iHeaderCellStyle">
+
+                <el-table-column
+                  prop="SN"
+                  width="140"
+                  label="SN号"
+                  align="center"
+                >
+                </el-table-column>
+
+                <el-table-column
+                  prop="address"
+                  width="180"
+                  label="位置"
+                  align="center"
+                />
+                <el-table-column
+                  prop="create_time"
+                  width="180"
+                  label="创建时间"
+                  align="center"
+                />
+                <el-table-column
+                  prop="remain_time"
+                  width="140"
+                  label="时:分:秒"
+                  align="center"
+                />
+
+                <el-table-column
+                  prop="remain_time"
+                  width="120"
+                  label="PH值/浓度值"
+                  align="center"
+                >
+                <template>
+                    <p >-</p>
+                  </template>
+                </el-table-column>
+                
+                <el-table-column
+                  prop="status"
+                  width="150"
+                  label="结果"
+                  align="center"
+                >
+                  <template slot-scope="scope">
+                    <p v-if="scope.row.status == '4'">失败</p>
+                    <p v-else>正常</p>
+                  </template>
+                </el-table-column>
+
+                <el-table-column
+                  prop="img"
+                  width="240"
+                  label="图片"
+                  align="center"
+                >
+                  <template slot-scope="scope">
+                    <div class="ozone-img">
+                      <el-image
+                        fit="cover"
+                        style="width: 200px; height: 60px"
+                        :src="scope.row.img"
+                        :preview-src-list="imgList">
+                      </el-image>
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+
+        <div class="block" style="margin-top: 0px">
+          <el-pagination
+            :current-page="current1"
+            :page-size="limit1"
+            :total="total1"
+            style="padding: 30px 0; text-align: center"
+            layout="total, sizes, prev, pager, next"
+            @current-change="getLiquidlist"
+            @size-change="handleSizeChange1"
+            :page-sizes="[10, 20, 30, 40]"
+          />
         </div>
-        <div class="ozone-echarts_view_center"></div>
+
+        <div class="ozone-echarts_view">
+          <div class="ozone-echarts_view_top">
+            <div class="ozone-echarts_view_l">
+              <el-form :inline="true" class="ozone-demo-form-inline">
+                <el-form-item label="时间范围">
+                  <el-date-picker
+                    v-model="currentMonth1"
+                    align="right"
+                    type="year"
+                    placeholder="选择年份">
+                  </el-date-picker>
+                </el-form-item>
+
+                <el-button
+                  style="margin-left: 20px"
+                  type="primary"
+                  size="medium"
+                  icon="el-icon-search"
+                  @click="getLiquidChart()">查询</el-button>
+              </el-form>
+              <div
+                id="echarttempLiu"
+                style="width: 1150px; height: 400px;margin-top:20px;"
+                ref="echarttempLiu"></div>
+            </div>
+            <div class="ozone-echarts_view_r">
+            </div>
+          </div>
+          <div class="ozone-echarts_view_center"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -410,12 +418,11 @@ export default {
       total1: 0, //总记录数
       listOzone1: [],
       timelist1: [
-        new Date().getTime(),
-        new Date().getTime(),
+        // new Date().getTime(),
+        // new Date().getTime(),
       ],
-      chartTempDom1: "",
-      myChartTemp1: "",
-      optionTemp1: "",
+      chartTempDomLiu: "",
+      myChartTempLiu: "",
       currentMonth1: new Date().getTime(),
       imgList: []
     };
@@ -427,15 +434,10 @@ export default {
       this.chartTempDom = this.$refs.echarttemp;
       this.myChartTemp = echarts.init(this.chartTempDom);
 
-      this.chartTempDom1 = this.$refs.echarttemp1;
-      this.myChartTemp1 = echarts.init(this.chartTempDom1);
-
       this.getGoodslistinfos();
       this.getGoodsChart();
       this.getDeviceInfo();
 
-      this.getLiquidlist();
-      this.getLiquidChart();
     });
   },
   methods: {
@@ -612,41 +614,59 @@ export default {
     },
     handleClick(number) {
       this.numberType = number;
-      if(number == 3){
+       if(number == 4){
+        this.$nextTick(() => {
+          this.chartTempDomLiu = document.getElementById("echarttempLiu");
+          this.myChartTempLiu = echarts.init(this.chartTempDomLiu);
+          this.timelist1 = [];
+          this.current1 = 1;
+          this.limit1 = 10;
+          this.getLiquidlist();
+          this.getLiquidChart();
+        });
+        
+      } else if(number == 3){
         this.results = '';
         this.timelist = [];
-        this.timelist1 = [];
+
+        this.location_id = '';
+        this.current = 1;
+        this.limit = 10;
+        this.getGoodslistinfos();
+        this.getGoodsChart();
       } else if (number == 2){
         this.results = '';
         this.timelist = [
           new Date().getTime(),
           new Date().getTime(),
         ]
-        this.timelist1 = [
-          new Date().getTime(),
-          new Date().getTime(),
-        ]
+        // this.timelist1 = [
+        //   new Date().getTime(),
+        //   new Date().getTime(),
+        // ]
+
+        this.location_id = '';
+        this.current = 1;
+        this.limit = 10;
+        this.getGoodslistinfos();
+        this.getGoodsChart();
       } else {
         this.results = '1';
         this.timelist = [
           new Date().getTime(),
           new Date().getTime(),
         ]
-        this.timelist1 = [
-          new Date().getTime(),
-          new Date().getTime(),
-        ]
-      }
-      this.location_id = '';
-      this.current = 1;
-      this.limit = 10;
-      this.getGoodslistinfos();
-      this.getGoodsChart();
+        // this.timelist1 = [
+        //   new Date().getTime(),
+        //   new Date().getTime(),
+        // ]
 
-      this.current1 = 1;
-      this.limit1 = 10;
-      this.getLiquidlist();
-      this.getLiquidChart();
+        this.location_id = '';
+        this.current = 1;
+        this.limit = 10;
+        this.getGoodslistinfos();
+        this.getGoodsChart();
+      }
     },
     getLiquidChart() {
       getLiquidChart({
@@ -654,16 +674,16 @@ export default {
         year: this.dateFormatMonth1(this.currentMonth1)
       }).then((res) => {
         if (res.data.success) {
-          let xdata = res.data.xdata;
-          let ydata = res.data.ydata;
-          let series = [
+          let xdata1 = res.data.xdata;
+          let ydata1 = res.data.ydata;
+          let series1 = [
             {
               name: "数量",
               // type: "bar",
               color: '#5470c6',
               // data: ydata,
               // barWidth: 12,
-              data: ydata,
+              data: ydata1,
               type: 'line',
               areaStyle: {}
             },
@@ -675,7 +695,7 @@ export default {
             //   barWidth: 12
             // }
           ];
-          this.initChart1(xdata,series);
+          this.initChartLiu(xdata1,series1);
         } else {
           Message({
             type: "warning",
@@ -717,10 +737,10 @@ export default {
       this.limit1 = val;
       this.getLiquidlist();
     },
-    initChart1(xdata, series) {
+    initChartLiu(xdata1, series1) {
       // 绘制图表
 
-      this.myChartTemp1.setOption({
+      this.myChartTempLiu.setOption({
         title: {
           text: "年度消毒次数统计（面积图）",
           // fontSize: 12
@@ -749,7 +769,7 @@ export default {
           type: 'category',
           axisTick: { show: false },
           name: "月",
-          data: xdata,
+          data: xdata1,
           boundaryGap: false,
         },
         yAxis: {
@@ -757,7 +777,7 @@ export default {
           min: 0,
           minInterval: 1,
         },
-        series: series,
+        series: series1,
       });
     },
   },
@@ -795,7 +815,7 @@ export default {
   flex-direction: column;
   padding: 0px 20px;
   margin-left: 200px;
-  height: 2000px;
+  /* height: 2000px; */
   /* overflow-y: scroll; */
 }
 
@@ -875,5 +895,12 @@ export default {
   padding: 10px 20px;
   font-size: 14px;
   border-radius: 4px;
+}
+
+.ozonemodule-dis-flex{
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 </style>
