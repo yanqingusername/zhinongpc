@@ -53,7 +53,7 @@
                       <span>{{item.location_descr}}</span>
                     </div>
                     <div class="measure-bottom measure-clearfix">
-                      <div class="measure-box-card-center">
+                      <div class="measure-box-card-center" @click="handlerLabel(item.id)">
                         <img src="../../assets/icon_2023_02_14_7.png" class="measure-icon-image" />
                         <div class="measure-item_view">
                           <span class="measure-item_view_1">耳环</span>
@@ -71,6 +71,7 @@
                     </div>
                     <div class="measure-name_span">饲养员： {{item.administrators || '未知'}}</div>
                   </div>
+                  <div class="measure-badge-view" @click="handlerBadge(item.id)" v-if="item.feversum > 0">{{item.feversum}}</div>
                 </el-card>
               </el-col>
             </el-row>
@@ -3732,6 +3733,7 @@ export default {
         this.getpiglist();
         this.getBreedlist();
       } else if (number == 2){
+        this.door2 = '';
         this.status2 = '';
         this.limit2 = 10;
         this.current2 = 1;
@@ -3784,6 +3786,28 @@ export default {
       window.open(
         `https://monitor.coyotebio-lab.com/jump.xlsx`
       );
+    },
+    handlerBadge(doorid){
+      this.numberType = 2;
+      this.door2 = doorid;
+      this.status2 = '4';
+      this.limit2 = 10;
+      this.current2 = 1;
+      this.logisticsDialog = true;
+      this.getPigHistorylist();
+      this.getPigSitearea();
+      this.getAllPiggery();
+    },
+    handlerLabel(doorid){
+      this.numberType = 2;
+      this.door2 = doorid;
+      this.status2 = '';
+      this.limit2 = 10;
+      this.current2 = 1;
+      this.logisticsDialog = true;
+      this.getPigHistorylist();
+      this.getPigSitearea();
+      this.getAllPiggery();
     },
   },
 };
@@ -3891,7 +3915,7 @@ export default {
     width: 100%;
     padding: 15px 0px;
     border-bottom: 1px solid #EEEEEE;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .measure-title{
@@ -3921,6 +3945,7 @@ export default {
 .measure-div_view {
   overflow-y: scroll;
   height: 500px;
+  padding-top: 30px;
 }
 
 
@@ -3933,6 +3958,7 @@ export default {
   align-items: center;
   justify-content: center;
   margin-bottom: 30px;
+  position: relative;
 }
 
 .measure-box-card {
@@ -4298,6 +4324,27 @@ export default {
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+.measure-badge-view{
+    position: absolute;
+    top: -15px;
+    right: 10px;
+    background-color: #F56C6C;
+    border-radius: 100%;
+    color: #FFF;
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    justify-content: center;
+    /* height: 18px; */
+    /* line-height: 18px; */
+    /* padding: 0 6px; */
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid #FFF;
 }
 
 </style>
