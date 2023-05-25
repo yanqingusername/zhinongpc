@@ -136,8 +136,8 @@
         >
           <template slot-scope="scope">
             <p v-if="scope.row.workType == ''">未知</p>
-            <p v-if="scope.row.workType == '1'">上班</p>
-            <p v-if="scope.row.workType == '2'">下班</p>
+            <p v-if="scope.row.workType == '0'">上班</p>
+            <p v-if="scope.row.workType == '1'">下班</p>
           </template>
         </el-table-column>
 
