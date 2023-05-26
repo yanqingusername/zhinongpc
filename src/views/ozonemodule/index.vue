@@ -255,14 +255,12 @@
           </el-form>
 
         <el-table :data="listOzone1" stripe style="width: 1150px" border
-          :row-style="iRowStyle"
-          :cell-style="iCellStyle"
           :header-row-style="iHeaderRowStyle"
           :header-cell-style="iHeaderCellStyle">
 
                 <el-table-column
                   prop="SN"
-                  width="140"
+                  width="240"
                   label="SN号"
                   align="center"
                 >
@@ -270,35 +268,31 @@
 
                 <el-table-column
                   prop="address"
-                  width="180"
+                  width="280"
                   label="位置"
                   align="center"
                 />
                 <el-table-column
                   prop="create_time"
-                  width="180"
+                  width="240"
                   label="创建时间"
                   align="center"
                 />
                 <el-table-column
-                  prop="remain_time"
-                  width="140"
-                  label="时:分:秒"
+                  prop="temp"
+                  width="200"
+                  label="温度"
                   align="center"
                 />
 
                 <el-table-column
-                  prop="remain_time"
-                  width="120"
+                  prop="ph"
+                  width="190"
                   label="PH值/浓度值"
                   align="center"
-                >
-                <template>
-                    <p >-</p>
-                  </template>
-                </el-table-column>
+                />
                 
-                <el-table-column
+                <!-- <el-table-column
                   prop="status"
                   width="150"
                   label="结果"
@@ -326,7 +320,7 @@
                       </el-image>
                     </div>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
               </el-table>
 
         <div class="block" style="margin-top: 0px">
@@ -342,7 +336,7 @@
           />
         </div>
 
-        <div class="ozone-echarts_view">
+        <!-- <div class="ozone-echarts_view">
           <div class="ozone-echarts_view_top">
             <div class="ozone-echarts_view_l">
               <el-form :inline="true" class="ozone-demo-form-inline">
@@ -371,7 +365,7 @@
             </div>
           </div>
           <div class="ozone-echarts_view_center"></div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -616,13 +610,13 @@ export default {
       this.numberType = number;
        if(number == 4){
         this.$nextTick(() => {
-          this.chartTempDomLiu = document.getElementById("echarttempLiu");
-          this.myChartTempLiu = echarts.init(this.chartTempDomLiu);
+          // this.chartTempDomLiu = document.getElementById("echarttempLiu");
+          // this.myChartTempLiu = echarts.init(this.chartTempDomLiu);
           this.timelist1 = [];
           this.current1 = 1;
           this.limit1 = 10;
           this.getLiquidlist();
-          this.getLiquidChart();
+          // this.getLiquidChart();
         });
         
       } else if(number == 3){
