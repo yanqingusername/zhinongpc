@@ -405,9 +405,9 @@
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="reviewer" width="100" label="审批人" align="center" />
+          <el-table-column prop="reviewer" width="120" label="审批人" align="center" />
 
-          <el-table-column label="操作" width="200" align="center">
+          <el-table-column label="操作" width="180" align="center">
             <template slot-scope="scope">
               <el-button
                 type="primary"
@@ -523,11 +523,11 @@
     <el-dialog
       title="新添/修改"
       :visible.sync="showOzoneDialog"
-      width="55%"
+      width="60%"
       center
       :close-on-click-modal="false"
       :show-close="false">
-      <el-form ref="formOzoneObj" :rules="rulesOzone" :model="formOzoneObj" label-width="140px">
+      <el-form ref="formOzoneObj" :rules="rulesOzone" :model="formOzoneObj" label-width="160px">
         <div class="device-flex-space">
           <el-form-item label="设备SN号*：" prop="ozone_sn">
             <el-input
