@@ -80,7 +80,7 @@
 
       <div v-if="numberType == 2">
         <div class="measure-view_2">
-          <div class="measure-view_2_1">
+          <div class="measure-view_2_1" v-if="logisticsDialog">
             <!-- <div class="measure-view_2_top measure-pulic_box_shadow">
               <div class="measure-view_2_top_1" @click="handlerClick(1)">
                 <span class="measure-view_2_top_1_1">50</span>
@@ -272,6 +272,169 @@
                 @size-change="handlePigHistorySizeChange"
                 :page-sizes="[10, 20, 30, 40]"
               />
+            </div>
+          </div>
+          <div class="measure-view_2_1" v-if="!logisticsDialog">
+            <el-page-header @back="handlerReturn" content="返回历史列表" style="padding: 20px 0px 0px 0px;"></el-page-header>
+            <div class="measure-view_2_top measure-pulic_box_shadow" style="margin-top: 20px;">
+              <div class="measure-view_2_top_1">
+                <span class="measure-view_2_top_1_1">{{pigInfoObj.source_label}}</span>
+                <span class="measure-view_2_top_1_2">耳号</span>
+              </div>
+              <div class="measure-view_2_top_1">
+                <span class="measure-view_2_top_1_1">{{pigInfoObj.label_id}}</span>
+                <span class="measure-view_2_top_1_2">电子耳号</span>
+              </div>
+              <!-- label_type: 3, // 耳环类型 0：育肥猪，1：母猪，2：仔猪，3：公猪 -->
+              <div class="measure-view_2_top_1">
+                <span class="measure-view_2_top_1_1">{{pigInfoObj.label_type == 0 ? '育肥猪' : pigInfoObj.label_type == 1 ? '母猪' : pigInfoObj.label_type == 2 ? '仔猪' : '公猪'}}</span>
+                <span class="measure-view_2_top_1_2">性别</span>
+              </div>
+              <div class="measure-view_2_top_1">
+                <span class="measure-view_2_top_1_1">{{pigInfoObj.breed}}</span>
+                <span class="measure-view_2_top_1_2">品种</span>
+              </div>
+            </div>
+            <el-form :inline="true" class="measure-demo-form-inline">
+              <el-form-item label="时间范围">
+                <el-date-picker
+                  v-model="timepiglist"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  style="width: 260px">
+                  </el-date-picker>
+               </el-form-item>
+
+              <el-button
+                style="margin-left:20px;"
+                type="primary"
+                size="medium"
+                icon="el-icon-search"
+                @click="getLabelTemActInfo()">查询</el-button>
+
+              <el-button type="primary" size="medium" @click="exportPigDetailsData()" style="margin-left:20px;" icon="el-icon-folder">导出</el-button>
+
+              <el-button type="primary" size="medium" @click="showColumn()" style="margin-left:20px;" icon="el-icon-document">转栏记录</el-button>
+            </el-form>
+            <el-table :data="listLabelTemActInfo" stripe style="width: 100%;" border
+            :row-style="iRowStyle"
+              :cell-style="iCellStyle"
+              :header-row-style="iHeaderRowStyle"
+              :header-cell-style="iHeaderCellStyle"
+              height="100%"
+            >
+              <el-table-column
+                prop="Sitearea"
+                width="220"
+                label="场区"
+                align="center"
+              />
+              <el-table-column
+                prop="door"
+                width="220"
+                label="栋舍"
+                align="center"
+              />
+              <el-table-column
+                prop="dorm"
+                width="220"
+                label="栏位"
+                align="center"
+              />
+              <el-table-column
+                prop="temp"
+                width="140"
+                label="体温(°C)"
+                align="center"
+              />
+              <el-table-column
+                prop="act"
+                width="152"
+                label="活跃度"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <p v-if="scope.row.act == '0'">无</p>
+                  <p v-if="scope.row.act == '1'">低</p>
+                  <p v-if="scope.row.act == '2'">中</p>
+                  <p v-if="scope.row.act == '3'">高</p>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="date"
+                width="200"
+                label="更新时间"
+                align="center"
+              />
+              
+            </el-table>
+
+            <!-- 分页 -->
+            <div class="block" style="margin-top: 0px">
+              <el-pagination
+                :current-page="currentLabel"
+                :page-size="limitLabel"
+                :total="totalLabel"
+                style="padding: 30px 0; text-align: center"
+                layout="total, sizes, prev, pager, next"
+                @current-change="getLabelTemActInfo"
+                @size-change="handleLabelSizeChange"
+                :page-sizes="[10, 20, 30, 40]"
+              />
+            </div>
+
+            <div class="measure-echarts_view">
+                <div class="measure-date-view">
+                  <el-radio-group v-model="temp_date_type" size="small" @input="handlerTempDateType">
+                    <el-radio-button label="0">天</el-radio-button>
+                    <el-radio-button label="1">周</el-radio-button>
+                    <el-radio-button label="2">6个月</el-radio-button>
+                  </el-radio-group>
+
+
+                    
+                    <el-date-picker
+                      v-model="timeEchartslist"
+                      type="daterange"
+                      range-separator="至"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期"
+                      :readonly="true"
+                      style="width: 260px;margin-left:30px;"
+                      size='small'>
+                      </el-date-picker>
+        <div
+        v-if="temp_date_type == '0'"
+        :class="[tempDayType == 1 ?'measure-date-view-click-activity':'measure-date-view-click']"
+        @click="handlerTempDayType(1)">前一天</div>
+
+        <div
+        v-if="temp_date_type == '0'"
+        :class="[tempDayType == 2 ?'measure-date-view-click-activity':'measure-date-view-click']"
+        @click="handlerTempDayType(2)">前二天</div>
+
+        <div
+        v-if="temp_date_type == '0'"
+        :class="[tempDayType == 3 ?'measure-date-view-click-activity':'measure-date-view-click']"
+        @click="handlerTempDayType(3)">前三天</div>
+
+                    
+                </div>
+                <div class="measure-echarts_view_top">
+                    <div class="measure-echarts_view_l">
+                        <div class="measure-echarts_view_title">猪只体温曲线图</div>
+                        <div id="echarttemp" style="width: 520px;height:400px;"></div>
+                    </div>
+                    <div class="measure-echarts_view_r">
+                        <div class="measure-echarts_view_title">猪只活跃度</div>
+                        <div id="echartact" style="width: 520px;height:400px;"></div>
+                    </div>
+                </div>
+                <div class="measure-echarts_view_center">
+                    
+                </div>
             </div>
           </div>
         </div>
@@ -836,186 +999,6 @@
            </div>
       </div>
     </div>
-
-<!--猪只个体信息 详情 -->
-    <el-dialog
-      title="猪只个体信息详情"
-      :visible.sync="logisticsDialog"
-      width="80%"
-      center
-      :close-on-click-modal="false"
-      @close="handlerReturn"
-      :destroy-on-close="true"
-      >
-        <div class="el-dialog-div">
-            <!-- <el-page-header @back="handlerReturn" content="返回历史列表" style="padding: 20px 0px 0px 0px;"></el-page-header> -->
-            <div class="measure-view_2_top measure-pulic_box_shadow" style="margin-top: 0px;">
-              <div class="measure-view_2_top_1">
-                <span class="measure-view_2_top_1_1">{{pigInfoObj.source_label}}</span>
-                <span class="measure-view_2_top_1_2">耳号</span>
-              </div>
-              <div class="measure-view_2_top_1">
-                <span class="measure-view_2_top_1_1">{{pigInfoObj.label_id}}</span>
-                <span class="measure-view_2_top_1_2">电子耳号</span>
-              </div>
-              <!-- label_type: 3, // 耳环类型 0：育肥猪，1：母猪，2：仔猪，3：公猪 -->
-              <div class="measure-view_2_top_1">
-                <span class="measure-view_2_top_1_1">{{pigInfoObj.label_type == 0 ? '育肥猪' : pigInfoObj.label_type == 1 ? '母猪' : pigInfoObj.label_type == 2 ? '仔猪' : '公猪'}}</span>
-                <span class="measure-view_2_top_1_2">性别</span>
-              </div>
-              <div class="measure-view_2_top_1">
-                <span class="measure-view_2_top_1_1">{{pigInfoObj.breed}}</span>
-                <span class="measure-view_2_top_1_2">品种</span>
-              </div>
-            </div>
-            <el-form :inline="true" class="measure-demo-form-inline">
-              <el-form-item label="时间范围">
-                <el-date-picker
-                  v-model="timepiglist"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  style="width: 260px">
-                  </el-date-picker>
-               </el-form-item>
-
-              <el-button
-                style="margin-left:20px;"
-                type="primary"
-                size="medium"
-                icon="el-icon-search"
-                @click="getLabelTemActInfo()">查询</el-button>
-
-              <el-button type="primary" size="medium" @click="exportPigDetailsData()" style="margin-left:20px;" icon="el-icon-folder">导出</el-button>
-
-              <el-button type="primary" size="medium" @click="showColumn()" style="margin-left:20px;" icon="el-icon-document">转栏记录</el-button>
-            </el-form>
-            <el-table :data="listLabelTemActInfo" stripe style="width: 100%;" border
-            :row-style="iRowStyle"
-              :cell-style="iCellStyle"
-              :header-row-style="iHeaderRowStyle"
-              :header-cell-style="iHeaderCellStyle"
-              height="300"
-            >
-              <el-table-column
-                prop="Sitearea"
-                width="200"
-                label="场区"
-                align="center"
-              />
-              <el-table-column
-                prop="door"
-                width="200"
-                label="栋舍"
-                align="center"
-              />
-              <el-table-column
-                prop="dorm"
-                width="200"
-                label="栏位"
-                align="center"
-              />
-              <el-table-column
-                prop="temp"
-                width="140"
-                label="体温(°C)"
-                align="center"
-              />
-              <el-table-column
-                prop="act"
-                width="152"
-                label="活跃度"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <p v-if="scope.row.act == '0'">无</p>
-                  <p v-if="scope.row.act == '1'">低</p>
-                  <p v-if="scope.row.act == '2'">中</p>
-                  <p v-if="scope.row.act == '3'">高</p>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="date"
-                width="200"
-                label="更新时间"
-                align="center"
-              />
-              
-            </el-table>
-
-            <!-- 分页 -->
-            <div class="block" style="margin-top: 0px">
-              <el-pagination
-                :current-page="currentLabel"
-                :page-size="limitLabel"
-                :total="totalLabel"
-                style="padding: 30px 0; text-align: center"
-                layout="total, sizes, prev, pager, next"
-                @current-change="getLabelTemActInfo"
-                @size-change="handleLabelSizeChange"
-                :page-sizes="[10, 20, 30, 40]"
-              />
-            </div>
-
-            <div class="measure-echarts_view">
-                <div class="measure-date-view">
-                  <el-radio-group v-model="temp_date_type" size="small" @input="handlerTempDateType">
-                    <el-radio-button label="0">天</el-radio-button>
-                    <el-radio-button label="1">周</el-radio-button>
-                    <el-radio-button label="2">6个月</el-radio-button>
-                  </el-radio-group>
-
-
-                    
-                    <el-date-picker
-                      v-model="timeEchartslist"
-                      type="daterange"
-                      range-separator="至"
-                      start-placeholder="开始日期"
-                      end-placeholder="结束日期"
-                      :readonly="true"
-                      style="width: 260px;margin-left:30px;"
-                      size='small'>
-                      </el-date-picker>
-        <div
-        v-if="temp_date_type == '0'"
-        :class="[tempDayType == 1 ?'measure-date-view-click-activity':'measure-date-view-click']"
-        @click="handlerTempDayType(1)">前一天</div>
-
-        <div
-        v-if="temp_date_type == '0'"
-        :class="[tempDayType == 2 ?'measure-date-view-click-activity':'measure-date-view-click']"
-        @click="handlerTempDayType(2)">前二天</div>
-
-        <div
-        v-if="temp_date_type == '0'"
-        :class="[tempDayType == 3 ?'measure-date-view-click-activity':'measure-date-view-click']"
-        @click="handlerTempDayType(3)">前三天</div>
-
-                    
-                </div>
-                <div class="measure-echarts_view_top">
-                    <div class="measure-echarts_view_l">
-                        <div class="measure-echarts_view_title">猪只体温曲线图</div>
-                        <div id="echarttemp" style="width: 520px;height:400px;"></div>
-                    </div>
-                    <div class="measure-echarts_view_r">
-                        <div class="measure-echarts_view_title">猪只活跃度</div>
-                        <div id="echartact" style="width: 520px;height:400px;"></div>
-                    </div>
-                </div>
-                <div class="measure-echarts_view_center">
-                    
-                </div>
-            </div>
-
-            <div class="measure-from-footer">
-              <el-button @click="handlerReturn">取消</el-button>
-              <el-button type="primary" @click="handlerReturn">确定</el-button>
-            </div>
-        </div>
-    </el-dialog>
 
     <!--猪只个体信息 新添/修改弹框 -->
     <el-dialog
@@ -1664,7 +1647,7 @@ export default {
       listPigSitearea: [],
       listAllPiggery: [],
       listStyByPiggery: [],
-      logisticsDialog: false,
+      logisticsDialog: true,
       pigInfoObj: '',
       // timepiglist: [
       //   new Date().getTime(),
@@ -1891,7 +1874,7 @@ export default {
         this.status2 = '4';
         this.limit2 = 10;
         this.current2 = 1;
-        // this.logisticsDialog = true;
+        this.logisticsDialog = true;
         this.getPigHistorylist();
         this.getPigSitearea();
         this.getAllPiggery();
@@ -2075,7 +2058,7 @@ export default {
       this.getPigHistorylist();
     },
     logisticsClick(item) {
-      this.logisticsDialog = true;
+      this.logisticsDialog = false;
       this.pigInfoObj = item;
       // this.timepiglist = [
       //   new Date().getTime(),
@@ -2517,7 +2500,7 @@ export default {
         return ydata
     },
     handlerReturn(){
-        this.logisticsDialog = false;
+        this.logisticsDialog = true;
         this.pigInfoObj = '';
     },
     //导出数据
@@ -3754,7 +3737,7 @@ export default {
         this.status2 = '';
         this.limit2 = 10;
         this.current2 = 1;
-        // this.logisticsDialog = true;
+        this.logisticsDialog = true;
         this.getPigHistorylist();
         this.getPigSitearea();
         this.getAllPiggery();
@@ -3810,7 +3793,7 @@ export default {
       this.status2 = '4';
       this.limit2 = 10;
       this.current2 = 1;
-      // this.logisticsDialog = true;
+      this.logisticsDialog = true;
       this.getPigHistorylist();
       this.getPigSitearea();
       this.getAllPiggery();
@@ -3821,7 +3804,7 @@ export default {
       this.status2 = '';
       this.limit2 = 10;
       this.current2 = 1;
-      // this.logisticsDialog = true;
+      this.logisticsDialog = true;
       this.getPigHistorylist();
       this.getPigSitearea();
       this.getAllPiggery();
@@ -4096,7 +4079,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  width: 1090px;
+  width: 1150px;
 }
 
 .measure-view_2_top_1 {
@@ -4104,7 +4087,7 @@ export default {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 6px;
+  padding: 20px;
 }
 
 .measure-view_2_top_1_1 {
@@ -4363,11 +4346,5 @@ export default {
     white-space: nowrap;
     border: 1px solid #FFF;
 }
-
-    .el-dialog-div {
-  height: 65vh;
-  overflow-x: hidden;
-}
-  
 
 </style>
