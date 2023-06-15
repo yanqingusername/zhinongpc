@@ -86,10 +86,12 @@
         <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
             <el-button
+              v-if="scope.row.role != 0"
               type="primary"
               size="mini"
               @click="handlerEdit(scope.row.id)">编辑</el-button>
             <el-button
+              v-if="scope.row.role != 0"
               type="danger"
               size="mini"
               @click="handlerDelete(scope.row.id)">删除</el-button>

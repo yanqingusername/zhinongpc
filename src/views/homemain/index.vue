@@ -185,6 +185,7 @@
             @current-change="getAlarmList"
             @size-change="handleSizeChangeAlarm"
             :page-sizes="[5,10, 20, 30, 40]"
+            :pager-count="3"
           />
         </div>
       </div>
@@ -250,6 +251,7 @@
             @current-change="getGoodsRecord"
             @size-change="handleSizeChangeGoods"
             :page-sizes="[5,10, 20, 30, 40]"
+            :pager-count="3"
           />
         </div>
       </div>
@@ -314,6 +316,7 @@
             @current-change="getAnimalRecord"
             @size-change="handleSizeChangeAnimal"
             :page-sizes="[5,10, 20, 30, 40]"
+            :pager-count="3"
           />
         </div>
       </div>
@@ -809,21 +812,21 @@ export default {
 }
 
 .index-container-2-left {
-  width: 420px;
+  width: 450px;
   display: flex;
   align-items: center;
   /* justify-content: center; */
   flex-direction: column;
-  padding: 0px 10px;
+  padding: 0px 0px;
 }
 
 .index-container-2-right {
-  width: 420px;
+  width: 450px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 0px 10px;
+  padding: 0px 0px;
   /* height: 800px; */
   /* overflow-y: scroll; */
 }

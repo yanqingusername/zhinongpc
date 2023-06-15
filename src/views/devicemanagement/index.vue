@@ -544,7 +544,7 @@
           </el-form-item>
         </div>
 
-        <div class="device-flex-space">
+        <!-- <div class="device-flex-space"> -->
           <el-form-item label="消毒时长(分钟)*：" prop="ozone_time">
             <el-input
               v-model="formOzoneObj.ozone_time"
@@ -552,11 +552,11 @@
               placeholder="请输入消毒时长(分钟)"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置*：" style="margin-left:20px;" prop="ozone_address_id">
+          <el-form-item label="设备位置*：" style="margin-left:0px;" prop="ozone_address_id">
             <el-select
               v-model="formOzoneObj.ozone_address_id"
-              placeholder="请选择位置"
-              style="width: 200px">
+              placeholder="请选择设备位置"
+              style="width: 280px">
               <el-option
                 v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
@@ -564,7 +564,7 @@
                 :value="item.id+''"></el-option>
             </el-select>
           </el-form-item>
-        </div>
+        <!-- </div> -->
 
         <el-form-item label="设备管理员*：" prop="ozone_device_people">
           <el-checkbox-group v-model="formOzoneObj.ozone_device_people">
@@ -594,14 +594,14 @@
       :show-close="false">
       <el-form ref="formDisObj" :rules="rulesDis" :model="formDisObj" label-width="160px">
         <div class="device-flex-center">
-          <el-form-item label="设备SN号*：" prop="dis_sn">
+          <el-form-item label="设备SN号*：" prop="dis_sn" label-width="170px">
             <el-input
               v-model="formDisObj.dis_sn"
               style="width: 260px"
               placeholder="请输入设备SN号"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置：" style="margin-left:0px;" prop="dis_address">
+          <el-form-item label="设备位置*：" style="margin-left:0px;" prop="dis_address"  label-width="170px">
             <el-input
               v-model="formDisObj.dis_address"
               style="width: 260px"
@@ -609,7 +609,7 @@
           </el-form-item>
         <!-- </div> -->
 
-        <el-form-item label="性别*：" prop="dis_gender">
+        <el-form-item label="性别*：" prop="dis_gender" label-width="170px">
           <el-select
             v-model="formDisObj.dis_gender"
             placeholder="请选择性别"
@@ -620,7 +620,7 @@
         </el-form-item>
 
         <!-- <div class="device-flex-space"> -->
-          <el-form-item label="有效淋浴时长(分钟)*：" prop="dis_time">
+          <el-form-item label="有效淋浴时长(分钟)*：" prop="dis_time" label-width="170px">
             <el-input
               v-model="formDisObj.dis_time"
               style="width: 260px"
@@ -659,7 +659,7 @@
               placeholder="请输入设备SN号"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置：" style="margin-left:0px;" prop="animal_address">
+          <el-form-item label="设备位置*：" style="margin-left:0px;" prop="animal_address">
             <el-input
               v-model="formAnimalObj.animal_address"
               style="width: 260px"
@@ -711,11 +711,11 @@
               placeholder="请输入设备编号"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置*：" style="margin-left:0px;" prop="access_address">
+          <el-form-item label="设备位置*：" style="margin-left:0px;" prop="access_address">
             <el-select
               v-model="formAccessObj.access_address"
               placeholder="请选择位置"
-              style="width: 220px">
+              style="width: 280px">
               <el-option
                 v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
@@ -765,7 +765,7 @@
       center
       :close-on-click-modal="false"
       :show-close="false">
-      <el-form ref="formLiquidObj" :model="formLiquidObj" label-width="140px">
+      <el-form ref="formLiquidObj" :rules="rulesLiquid" :model="formLiquidObj" label-width="140px">
         <div class="device-flex-space">
           <el-form-item label="设备SN号*：" prop="liquid_sn">
             <el-input
@@ -782,19 +782,19 @@
           </el-form-item>
         </div>
 
-        <div class="device-flex-space">
+        <!-- <div class="device-flex-space"> -->
           <el-form-item label="消毒时长(分钟)*：" prop="liquid_time">
             <el-input
               v-model="formLiquidObj.liquid_time"
-              style="width: 200px"
+              style="width: 280px"
               placeholder="请输入消毒时长(分钟)"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置*：" prop="liquid_address_id" style="margin-left:20px;">
+          <el-form-item label="设备位置*：" prop="liquid_address_id" style="margin-left:0px;">
             <el-select
               v-model="formLiquidObj.liquid_address_id"
-              placeholder="请选择位置"
-              style="width: 200px">
+              placeholder="请选择设备位置"
+              style="width: 280px">
               <el-option
                 v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
@@ -802,7 +802,7 @@
                 :value="item.id+''"></el-option>
             </el-select>
           </el-form-item>
-        </div>
+        <!-- </div> -->
 
         <el-form-item label="设备管理员*：" prop="liquid_device_people">
           <el-checkbox-group v-model="formLiquidObj.liquid_device_people">
@@ -837,20 +837,20 @@
       center
       :close-on-click-modal="false"
       :show-close="false">
-      <el-form ref="formCarObj" :model="formCarObj" label-width="140px">
+      <el-form ref="formCarObj" :rules="rulesCar" :model="formCarObj" label-width="140px">
         <!-- <div class="device-flex-space"> -->
           <el-form-item label="设备SN号*：" prop="car_sn">
             <el-input
               v-model="formCarObj.car_sn"
-              style="width: 200px"
+              style="width: 280px"
               placeholder="请输入设备SN号"></el-input>
           </el-form-item>
 
-          <el-form-item label="位置*：" prop="car_address_id" style="margin-left:0px;">
+          <el-form-item label="设备位置*：" prop="car_address_id" style="margin-left:0px;">
             <el-select
               v-model="formCarObj.car_address_id"
-              placeholder="请选择位置"
-              style="width: 200px">
+              placeholder="请选择设备位置"
+              style="width: 280px">
               <el-option
                 v-for="(item, index) in listAccesslayoutdescr"
                 :key="index"
@@ -950,7 +950,7 @@ export default {
         ozone_time: [
           { required: true, message: "请输入消毒时长(分钟)", trigger: "blur" },
         ],
-        ozone_address_id: [{ required: true, message: "请选择位置", trigger: "change" }],
+        ozone_address_id: [{ required: true, message: "请选择设备位置", trigger: "change" }],
         ozone_device_people: [
           { type: 'array', required: true, message: '请至少选择一个设备管理员', trigger: 'change' }
         ],
